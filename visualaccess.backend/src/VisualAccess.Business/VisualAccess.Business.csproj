@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Mappers\" />
+    <None Remove="Services\" />
+    <None Remove="Validators\" />
+    <None Remove="Factories\" />
+    <None Remove="Services\Authentication\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mappers\" />
+    <Folder Include="Services\" />
+    <Folder Include="Validators\" />
+    <Folder Include="Factories\" />
+    <Folder Include="Services\Authentication\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="log4net" Version="2.0.15" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.2.0" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VisualAccess.DataAccess\VisualAccess.DataAccess.csproj" />
+    <ProjectReference Include="..\VisualAccess.Domain\VisualAccess.Domain.csproj" />
+  </ItemGroup>
+</Project>

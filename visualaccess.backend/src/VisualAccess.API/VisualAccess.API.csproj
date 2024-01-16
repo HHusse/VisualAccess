@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(RunConfiguration)' == 'https' ">
+		<ExternalConsole>true</ExternalConsole>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.15" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+		<PackageReference Include="log4net" Version="2.0.15" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Update="Properties\log4net.config">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove="Controllers\" />
+		<None Remove="Middlewares\" />
+		<None Remove="RequestModels\" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Controllers\" />
+		<Folder Include="Middlewares\" />
+		<Folder Include="RequestModels\" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\VisualAccess.DataAccess\VisualAccess.DataAccess.csproj">
+			<GlobalPropertiesToRemove>
+			</GlobalPropertiesToRemove>
+		</ProjectReference>
+		<ProjectReference Include="..\VisualAccess.Domain\VisualAccess.Domain.csproj">
+			<GlobalPropertiesToRemove>
+			</GlobalPropertiesToRemove>
+		</ProjectReference>
+		<ProjectReference Include="..\VisualAccess.Business\VisualAccess.Business.csproj">
+			<GlobalPropertiesToRemove>
+			</GlobalPropertiesToRemove>
+		</ProjectReference>
+	</ItemGroup>
+</Project>
