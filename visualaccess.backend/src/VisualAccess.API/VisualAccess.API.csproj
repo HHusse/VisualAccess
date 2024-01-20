@@ -12,7 +12,7 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.15" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-		<PackageReference Include="log4net" Version="2.0.15" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.15" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Update="Properties\log4net.config">

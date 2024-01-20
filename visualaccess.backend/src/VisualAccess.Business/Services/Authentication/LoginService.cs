@@ -13,15 +13,13 @@ namespace VisualAccess.Business.Services.Authentication
 {
     public class LoginService
     {
-        private readonly VisualAccessDbContext dbContext;
         private readonly ILog log = LogManager.GetLogger(typeof(LoginService).Name);
         private IAccountRepository repository;
         private IAccountValidator validator;
         private ITokenFactory factory;
 
-        public LoginService(VisualAccessDbContext dbContext, IAccountRepository repository, IAccountValidator validator, ITokenFactory factory)
+        public LoginService(IAccountRepository repository, IAccountValidator validator, ITokenFactory factory)
         {
-            this.dbContext = dbContext;
             this.repository = repository;
             this.validator = validator;
             this.factory = factory;

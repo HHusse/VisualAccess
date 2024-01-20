@@ -77,6 +77,20 @@ namespace VisualAccess.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("Accounts", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "",
+                            Email = "",
+                            FirstName = "",
+                            LastName = "",
+                            Password = "$2a$11$gAk6y2PCKKDSYQ14Glyh6ea4evjHg0V7/jASaGPQPgE7o3yj/r3iq",
+                            PhoneNumber = "",
+                            Role = "ADMIN",
+                            Username = "setup"
+                        });
                 });
 
             modelBuilder.Entity("VisualAccess.DataAccess.Models.FacesDTO", b =>

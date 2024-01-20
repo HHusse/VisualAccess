@@ -48,6 +48,17 @@ app.MapControllers();
 
 log.Info("Server has started");
 
-app.Run();
+var cancellationToken = new CancellationTokenSource();
+
+Console.CancelKeyPress += (sender, e) =>
+{
+    e.Cancel = true;
+    cancellationToken.Cancel();
+    log.Info("Shutdown initiated...");
+};
+
+await app.RunAsync(cancellationToken.Token);
+
+log.Info("Server has stopped");
 
 

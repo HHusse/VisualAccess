@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using VisualAccess.DataAccess.Models;
+using VisualAccess.Domain.Enumerations;
 
 namespace VisualAccess.DataAccess.Context
 {
@@ -40,6 +41,9 @@ namespace VisualAccess.DataAccess.Context
             modelBuilder.Entity<AccountDTO>()
                .HasIndex(a => a.FaceID)
                .IsUnique();
+            AccountDTO accountForSetup = new AccountDTO("", "", "setup", "", BCrypt.Net.BCrypt.HashPassword("visualaccess"), "", "", Role.ADMIN);
+            accountForSetup.Id = 1;
+            modelBuilder.Entity<AccountDTO>().HasData(accountForSetup);
 
             modelBuilder.Entity<FacesDTO>().ToTable("Faces").HasKey(f => f.Id);
             modelBuilder.Entity<FacesDTO>()
@@ -58,7 +62,7 @@ namespace VisualAccess.DataAccess.Context
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql("");
+                optionsBuilder.UseNpgsql(Environment.GetEnvironmentVariable("DBCONNECTIONSTRING")!);
             }
         }
 

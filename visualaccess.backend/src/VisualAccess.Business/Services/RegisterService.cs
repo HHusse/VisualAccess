@@ -6,18 +6,16 @@ using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Interfaces.Validators;
 using VisualAccess.Business.Validators;
 
-namespace VisualAccess.Business.Services.Authentication
+namespace VisualAccess.Business.Services
 {
     public class RegisterService
     {
-        private readonly VisualAccessDbContext dbContext;
         private readonly ILog log = LogManager.GetLogger(typeof(RegisterService).Name);
         private IAccountRepository repository;
         private IAccountValidator validator;
 
-        public RegisterService(VisualAccessDbContext dbContext, IAccountRepository repository, IAccountValidator validator)
+        public RegisterService(IAccountRepository repository, IAccountValidator validator)
         {
-            this.dbContext = dbContext;
             this.repository = repository;
             this.validator = validator;
         }

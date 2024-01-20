@@ -50,6 +50,11 @@ namespace VisualAccess.DataAccess.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.InsertData(
+                table: "Accounts",
+                columns: new[] { "Id", "Address", "Email", "FaceID", "FirstName", "LastName", "Password", "PhoneNumber", "Role", "Username" },
+                values: new object[] { 1, "", "", null, "", "", "$2a$11$gAk6y2PCKKDSYQ14Glyh6ea4evjHg0V7/jASaGPQPgE7o3yj/r3iq", "", "ADMIN", "setup" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Accounts_Email",
                 table: "Accounts",
