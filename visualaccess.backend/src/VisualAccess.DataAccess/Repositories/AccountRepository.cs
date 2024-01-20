@@ -51,6 +51,30 @@ namespace VisualAccess.DataAccess.Repositories
 
             return account;
         }
+
+        public async Task<bool> AssociateFaceID(string username, int faceID)
+        {
+            var account = await dbContext.Accounts.FirstOrDefaultAsync(a => a.Username == username);
+
+            if (account is null)
+            {
+                log.Error($"Unable to associate FaceID with account {username} because the account was not found in database");
+                return false;
+            }
+
+            account.FaceID = faceID;
+            try
+            {
+                await dbContext.SaveChangesAsync();
+                log.Info($"Succesfuly associate FaceID with account {account.Username}");
+                return true;
+            }
+            catch (Exception e)
+            {
+                LogException.Log(log, e);
+                return false;
+            }
+        }
     }
 }
 

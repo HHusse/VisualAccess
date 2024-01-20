@@ -15,6 +15,16 @@ namespace VisualAccess.API
     {
         public static void AddConfig(this IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
+            });
+
             services.AddDbContext<VisualAccessDbContext>(opt => opt.UseNpgsql(Environment.GetEnvironmentVariable("DBCONNECTIONSTRING")!));
             services.AddSingleton(LogManager.GetLogger("API"));
             services.AddScoped<IAccountRepository, AccountRepository>();

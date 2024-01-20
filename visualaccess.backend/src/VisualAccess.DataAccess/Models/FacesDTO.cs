@@ -1,7 +1,9 @@
 ﻿using System;
+using VisualAccess.Domain.Entities;
+
 namespace VisualAccess.DataAccess.Models
 {
-    public class FacesDTO
+    public class FacesDTO : DTOBase
     {
         public FacesDTO(int id, string encoding)
         {
@@ -11,6 +13,7 @@ namespace VisualAccess.DataAccess.Models
 
         public int Id { get; set; }
         public string Encoding { get; set; }
+        public virtual AccountDTO? Account { get; set; }
     }
 }
 

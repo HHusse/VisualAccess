@@ -36,6 +36,10 @@ namespace VisualAccess.DataAccess.Context
             modelBuilder.Entity<AccountDTO>().Property(a => a.Password).IsRequired();
             modelBuilder.Entity<AccountDTO>().Property(a => a.PhoneNumber).IsRequired();
             modelBuilder.Entity<AccountDTO>().Property(a => a.Address).IsRequired();
+            modelBuilder.Entity<AccountDTO>().Property(a => a.FaceID).IsRequired(false);
+            modelBuilder.Entity<AccountDTO>()
+               .HasIndex(a => a.FaceID)
+               .IsUnique();
 
             modelBuilder.Entity<FacesDTO>().ToTable("Faces").HasKey(f => f.Id);
             modelBuilder.Entity<FacesDTO>()
@@ -43,6 +47,11 @@ namespace VisualAccess.DataAccess.Context
                 .IsUnique();
             modelBuilder.Entity<FacesDTO>().Property(f => f.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<FacesDTO>().Property(f => f.Encoding).IsRequired();
+
+            modelBuilder.Entity<AccountDTO>()
+                .HasOne(a => a.Face)
+                .WithOne(f => f.Account)
+                .HasForeignKey<AccountDTO>(a => a.FaceID);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

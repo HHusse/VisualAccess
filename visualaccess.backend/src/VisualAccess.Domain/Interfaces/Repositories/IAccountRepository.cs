@@ -7,6 +7,7 @@ namespace VisualAccess.Domain.Interfaces.Repositories
     {
         public Task<bool> CreateAccount(Account account);
         public Task<DTOBase?> GetAccountByUsername(string username);
+        public Task<bool> AssociateFaceID(string username, int faceID);
     }
 }
 

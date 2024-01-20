@@ -18,6 +18,20 @@ namespace VisualAccess.DataAccess.Models
             Role = role;
         }
 
+        public AccountDTO(int id, string firstName, string lastName, string username, string email, string password, string address, string phoneNumber, Role role, int? faceID)
+        {
+            Id = id;
+            FirstName = firstName;
+            LastName = lastName;
+            Username = username;
+            Email = email;
+            Password = password;
+            Address = address;
+            PhoneNumber = phoneNumber;
+            Role = role;
+            FaceID = faceID;
+        }
+
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -27,6 +41,8 @@ namespace VisualAccess.DataAccess.Models
         public string Address { get; set; }
         public string PhoneNumber { get; set; }
         public Role Role { get; set; }
+        public int? FaceID { get; set; }
+        public virtual FacesDTO? Face { get; set; }
     }
 }
 

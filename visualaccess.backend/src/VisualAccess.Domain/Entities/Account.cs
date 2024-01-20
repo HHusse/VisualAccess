@@ -15,6 +15,7 @@ namespace VisualAccess.Domain.Entities
             Address = address;
             PhoneNumber = phoneNumber;
             Role = role;
+            FaceID = null;
         }
 
         public Account(string firstName, string lastName, string username, string email, string password, string address, string phoneNumber, string roleAsString)
@@ -35,6 +36,8 @@ namespace VisualAccess.Domain.Entities
             {
                 throw new ArgumentException($"Invalid role value: {roleAsString}");
             }
+
+            FaceID = null;
         }
 
         public string FirstName { get; set; }
@@ -45,6 +48,7 @@ namespace VisualAccess.Domain.Entities
         public string Address { get; set; }
         public string PhoneNumber { get; set; }
         public Role Role { get; set; }
+        public int? FaceID { get; set; }
     }
 }
 
