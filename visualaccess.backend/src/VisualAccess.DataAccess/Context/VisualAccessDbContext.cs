@@ -7,6 +7,7 @@ namespace VisualAccess.DataAccess.Context
     public class VisualAccessDbContext : DbContext
     {
         public DbSet<AccountDTO> Accounts { get; set; }
+        public DbSet<FacesDTO> Faces { get; set; }
 
         public VisualAccessDbContext()
         {
@@ -35,6 +36,13 @@ namespace VisualAccess.DataAccess.Context
             modelBuilder.Entity<AccountDTO>().Property(a => a.Password).IsRequired();
             modelBuilder.Entity<AccountDTO>().Property(a => a.PhoneNumber).IsRequired();
             modelBuilder.Entity<AccountDTO>().Property(a => a.Address).IsRequired();
+
+            modelBuilder.Entity<FacesDTO>().ToTable("Faces").HasKey(f => f.Id);
+            modelBuilder.Entity<FacesDTO>()
+                .HasIndex(f => f.Id)
+                .IsUnique();
+            modelBuilder.Entity<FacesDTO>().Property(f => f.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<FacesDTO>().Property(f => f.Encoding).IsRequired();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
