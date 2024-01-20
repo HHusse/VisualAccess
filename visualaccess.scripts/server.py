@@ -1,32 +1,29 @@
+import os
+import psycopg2
 import face_recognition
 from PIL import Image, ImageDraw
-import os
-import sqlite3
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-app = Flask(__name__)
 api_route = "/api/v1"
-CORS(app, resources={f"{api_route}/*": {"origins": "*"}})
-database_path = 'faces_database.db'
-face_threshold = 0.5
+face_threshold = 0.4
+database_url = os.environ.get('DATABASE_URL')
+if database_url is None:
+    raise ValueError("The DATABASE_URL environment variable is not set.")
 
-def create_database_table(cursor):
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS faces (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            encoding TEXT NOT NULL
-        )
-    ''')
+def parse_connection_string(conn_str):
+    params = conn_str.split(';')
+    conn_dict = {item.split('=')[0]: item.split('=')[1] for item in params}
+    return f"dbname='{conn_dict['Database']}' user='{conn_dict['Username']}' password='{conn_dict['Password']}' host='{conn_dict['Host']}' port='{conn_dict['Port']}'"
 
-def load_known_faces(database_path):
+connectionString = parse_connection_string(database_url)
+
+def load_known_faces():
     known_faces = []
     known_ids = []
 
-    conn = sqlite3.connect(database_path)
+    conn = psycopg2.connect(connectionString)
     cursor = conn.cursor()
-
-    create_database_table(cursor)
 
     cursor.execute('SELECT id, encoding FROM faces')
     rows = cursor.fetchall()
@@ -45,32 +42,26 @@ def is_face_present(image):
     image = face_recognition.load_image_file(image)
     face_locations = face_recognition.face_locations(image)
 
-    if len(face_locations) > 0:
-        return True
-    else:
-        return False
+    return len(face_locations) > 0
 
-def register_face(database_path, image):
+def register_face(image):
     if not is_face_present(image):
         return -1
 
-    known_faces, known_ids = load_known_faces(database_path)
+    known_faces, known_ids = load_known_faces()
     id = verify_face(image, known_faces, known_ids)
     if id > 0:
         return -2
 
-    conn = sqlite3.connect(database_path)
+    conn = psycopg2.connect(connectionString)
     cursor = conn.cursor()
-
-    create_database_table(cursor)
 
     image = face_recognition.load_image_file(image)
     face_encoding = face_recognition.face_encodings(image)[0]
     encoding_str = ','.join(str(value) for value in face_encoding)
 
-    cursor.execute('INSERT INTO faces (encoding) VALUES (?)', (encoding_str,))
-
-    inserted_id = cursor.lastrowid
+    cursor.execute('INSERT INTO faces (encoding) VALUES (%s) RETURNING id', (encoding_str,))
+    inserted_id = cursor.fetchone()[0]
 
     conn.commit()
     conn.close()
@@ -99,10 +90,13 @@ def verify_face(image, known_faces, known_ids):
 
     return face_id
 
-
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in {'jpg', 'jpeg', 'png'}
+
+
+app = Flask(__name__)
+CORS(app, resources={f"{api_route}/*": {"origins": "*"}})
 
 @app.route(f'{api_route}/register', methods=['POST'])
 def register_new_face_endpoint():
@@ -117,7 +111,7 @@ def register_new_face_endpoint():
         return jsonify(response), 400 
 
     if file and allowed_file(file.filename):
-        registeredID = register_face(database_path, file)
+        registeredID = register_face(file)
         if registeredID > 0:
             response['id'] = registeredID
             return jsonify(response), 200
@@ -144,7 +138,7 @@ def verify_face_endpoint():
         return jsonify(response), 400 
 
     if file and allowed_file(file.filename):
-        known_faces, known_ids = load_known_faces(database_path)
+        known_faces, known_ids = load_known_faces()
         id = verify_face(file, known_faces, known_ids)
         if id > 0:
             response['id'] = id
