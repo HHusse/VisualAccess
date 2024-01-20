@@ -5,6 +5,9 @@ from PIL import Image, ImageDraw
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
+cached_known_faces = []
+cached_known_ids = []
+
 api_route = "/api/v1"
 face_threshold = 0.4
 database_url = os.environ.get('DATABASE_URL')
@@ -19,6 +22,7 @@ def parse_connection_string(conn_str):
 connectionString = parse_connection_string(database_url)
 
 def load_known_faces():
+    global cached_known_faces, cached_known_ids
     known_faces = []
     known_ids = []
 
@@ -36,7 +40,8 @@ def load_known_faces():
 
     conn.close()
 
-    return known_faces, known_ids
+    cached_known_faces = known_faces
+    cached_known_ids = known_ids
 
 def is_face_present(image):
     image = face_recognition.load_image_file(image)
@@ -48,8 +53,7 @@ def register_face(image):
     if not is_face_present(image):
         return -1
 
-    known_faces, known_ids = load_known_faces()
-    id = verify_face(image, known_faces, known_ids)
+    id = verify_face(image)
     if id > 0:
         return -2
 
@@ -65,10 +69,11 @@ def register_face(image):
 
     conn.commit()
     conn.close()
+    load_known_faces()
 
     return inserted_id
 
-def verify_face(image, known_faces, known_ids):
+def verify_face(image):
     if not is_face_present(image):
         return -1
     unknown_image = face_recognition.load_image_file(image)
@@ -80,20 +85,19 @@ def verify_face(image, known_faces, known_ids):
 
     for i, (top, right, bottom, left) in enumerate(unknown_face_locations):
         unknown_face_encoding = unknown_face_encodings[i]
-        matches = face_recognition.compare_faces(known_faces, unknown_face_encoding, tolerance=face_threshold)
+        matches = face_recognition.compare_faces(cached_known_faces, unknown_face_encoding, tolerance=face_threshold)
 
         face_id = 0
 
         if True in matches:
             first_match_index = matches.index(True)
-            face_id = known_ids[first_match_index]
+            face_id = cached_known_ids[first_match_index]
 
     return face_id
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in {'jpg', 'jpeg', 'png'}
-
 
 app = Flask(__name__)
 CORS(app, resources={f"{api_route}/*": {"origins": "*"}})
@@ -138,8 +142,7 @@ def verify_face_endpoint():
         return jsonify(response), 400 
 
     if file and allowed_file(file.filename):
-        known_faces, known_ids = load_known_faces()
-        id = verify_face(file, known_faces, known_ids)
+        id = verify_face(file)
         if id > 0:
             response['id'] = id
             return jsonify(response), 200
@@ -154,4 +157,5 @@ def verify_face_endpoint():
     return jsonify(response), 400
 
 if __name__ == '__main__':
+    load_known_faces()
     app.run(debug=True)
