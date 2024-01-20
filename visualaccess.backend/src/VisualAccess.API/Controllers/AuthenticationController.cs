@@ -40,7 +40,7 @@ namespace VisualAccess.API.Controllers
             }
 
             LoginService service = new(dbContext, accountRepository, accountValidator, tokenFactory);
-            Result result = await service.Execute(requestModel.Username!, requestModel.Password!);
+            Result result = await service.Execute(requestModel.Username!.ToLower(), requestModel.Password!);
 
             return result.Succed ? StatusCode(200, new { token = result.Message }) : StatusCode(401);
         }
@@ -55,7 +55,7 @@ namespace VisualAccess.API.Controllers
             }
 
             RegisterService service = new(dbContext, accountRepository, accountValidator);
-            Account newAccount = new(requestModel.FirstName!, requestModel.LastName!, requestModel.Username!, requestModel.Email!, requestModel.Password!, requestModel.Address!, requestModel.PhoneNumber!, requestModel.Role!);
+            Account newAccount = new(requestModel.FirstName!, requestModel.LastName!, requestModel.Username!.ToLower(), requestModel.Email!.ToLower(), requestModel.Password!, requestModel.Address!, requestModel.PhoneNumber!, requestModel.Role!);
             Result result = await service.Execute(newAccount);
             if (!result.Succed)
             {

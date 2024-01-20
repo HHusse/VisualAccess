@@ -9,8 +9,8 @@ namespace VisualAccess.Domain.Entities
         {
             FirstName = firstName;
             LastName = lastName;
-            Username = username;
-            Email = email;
+            Username = username.ToLower();
+            Email = email.ToLower();
             Password = password;
             Address = address;
             PhoneNumber = phoneNumber;
@@ -22,8 +22,8 @@ namespace VisualAccess.Domain.Entities
         {
             FirstName = firstName;
             LastName = lastName;
-            Username = username;
-            Email = email;
+            Username = username.ToLower();
+            Email = email.ToLower();
             Password = password;
             Address = address;
             PhoneNumber = phoneNumber;
