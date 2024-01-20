@@ -25,7 +25,7 @@ def load_known_faces():
     conn = psycopg2.connect(connectionString)
     cursor = conn.cursor()
 
-    cursor.execute('SELECT id, encoding FROM faces')
+    cursor.execute('SELECT "Id", "Encoding" FROM "Faces"')
     rows = cursor.fetchall()
 
     for row in rows:
@@ -60,7 +60,7 @@ def register_face(image):
     face_encoding = face_recognition.face_encodings(image)[0]
     encoding_str = ','.join(str(value) for value in face_encoding)
 
-    cursor.execute('INSERT INTO faces (encoding) VALUES (%s) RETURNING id', (encoding_str,))
+    cursor.execute('INSERT INTO "Faces" ("Encoding") VALUES (%s) RETURNING "Id"', (encoding_str,))
     inserted_id = cursor.fetchone()[0]
 
     conn.commit()
