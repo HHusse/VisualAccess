@@ -19,8 +19,8 @@ namespace VisualAccess.Business.Factories
                 new Claim(ClaimTypes.Role, account.Role.ToString())
             };
 
-            string secretKey = Environment.GetEnvironmentVariable("SecretKey")!;
-            string issuer = Environment.GetEnvironmentVariable("Issuer")!;
+            string secretKey = Environment.GetEnvironmentVariable("SECRETKEY")!;
+            string issuer = Environment.GetEnvironmentVariable("ISSUER")!;
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 

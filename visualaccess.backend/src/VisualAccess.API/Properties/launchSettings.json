@@ -26,9 +26,9 @@
       "applicationUrl": "https://localhost:7279;http://localhost:5267",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DbConnectionString": "Host=localhost;Port=5432;Database=visualaccessdb;Username=user;Password=P@ssword123\n",
-        "SecretKey": "qfEtbmKAgNOP5El/21kowmwdjsQyJp63hI+3d0CU3A0=",
-        "Issuer": "VisualAccess"
+        "DBCONNECTIONSTRING": "Host=localhost;Port=5432;Database=visualaccessdb;Username=user;Password=P@ssword123\n",
+        "SECRETKEY": "qfEtbmKAgNOP5El/21kowmwdjsQyJp63hI+3d0CU3A0=",
+        "ISSUER": "VisualAccess"
       },
       "dotnetRunMessages": true
     },

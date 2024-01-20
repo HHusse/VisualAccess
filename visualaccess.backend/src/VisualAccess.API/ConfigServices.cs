@@ -15,7 +15,7 @@ namespace VisualAccess.API
     {
         public static void AddConfig(this IServiceCollection services)
         {
-            services.AddDbContext<VisualAccessDbContext>(opt => opt.UseNpgsql(Environment.GetEnvironmentVariable("DbConnectionString")!));
+            services.AddDbContext<VisualAccessDbContext>(opt => opt.UseNpgsql(Environment.GetEnvironmentVariable("DBCONNECTIONSTRING")!));
             services.AddSingleton(LogManager.GetLogger("API"));
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IAccountValidator, AccountValidator>();
