@@ -10,6 +10,8 @@ using VisualAccess.Business.Factories;
 using VisualAccess.Domain.Interfaces.Factories;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using VisualAccess.Domain.Interfaces.ServicesClient;
+using VisualAccess.FaceRecognition.ServicesClient;
 
 namespace VisualAccess.API
 {
@@ -35,12 +37,13 @@ namespace VisualAccess.API
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRETKEY")!))
                 }
             );
-
+            services.AddHttpClient();
             services.AddDbContext<VisualAccessDbContext>(opt => opt.UseNpgsql(Environment.GetEnvironmentVariable("DBCONNECTIONSTRING")!));
             services.AddSingleton(LogManager.GetLogger("API"));
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IAccountValidator, AccountValidator>();
             services.AddScoped<ITokenFactory, TokenFactory>();
+            services.AddScoped<IFaceRecognitionServiceClient, FaceRecognitionServiceClient>();
         }
     }
 }

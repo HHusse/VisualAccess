@@ -1,10 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Security.Claims;
-using log4net;
+﻿using log4net;
 using Microsoft.AspNetCore.Mvc;
-using VisualAccess.Domain.Interfaces.Repositories;
-using VisualAccess.Domain.Interfaces.Validators;
 
 namespace VisualAccess.API.Controllers
 {

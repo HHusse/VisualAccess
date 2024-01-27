@@ -27,7 +27,8 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DBCONNECTIONSTRING": "Host=localhost;Port=5432;Database=visualaccessdb;Username=user;Password=P@ssword123\n",
         "SECRETKEY": "qfEtbmKAgNOP5El/21kowmwdjsQyJp63hI+3d0CU3A0=",
-        "ISSUER": "VisualAccess"
+        "ISSUER": "VisualAccess",
+        "FACERECOGNITIONURL": "http://127.0.0.1:5000/api/v1"
       },
       "dotnetRunMessages": true
     },

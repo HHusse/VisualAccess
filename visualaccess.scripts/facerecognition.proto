@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package facerecognition;
+
+service FaceRecognition {
+  rpc RegisterFace (Image) returns (RegisterFaceResponse) {}
+  rpc VerifyFace (Image) returns (VerifyFaceResponse) {}
+}
+
+message Image {
+  bytes content = 1;
+}
+
+message RegisterFaceResponse {
+  int32 id = 1;
+  string message = 2;
+}
+
+message VerifyFaceResponse {
+  int32 id = 1;
+  string message = 2;
+}
