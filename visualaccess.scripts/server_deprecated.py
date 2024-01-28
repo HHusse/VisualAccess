@@ -2,11 +2,9 @@ import os
 import psycopg2
 import face_recognition
 from PIL import Image, ImageDraw
-from concurrent import futures
-import grpc
-import facerecognition_pb2
-import facerecognition_pb2_grpc
-from io import BytesIO
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import asyncio
 
 #export DATABASE_URL="Host=localhost;Port=5432;Database=visualaccessdb;Username=user;Password=P@ssword123"
 
@@ -26,7 +24,7 @@ def parse_connection_string(conn_str):
 
 connectionString = parse_connection_string(database_url)
 
-def load_known_faces():
+async def load_known_faces():
     global cached_known_faces, cached_known_ids
     known_faces = []
     known_ids = []
@@ -74,7 +72,7 @@ def register_face(image):
 
     conn.commit()
     conn.close()
-    load_known_faces()
+    asyncio.run(load_known_faces())
 
     return inserted_id
 
@@ -104,29 +102,63 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in {'jpg', 'jpeg', 'png'}
 
-class FaceRecognitionServicer(facerecognition_pb2_grpc.FaceRecognitionServicer):
-    def RegisterFace(self, request, context):
-        image_stream = BytesIO(request.content)
-        image = face_recognition.load_image_file(image_stream)
-        registered_id = register_face(image)  # Implement this function based on your Flask app logic
-        message = "Registered successfully" if registered_id > 0 else "Registration failed"
-        return facerecognition_pb2.RegisterFaceResponse(id=registered_id, message=message)
+app = Flask(__name__)
+CORS(app, resources={f"{api_route}/*": {"origins": "*"}})
 
-    def VerifyFace(self, request, context):
-        image_stream = BytesIO(request.content)
-        image = face_recognition.load_image_file(image_stream)
-        verified_id = verify_face(image)  # Implement this function based on your Flask app logic
-        message = "Verified successfully" if verified_id > 0 else "Verification failed"
-        return facerecognition_pb2.VerifyFaceResponse(id=verified_id, message=message)
+@app.route(f'{api_route}/register', methods=['POST'])
+def register_new_face_endpoint():
+    response = {} 
+    if 'file' not in request.files:
+        response['message'] = 'No file part'
+        return jsonify(response), 400 
+    
+    file = request.files['file']
+    if file.filename == '':
+        response['message'] = 'No selected file'
+        return jsonify(response), 400 
 
-def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    facerecognition_pb2_grpc.add_FaceRecognitionServicer_to_server(FaceRecognitionServicer(), server)
-    server.add_insecure_port('[::]:50051')
-    server.start()
-    server.wait_for_termination()
-    print("Server Start")
+    if file and allowed_file(file.filename):
+        registeredID = register_face(file)
+        if registeredID > 0:
+            response['id'] = registeredID
+            return jsonify(response), 200
+        elif registeredID == -2:
+            response['message'] = 'Face already exist'
+            return jsonify(response), 403
+        else:
+            response['message'] = 'No face detected'
+            return jsonify(response), 404 
+    
+    response['message'] = 'Invalid file format'
+    return jsonify(response), 400
+
+@app.route(f'{api_route}/verify', methods=['POST'])
+def verify_face_endpoint():
+    response = {} 
+    if 'file' not in request.files:
+        response['message'] = 'No file part'
+        return jsonify(response), 400 
+
+    file = request.files['file']
+    if file.filename == '':
+        response['message'] = 'No selected file'
+        return jsonify(response), 400 
+
+    if file and allowed_file(file.filename):
+        id = verify_face(file)
+        if id > 0:
+            response['id'] = id
+            return jsonify(response), 200
+        elif id == 0:
+            response['message'] = 'Access denied'
+            return jsonify(response), 403
+        else:
+            response['message'] = 'No face detected'
+            return jsonify(response), 404 
+    
+    response['message'] = 'Invalid file format'
+    return jsonify(response), 400
 
 if __name__ == '__main__':
-    load_known_faces()
-    serve()
+    asyncio.run(load_known_faces())
+    app.run(debug=True)
