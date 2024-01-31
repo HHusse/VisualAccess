@@ -9,6 +9,8 @@ namespace VisualAccess.Domain.Interfaces.Validators
         public bool IsValidEmail(string email);
         public bool IsValidPhoneNumber(string phoneNumber);
         public bool IsValidUsername(string username);
+        public Task<bool> UsernameAlreadyExist(string username);
+        public Task<bool> EmailAlreadyExist(string email);
     }
 }
 

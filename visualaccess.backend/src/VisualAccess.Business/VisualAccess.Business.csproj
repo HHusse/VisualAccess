@@ -11,14 +11,16 @@
     <None Remove="Services\" />
     <None Remove="Validators\" />
     <None Remove="Factories\" />
-    <None Remove="Services\Authentication\" />
+    <None Remove="Services\AccountServices\" />
+    <None Remove="Services\AuthenticationServices\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Mappers\" />
     <Folder Include="Services\" />
     <Folder Include="Validators\" />
     <Folder Include="Factories\" />
-    <Folder Include="Services\Authentication\" />
+    <Folder Include="Services\AccountServices\" />
+    <Folder Include="Services\AuthenticationServices\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />

@@ -42,6 +42,7 @@ namespace VisualAccess.API
             services.AddSingleton(LogManager.GetLogger("API"));
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IAccountValidator, AccountValidator>();
+            services.AddScoped<IFaceRepository, FaceRepository>();
             services.AddScoped<ITokenFactory, TokenFactory>();
             services.AddScoped<IFaceRecognitionServiceClient, FaceRecognitionServiceClient>();
         }

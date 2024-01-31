@@ -2,8 +2,8 @@
 using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VisualAccess.API.RequestModels;
-using VisualAccess.Business.Services.Authentication;
+using VisualAccess.API.RequestModels.AuthenticationModels;
+using VisualAccess.Business.Services.AuthenticationServices;
 using VisualAccess.DataAccess.Context;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Interfaces.Factories;

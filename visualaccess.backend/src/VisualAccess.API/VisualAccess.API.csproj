@@ -8,7 +8,9 @@
 	<PropertyGroup Condition=" '$(RunConfiguration)' == 'https' ">
 		<ExternalConsole>true</ExternalConsole>
 	</PropertyGroup>
-	<PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
+	<PropertyGroup Condition=" '$(RunConfiguration)' == 'http' ">
+	  <ExternalConsole>true</ExternalConsole>
+	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.15" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
@@ -23,11 +25,15 @@
 		<None Remove="Controllers\" />
 		<None Remove="Middlewares\" />
 		<None Remove="RequestModels\" />
+		<None Remove="RequestModels\AuthenticationModels\" />
+		<None Remove="RequestModels\AccountModels\" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Controllers\" />
 		<Folder Include="Middlewares\" />
 		<Folder Include="RequestModels\" />
+		<Folder Include="RequestModels\AuthenticationModels\" />
+		<Folder Include="RequestModels\AccountModels\" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\VisualAccess.DataAccess\VisualAccess.DataAccess.csproj">
@@ -42,7 +48,7 @@
 			<GlobalPropertiesToRemove>
 			</GlobalPropertiesToRemove>
 		</ProjectReference>
-		<ProjectReference Include="..\..\VisualAccess.FaceRecognition\VisualAccess.FaceRecognition.csproj">
+		<ProjectReference Include="..\VisualAccess.FaceRecognition\VisualAccess.FaceRecognition.csproj">
 		  <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
 		</ProjectReference>
 	</ItemGroup>

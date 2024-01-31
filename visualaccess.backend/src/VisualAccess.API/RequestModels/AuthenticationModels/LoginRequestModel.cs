@@ -1,15 +1,15 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace VisualAccess.API.RequestModels
+namespace VisualAccess.API.RequestModels.AuthenticationModels
 {
-    public class RegisterFaceRequestModel
+    public class LoginRequestModel
     {
         [Required]
         public string? Username { get; set; }
 
         [Required]
-        public IFormFile? FaceImg { get; set; }
+        public string? Password { get; set; }
     }
 }
 

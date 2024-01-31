@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using VisualAccess.Domain.Enumerations;
 
-namespace VisualAccess.API.RequestModels
+namespace VisualAccess.API.RequestModels.AccountModels
 {
     public class ValidRoleAttribute : ValidationAttribute
     {

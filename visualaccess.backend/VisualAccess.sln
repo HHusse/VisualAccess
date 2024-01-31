@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualAccess.DataAccess", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualAccess.Business", "src\VisualAccess.Business\VisualAccess.Business.csproj", "{3F5BF8C4-ED0F-4869-86CE-8574FEE4CC65}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualAccess.FaceRecognition", "VisualAccess.FaceRecognition\VisualAccess.FaceRecognition.csproj", "{1CB6E199-8E49-45A9-B08E-B9DC46796643}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualAccess.FaceRecognition", "src\VisualAccess.FaceRecognition\VisualAccess.FaceRecognition.csproj", "{1CB6E199-8E49-45A9-B08E-B9DC46796643}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

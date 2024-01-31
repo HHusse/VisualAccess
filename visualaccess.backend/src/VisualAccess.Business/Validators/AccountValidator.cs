@@ -3,12 +3,19 @@ using System.Security.Principal;
 using System.Text.RegularExpressions;
 using log4net;
 using VisualAccess.Domain.Entities;
+using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Interfaces.Validators;
 
 namespace VisualAccess.Business.Validators
 {
     public class AccountValidator : IAccountValidator
     {
+        private readonly IAccountRepository accountRepository;
+
+        public AccountValidator(IAccountRepository accountRepository)
+        {
+            this.accountRepository = accountRepository;
+        }
 
         public bool VerifyAccountPassword(Account account, string password)
         {
@@ -31,6 +38,16 @@ namespace VisualAccess.Business.Validators
         {
             Regex usernameRgx = new("^[a-zA-Z0-9_-]{5,15}$");
             return usernameRgx.IsMatch(username);
+        }
+
+        public async Task<bool> UsernameAlreadyExist(string username)
+        {
+            return await accountRepository.UsernameExist(username);
+        }
+
+        public async Task<bool> EmailAlreadyExist(string email)
+        {
+            return await accountRepository.EmailExist(email);
         }
     }
 }

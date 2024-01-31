@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Entities\" />
     <None Remove="Enumerations\" />
     <None Remove="Interfaces\" />
     <None Remove="Interfaces\Repositories\" />
@@ -15,9 +14,9 @@
     <None Remove="Interfaces\Factories\" />
     <None Remove="Interfaces\Validators\" />
     <None Remove="Interfaces\ServicesClient\" />
+    <None Remove="Entities\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Entities\" />
     <Folder Include="Enumerations\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Interfaces\Repositories\" />
@@ -25,6 +24,7 @@
     <Folder Include="Interfaces\Factories\" />
     <Folder Include="Interfaces\Validators\" />
     <Folder Include="Interfaces\ServicesClient\" />
+    <Folder Include="Entities\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.15" />

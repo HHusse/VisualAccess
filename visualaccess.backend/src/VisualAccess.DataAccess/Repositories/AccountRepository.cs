@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Principal;
 using log4net;
 using Microsoft.EntityFrameworkCore;
 using VisualAccess.DataAccess.Context;
@@ -42,11 +43,11 @@ namespace VisualAccess.DataAccess.Repositories
 
             if (account is not null)
             {
-                log.Info($"Account with user {username} was found in database");
+                log.Info($"Account with username {username} was found in database");
             }
             else
             {
-                log.Warn($"Account with user {username} was not found in database");
+                log.Warn($"Account with username {username} was not found in database");
             }
 
             return account;
@@ -75,6 +76,64 @@ namespace VisualAccess.DataAccess.Repositories
                 return false;
             }
         }
+
+        public async Task<bool> UsernameExist(string username)
+        {
+            var account = await dbContext.Accounts.FirstOrDefaultAsync(a => a.Username == username);
+            return account != null ? true : false;
+        }
+
+        public async Task<bool> EmailExist(string email)
+        {
+            var account = await dbContext.Accounts.FirstOrDefaultAsync(a => a.Email == email);
+            return account != null ? true : false;
+        }
+
+        public async Task<bool> RemoveAccount(string username)
+        {
+            var account = await dbContext.Accounts.FirstOrDefaultAsync(a => a.Username == username);
+
+            if (account is null)
+            {
+                log.Warn($"Account with username {username} was not found in database");
+                return false;
+            }
+
+            try
+            {
+                dbContext.Accounts.Remove(account);
+                await dbContext.SaveChangesAsync();
+                log.Info($"Succesfuly removed the account with username {account.Username} from database");
+                return true;
+            }
+            catch (Exception e)
+            {
+                LogException.Log(log, e);
+                return false;
+            }
+        }
+
+        public async Task<int> GetFaceId(string username)
+        {
+            var account = await dbContext.Accounts.FirstOrDefaultAsync(a => a.Username == username);
+
+            if (account is null)
+            {
+                log.Warn($"Account with username {username} was not found in database");
+                return -1;
+            }
+
+            int? faceId = account.FaceID;
+
+            if (faceId is null)
+            {
+                log.Info($"Account with username {username} has no face associated");
+                return -1;
+            }
+
+            return faceId.Value;
+        }
+
     }
 }
 

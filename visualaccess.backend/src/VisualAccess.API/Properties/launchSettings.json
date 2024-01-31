@@ -13,22 +13,26 @@
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5267",
+      "applicationUrl": "http://localhost:8001",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DBCONNECTIONSTRING": "Host=localhost;Port=5432;Database=visualaccessdb;Username=user;Password=P@ssword123\n",
+        "SECRETKEY": "qfEtbmKAgNOP5El/21kowmwdjsQyJp63hI+3d0CU3A0=",
+        "ISSUER": "VisualAccess",
+        "FACERECOGNITIONURL": "http://localhost:50051"
       },
       "dotnetRunMessages": true
     },
     "https": {
       "commandName": "Project",
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:9443;http://localhost:9880",
+      "applicationUrl": "https://localhost:8000;http://localhost:8001",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DBCONNECTIONSTRING": "Host=localhost;Port=5432;Database=visualaccessdb;Username=user;Password=P@ssword123\n",
         "SECRETKEY": "qfEtbmKAgNOP5El/21kowmwdjsQyJp63hI+3d0CU3A0=",
         "ISSUER": "VisualAccess",
-        "FACERECOGNITIONURL": "http://127.0.0.1:5000/api/v1"
+        "FACERECOGNITIONURL": "http://localhost:50051"
       },
       "dotnetRunMessages": true
     },

@@ -2,9 +2,9 @@
 using System.ComponentModel.DataAnnotations;
 using VisualAccess.Domain.Enumerations;
 
-namespace VisualAccess.API.RequestModels
+namespace VisualAccess.API.RequestModels.AccountModels
 {
-    public class RegisterRequestModel
+    public class RegisterAccountRequestModel
     {
         [Required]
         public string? FirstName { get; set; }
