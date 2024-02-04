@@ -49,6 +49,7 @@ namespace VisualAccess.Business.Validators
         {
             return await accountRepository.EmailExist(email);
         }
+
     }
 }
 

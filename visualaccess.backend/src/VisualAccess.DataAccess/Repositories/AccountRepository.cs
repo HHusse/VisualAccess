@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using VisualAccess.DataAccess.Context;
 using VisualAccess.DataAccess.Models;
 using VisualAccess.Domain.Entities;
+using VisualAccess.Domain.Enumerations;
 using VisualAccess.Domain.Exceptions;
 using VisualAccess.Domain.Interfaces.Repositories;
+using VisualAccess.Domain.Mappers;
 
 namespace VisualAccess.DataAccess.Repositories
 {
@@ -20,66 +22,64 @@ namespace VisualAccess.DataAccess.Repositories
             this.dbContext = dbContext;
         }
 
-        public async Task<bool> CreateAccount(Account account)
+        public async Task<DatabaseResult> CreateAccount(Account account)
         {
-            AccountDTO newAccount = new(account.FirstName, account.LastName, account.Username, account.Email, account.Password, account.Address, account.PhoneNumber, account.Role);
+            AccountDTO newAccount = Mapper<Account, AccountDTO>.Map(account);
             try
             {
-                await dbContext.AddAsync(newAccount);
+                await dbContext.Accounts.AddAsync(newAccount);
                 await dbContext.SaveChangesAsync();
                 log.Info($"Succesfuly added new account {account.Username} in database");
-                return true;
+                return DatabaseResult.OK;
             }
             catch (Exception e)
             {
                 LogException.Log(log, e);
-                return false;
+                return DatabaseResult.UNKNOWN_ERROR;
             }
         }
 
         public async Task<DTOBase?> GetAccountByUsername(string username)
         {
-            var account = await dbContext.Accounts.FirstOrDefaultAsync(a => a.Username == username);
+            AccountDTO? searchedAccount = await dbContext.Accounts.FirstOrDefaultAsync(a => a.Username == username.ToLower());
 
-            if (account is not null)
+            if (searchedAccount is not null)
             {
-                log.Info($"Account with username {username} was found in database");
+                log.Info($"Account with username {username.ToLower()} was found in database");
             }
             else
             {
-                log.Warn($"Account with username {username} was not found in database");
+                log.Warn($"Account with username {username.ToLower()} was not found in database");
             }
 
-            return account;
+            return searchedAccount;
         }
 
-        public async Task<bool> AssociateFaceID(string username, int faceID)
+        public async Task<DatabaseResult> AssociateFaceID(DTOBase accountDTO, int faceID)
         {
-            var account = await dbContext.Accounts.FirstOrDefaultAsync(a => a.Username == username);
-
-            if (account is null)
+            if (accountDTO is not AccountDTO accountDTOCasted)
             {
-                log.Error($"Unable to associate FaceID with account {username} because the account was not found in database");
-                return false;
+                log.Error($"Invalid operation: Provided DTOBase is not an AccountDTO.");
+                return DatabaseResult.INVALID_OPERATION;
             }
 
-            account.FaceID = faceID;
+            accountDTOCasted.FaceID = faceID;
             try
             {
                 await dbContext.SaveChangesAsync();
-                log.Info($"Succesfuly associate FaceID with account {account.Username}");
-                return true;
+                log.Info($"Succesfuly associate FaceID with account {accountDTOCasted.Username}");
+                return DatabaseResult.OK;
             }
             catch (Exception e)
             {
                 LogException.Log(log, e);
-                return false;
+                return DatabaseResult.UNKNOWN_ERROR;
             }
         }
 
         public async Task<bool> UsernameExist(string username)
         {
-            var account = await dbContext.Accounts.FirstOrDefaultAsync(a => a.Username == username);
+            var account = await dbContext.Accounts.FirstOrDefaultAsync(a => a.Username == username.ToLower());
             return account != null ? true : false;
         }
 
@@ -89,51 +89,27 @@ namespace VisualAccess.DataAccess.Repositories
             return account != null ? true : false;
         }
 
-        public async Task<bool> RemoveAccount(string username)
+        public async Task<DatabaseResult> RemoveAccount(DTOBase accountDTO)
         {
-            var account = await dbContext.Accounts.FirstOrDefaultAsync(a => a.Username == username);
-
-            if (account is null)
+            if (accountDTO is not AccountDTO accountDTOCasted)
             {
-                log.Warn($"Account with username {username} was not found in database");
-                return false;
+                log.Error($"Invalid operation: Provided DTOBase is not an AccountDTO.");
+                return DatabaseResult.INVALID_OPERATION;
             }
 
             try
             {
-                dbContext.Accounts.Remove(account);
+                dbContext.Accounts.Remove(accountDTOCasted);
                 await dbContext.SaveChangesAsync();
-                log.Info($"Succesfuly removed the account with username {account.Username} from database");
-                return true;
+                log.Info($"Succesfuly removed the account with username {accountDTOCasted.Username} from database");
+                return DatabaseResult.OK;
             }
             catch (Exception e)
             {
                 LogException.Log(log, e);
-                return false;
+                return DatabaseResult.UNKNOWN_ERROR;
             }
         }
-
-        public async Task<int> GetFaceId(string username)
-        {
-            var account = await dbContext.Accounts.FirstOrDefaultAsync(a => a.Username == username);
-
-            if (account is null)
-            {
-                log.Warn($"Account with username {username} was not found in database");
-                return -1;
-            }
-
-            int? faceId = account.FaceID;
-
-            if (faceId is null)
-            {
-                log.Info($"Account with username {username} has no face associated");
-                return -1;
-            }
-
-            return faceId.Value;
-        }
-
     }
 }
 

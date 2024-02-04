@@ -42,7 +42,7 @@ namespace VisualAccess.DataAccess.Models
         public string PhoneNumber { get; set; }
         public Role Role { get; set; }
         public int? FaceID { get; set; }
-        public virtual FacesDTO? Face { get; set; }
+        public virtual FaceDTO? Face { get; set; }
     }
 }
 

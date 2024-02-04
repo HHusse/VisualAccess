@@ -27,6 +27,7 @@
 		<None Remove="RequestModels\" />
 		<None Remove="RequestModels\AuthenticationModels\" />
 		<None Remove="RequestModels\AccountModels\" />
+		<None Remove="RequestModels\RoomModels\" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Controllers\" />
@@ -34,6 +35,7 @@
 		<Folder Include="RequestModels\" />
 		<Folder Include="RequestModels\AuthenticationModels\" />
 		<Folder Include="RequestModels\AccountModels\" />
+		<Folder Include="RequestModels\RoomModels\" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\VisualAccess.DataAccess\VisualAccess.DataAccess.csproj">

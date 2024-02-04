@@ -3,9 +3,9 @@ using VisualAccess.Domain.Entities;
 
 namespace VisualAccess.DataAccess.Models
 {
-    public class FacesDTO : DTOBase
+    public class FaceDTO : DTOBase
     {
-        public FacesDTO(int id, string encoding)
+        public FaceDTO(int id, string encoding)
         {
             Id = id;
             Encoding = encoding;

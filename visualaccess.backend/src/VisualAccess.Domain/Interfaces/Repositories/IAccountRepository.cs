@@ -1,17 +1,17 @@
 ﻿using System;
 using VisualAccess.Domain.Entities;
+using VisualAccess.Domain.Enumerations;
 
 namespace VisualAccess.Domain.Interfaces.Repositories
 {
     public interface IAccountRepository
     {
-        public Task<bool> CreateAccount(Account account);
+        public Task<DatabaseResult> CreateAccount(Account account);
         public Task<DTOBase?> GetAccountByUsername(string username);
-        public Task<bool> AssociateFaceID(string username, int faceID);
+        public Task<DatabaseResult> AssociateFaceID(DTOBase accountDTO, int faceID);
         public Task<bool> UsernameExist(string username);
         public Task<bool> EmailExist(string email);
-        public Task<bool> RemoveAccount(string username);
-        public Task<int> GetFaceId(string username);
+        public Task<DatabaseResult> RemoveAccount(DTOBase accountDTO);
     }
 }
 

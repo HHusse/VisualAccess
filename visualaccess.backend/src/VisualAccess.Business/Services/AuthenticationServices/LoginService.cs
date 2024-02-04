@@ -8,6 +8,8 @@ using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Interfaces.Validators;
 using VisualAccess.Business.Factories;
 using VisualAccess.Business.Validators;
+using VisualAccess.Domain.Enumerations;
+using VisualAccess.Domain.Mappers;
 
 namespace VisualAccess.Business.Services.AuthenticationServices
 {
@@ -25,34 +27,27 @@ namespace VisualAccess.Business.Services.AuthenticationServices
             this.factory = factory;
         }
 
-        /// <returns>
-        /// The task result contains a Result object with the following status codes:
-        /// 1 - Failure: The account with the specified username was not found in the database.
-        /// 2 - Failure: Incorrect password for specified username.
-        /// </returns>
-        public async Task<Result> Execute(string username, string password)
+        public async Task<(ServiceResult, string)> Execute(string username, string password)
         {
-            DTOBase? dto = await repository.GetAccountByUsername(username);
+            AccountDTO? accountDTO = (AccountDTO?)await repository.GetAccountByUsername(username);
 
-            if (dto is null)
+            if (accountDTO is null)
             {
-                Result noAccountFoundResult = new(false, 1, "No account found");
                 log.Warn($"No account found for user {username}");
-                return noAccountFoundResult;
+                return new(ServiceResult.ACCOUNT_NOT_FOUND, "");
             }
 
-            Account account = Mappers.AccountMapper.MapToAccount((AccountDTO)dto);
+            Account account = Mapper<AccountDTO, Account>.Map(accountDTO);
 
             if (!validator.VerifyAccountPassword(account, password))
             {
-                Result incorrectPasswordResult = new(false, 2, "Incorrect password");
                 log.Warn($"Incorrect password for user {account.Username}");
-                return incorrectPasswordResult;
+                return new(ServiceResult.WRONG_PASSWORD, "");
             }
 
             var token = factory.Create(account);
             log.Info($"Token was succesfuly created for user {username}");
-            return new(true, token);
+            return new(ServiceResult.OK, token);
         }
     }
 }

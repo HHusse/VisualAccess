@@ -7,23 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Mappers\" />
     <None Remove="Services\" />
     <None Remove="Validators\" />
     <None Remove="Factories\" />
     <None Remove="Services\AccountServices\" />
     <None Remove="Services\AuthenticationServices\" />
+    <None Remove="Services\RoomServices\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Mappers\" />
     <Folder Include="Services\" />
     <Folder Include="Validators\" />
     <Folder Include="Factories\" />
     <Folder Include="Services\AccountServices\" />
     <Folder Include="Services\AuthenticationServices\" />
+    <Folder Include="Services\RoomServices\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.2.0" />
   </ItemGroup>
   <ItemGroup>

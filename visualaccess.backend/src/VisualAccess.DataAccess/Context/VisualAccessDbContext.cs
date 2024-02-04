@@ -8,7 +8,9 @@ namespace VisualAccess.DataAccess.Context
     public class VisualAccessDbContext : DbContext
     {
         public DbSet<AccountDTO> Accounts { get; set; }
-        public DbSet<FacesDTO> Faces { get; set; }
+        public DbSet<FaceDTO> Faces { get; set; }
+        public DbSet<RoomDTO> Rooms { get; set; }
+        public DbSet<RoomPermissionDTO> RoomPermissions { get; set; }
 
         public VisualAccessDbContext()
         {
@@ -45,17 +47,44 @@ namespace VisualAccess.DataAccess.Context
             accountForSetup.Id = 1;
             modelBuilder.Entity<AccountDTO>().HasData(accountForSetup);
 
-            modelBuilder.Entity<FacesDTO>().ToTable("Faces").HasKey(f => f.Id);
-            modelBuilder.Entity<FacesDTO>()
+            modelBuilder.Entity<FaceDTO>().ToTable("Faces").HasKey(f => f.Id);
+            modelBuilder.Entity<FaceDTO>()
                 .HasIndex(f => f.Id)
                 .IsUnique();
-            modelBuilder.Entity<FacesDTO>().Property(f => f.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<FacesDTO>().Property(f => f.Encoding).IsRequired();
+            modelBuilder.Entity<FaceDTO>().Property(f => f.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<FaceDTO>().Property(f => f.Encoding).IsRequired();
 
-            modelBuilder.Entity<AccountDTO>()
-                .HasOne(a => a.Face)
-                .WithOne(f => f.Account)
-                .HasForeignKey<AccountDTO>(a => a.FaceID);
+
+            modelBuilder.Entity<RoomDTO>().ToTable("Rooms");
+            modelBuilder.Entity<RoomDTO>(entity =>
+            {
+                entity.HasKey(r => r.Id);
+                entity.HasIndex(r => r.Id).IsUnique();
+                entity.HasIndex(r => r.Name).IsUnique();
+                entity.Property(r => r.Id).ValueGeneratedOnAdd();
+                entity.Property(r => r.Name).IsRequired();
+            });
+
+
+            modelBuilder.Entity<RoomPermissionDTO>().ToTable("RoomPermissions");
+            modelBuilder.Entity<RoomPermissionDTO>(entity =>
+            {
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+
+                entity.HasOne(rp => rp.Account)
+                      .WithMany()
+                      .HasForeignKey(rp => rp.AccountId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(rp => rp.Room)
+                      .WithMany()
+                      .HasForeignKey(rp => rp.RoomId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

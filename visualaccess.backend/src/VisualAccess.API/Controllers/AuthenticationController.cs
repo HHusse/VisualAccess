@@ -6,6 +6,7 @@ using VisualAccess.API.RequestModels.AuthenticationModels;
 using VisualAccess.Business.Services.AuthenticationServices;
 using VisualAccess.DataAccess.Context;
 using VisualAccess.Domain.Entities;
+using VisualAccess.Domain.Enumerations;
 using VisualAccess.Domain.Interfaces.Factories;
 using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Interfaces.Validators;
@@ -39,9 +40,15 @@ namespace VisualAccess.API.Controllers
             }
 
             LoginService service = new(accountRepository, accountValidator, tokenFactory);
-            Result result = await service.Execute(requestModel.Username!.ToLower(), requestModel.Password!);
+            var result = await service.Execute(requestModel.Username!.ToLower(), requestModel.Password!);
+            ServiceResult serviceResult = result.Item1;
+            if (serviceResult != ServiceResult.OK)
+            {
+                return StatusCode(401, new { message = "Invalid credentials" });
+            }
 
-            return result.Succed ? StatusCode(200, new { token = result.Message }) : StatusCode(401);
+            string token = result.Item2;
+            return StatusCode(200, new { token = token });
         }
     }
 }

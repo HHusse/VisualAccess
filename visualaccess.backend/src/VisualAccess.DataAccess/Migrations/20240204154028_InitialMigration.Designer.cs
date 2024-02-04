@@ -12,7 +12,7 @@ using VisualAccess.DataAccess.Context;
 namespace VisualAccess.DataAccess.Migrations
 {
     [DbContext(typeof(VisualAccessDbContext))]
-    [Migration("20240120152649_InitialMigration")]
+    [Migration("20240204154028_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -89,14 +89,14 @@ namespace VisualAccess.DataAccess.Migrations
                             Email = "",
                             FirstName = "",
                             LastName = "",
-                            Password = "$2a$11$gAk6y2PCKKDSYQ14Glyh6ea4evjHg0V7/jASaGPQPgE7o3yj/r3iq",
+                            Password = "$2a$11$fe7Z4IMD/D//.AvcJRPSr.Y9NXzBBGFuh0EdC1XCF2cp35mcnlyZS",
                             PhoneNumber = "",
                             Role = "ADMIN",
                             Username = "setup"
                         });
                 });
 
-            modelBuilder.Entity("VisualAccess.DataAccess.Models.FacesDTO", b =>
+            modelBuilder.Entity("VisualAccess.DataAccess.Models.FaceDTO", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -116,16 +116,81 @@ namespace VisualAccess.DataAccess.Migrations
                     b.ToTable("Faces", (string)null);
                 });
 
+            modelBuilder.Entity("VisualAccess.DataAccess.Models.RoomDTO", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Rooms", (string)null);
+                });
+
+            modelBuilder.Entity("VisualAccess.DataAccess.Models.RoomPermissionDTO", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("RoomPermissions", (string)null);
+                });
+
             modelBuilder.Entity("VisualAccess.DataAccess.Models.AccountDTO", b =>
                 {
-                    b.HasOne("VisualAccess.DataAccess.Models.FacesDTO", "Face")
+                    b.HasOne("VisualAccess.DataAccess.Models.FaceDTO", "Face")
                         .WithOne("Account")
                         .HasForeignKey("VisualAccess.DataAccess.Models.AccountDTO", "FaceID");
 
                     b.Navigation("Face");
                 });
 
-            modelBuilder.Entity("VisualAccess.DataAccess.Models.FacesDTO", b =>
+            modelBuilder.Entity("VisualAccess.DataAccess.Models.RoomPermissionDTO", b =>
+                {
+                    b.HasOne("VisualAccess.DataAccess.Models.AccountDTO", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VisualAccess.DataAccess.Models.RoomDTO", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("VisualAccess.DataAccess.Models.FaceDTO", b =>
                 {
                     b.Navigation("Account");
                 });

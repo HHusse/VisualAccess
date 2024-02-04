@@ -43,6 +43,8 @@ namespace VisualAccess.API
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IAccountValidator, AccountValidator>();
             services.AddScoped<IFaceRepository, FaceRepository>();
+            services.AddScoped<IRoomRepository, RoomRepository>();
+            services.AddScoped<IRoomPermissionRepository, RoomPermissionRepository>();
             services.AddScoped<ITokenFactory, TokenFactory>();
             services.AddScoped<IFaceRecognitionServiceClient, FaceRecognitionServiceClient>();
         }
