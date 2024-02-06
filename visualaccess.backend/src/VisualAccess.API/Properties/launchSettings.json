@@ -16,9 +16,11 @@
       "applicationUrl": "http://localhost:8001",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DBCONNECTIONSTRING": "Host=localhost;Port=5432;Database=visualaccessdb;Username=user;Password=P@ssword123\n",
+        "PGSQL": "Host=localhost;Port=5432;Database=visualaccessdb;Username=user;Password=P@ssword123\n",
         "SECRETKEY": "qfEtbmKAgNOP5El/21kowmwdjsQyJp63hI+3d0CU3A0=",
         "ISSUER": "VisualAccess",
+        "MONGODB_CONNECTION_STRING": "mongodb://localhost:27017",
+        "MONGODB_DATABASE_NAME": "visualaccessdb",
         "FACERECOGNITIONURL": "http://localhost:50051"
       },
       "dotnetRunMessages": true
@@ -29,9 +31,11 @@
       "applicationUrl": "https://localhost:8000;http://localhost:8001",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DBCONNECTIONSTRING": "Host=localhost;Port=5432;Database=visualaccessdb;Username=user;Password=P@ssword123\n",
+        "PGSQL": "Host=localhost;Port=5432;Database=visualaccessdb;Username=user;Password=P@ssword123\n",
         "SECRETKEY": "qfEtbmKAgNOP5El/21kowmwdjsQyJp63hI+3d0CU3A0=",
         "ISSUER": "VisualAccess",
+        "MONGODB_CONNECTION_STRING": "mongodb://localhost:27017",
+        "MONGODB_DATABASE_NAME": "visualaccessdb",
         "FACERECOGNITIONURL": "http://localhost:50051"
       },
       "dotnetRunMessages": true

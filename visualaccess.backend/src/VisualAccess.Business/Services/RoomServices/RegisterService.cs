@@ -20,10 +20,9 @@ namespace VisualAccess.Business.Services.RoomServices
 
         public async Task<ServiceResult> Execute(Room room)
         {
-            RoomDTO? roomDTO = (RoomDTO?)await repository.GetRoom(room.Name);
-            if (roomDTO is not null)
+            DatabaseResult existResult = await repository.RoomExist(room.Name);
+            if (existResult == DatabaseResult.ROOM_EXIST)
             {
-                log.Warn($"Room with name {room.Name} dosen't exist");
                 return ServiceResult.ROOM_ALREADY_EXIST;
             }
 

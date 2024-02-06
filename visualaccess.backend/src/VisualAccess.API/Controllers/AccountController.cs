@@ -22,9 +22,8 @@ namespace VisualAccess.API.Controllers
         private readonly IFaceRecognitionServiceClient faceRecognitionClient;
         private readonly IFaceRepository faceRepository;
         private readonly IRoomRepository roomRepository;
-        private readonly IRoomPermissionRepository roomPermissionRepository;
 
-        public AccountController(ILog log, IAccountRepository accountRepository, IAccountValidator accountValidator, IFaceRecognitionServiceClient faceRecognitionClient, IFaceRepository faceRepository, IRoomRepository roomRepository, IRoomPermissionRepository roomPermissionRepository)
+        public AccountController(ILog log, IAccountRepository accountRepository, IAccountValidator accountValidator, IFaceRecognitionServiceClient faceRecognitionClient, IFaceRepository faceRepository, IRoomRepository roomRepository)
         {
             this.log = log;
             this.accountRepository = accountRepository;
@@ -32,7 +31,6 @@ namespace VisualAccess.API.Controllers
             this.faceRecognitionClient = faceRecognitionClient;
             this.faceRepository = faceRepository;
             this.roomRepository = roomRepository;
-            this.roomPermissionRepository = roomPermissionRepository;
         }
 
         [HttpPost("register")]
@@ -142,7 +140,7 @@ namespace VisualAccess.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            AddRoomPremissionService service = new(accountRepository, roomRepository, roomPermissionRepository);
+            AddRoomPremissionService service = new(accountRepository, roomRepository);
             ServiceResult result = await service.Execute(requestModel.Username!, requestModel.RoomName!);
 
             if (result != ServiceResult.OK)
@@ -172,7 +170,7 @@ namespace VisualAccess.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            RemoveRoomPermissionService service = new(accountRepository, roomRepository, roomPermissionRepository);
+            RemoveRoomPermissionService service = new(accountRepository, roomRepository);
             ServiceResult result = await service.Execute(requestModel.Username!, requestModel.RoomName!);
 
             if (result != ServiceResult.OK)

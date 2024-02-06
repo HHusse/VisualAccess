@@ -16,6 +16,7 @@ namespace VisualAccess.Domain.Entities
             PhoneNumber = phoneNumber;
             Role = role;
             FaceID = null;
+            AllowedRooms = new();
         }
 
         public Account(string firstName, string lastName, string username, string email, string password, string address, string phoneNumber, string roleAsString)
@@ -38,9 +39,10 @@ namespace VisualAccess.Domain.Entities
             }
 
             FaceID = null;
+            AllowedRooms = new();
         }
 
-        public int Id { get; set; }
+        public string? Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Username { get; set; }
@@ -50,6 +52,8 @@ namespace VisualAccess.Domain.Entities
         public string PhoneNumber { get; set; }
         public Role Role { get; set; }
         public int? FaceID { get; set; }
+        public List<string> AllowedRooms { get; set; }
+        public long CreatedAt { get; set; }
     }
 }
 

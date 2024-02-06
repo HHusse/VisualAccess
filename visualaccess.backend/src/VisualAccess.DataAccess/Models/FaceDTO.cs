@@ -13,7 +13,6 @@ namespace VisualAccess.DataAccess.Models
 
         public int Id { get; set; }
         public string Encoding { get; set; }
-        public virtual AccountDTO? Account { get; set; }
     }
 }
 

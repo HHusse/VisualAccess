@@ -27,8 +27,9 @@ namespace VisualAccess.Business.Services.RoomServices
                 log.Warn($"Room with name {roomName.ToLower()} dosen't exist");
                 return ServiceResult.ROOM_NOT_FOUND;
             }
+            Room room = Mapper<RoomDTO, Room>.Map(roomDTO);
 
-            DatabaseResult result = await repository.RemoveRoom(roomDTO);
+            DatabaseResult result = await repository.RemoveRoom(room);
             if (result == DatabaseResult.UNKNOWN_ERROR)
             {
                 return ServiceResult.DATABASE_ERROR;

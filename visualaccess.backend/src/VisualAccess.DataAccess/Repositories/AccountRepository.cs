@@ -2,11 +2,13 @@
 using System.Security.Principal;
 using log4net;
 using Microsoft.EntityFrameworkCore;
-using VisualAccess.DataAccess.Context;
+using MongoDB.Driver;
+using VisualAccess.DataAccess.Contexts;
 using VisualAccess.DataAccess.Models;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
 using VisualAccess.Domain.Exceptions;
+using VisualAccess.Domain.Interfaces.Contexts;
 using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Mappers;
 
@@ -14,22 +16,59 @@ namespace VisualAccess.DataAccess.Repositories
 {
     public class AccountRepository : IAccountRepository
     {
-        private readonly VisualAccessDbContext dbContext;
+        private readonly VisualAccessDbContextMongoDB dbContext;
         private readonly ILog log = LogManager.GetLogger("Database");
 
-        public AccountRepository(VisualAccessDbContext dbContext)
+        public AccountRepository(IVisualAccessDbContextMongoDB dbContext)
         {
-            this.dbContext = dbContext;
+            this.dbContext = (VisualAccessDbContextMongoDB)dbContext;
         }
 
         public async Task<DatabaseResult> CreateAccount(Account account)
         {
             AccountDTO newAccount = Mapper<Account, AccountDTO>.Map(account);
+            newAccount.CreatedAt = DateTimeOffset.Now.ToUnixTimeSeconds();
+            newAccount.Username = newAccount.Username!.ToLower();
+            newAccount.Email = newAccount.Email!.ToLower();
+
             try
             {
-                await dbContext.Accounts.AddAsync(newAccount);
-                await dbContext.SaveChangesAsync();
-                log.Info($"Succesfuly added new account {account.Username} in database");
+                await dbContext.AccountsCollection.InsertOneAsync(newAccount);
+                log.Info($"Account with username {newAccount.Username} created successfully.");
+                return DatabaseResult.OK;
+            }
+            catch (MongoWriteException ex) when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
+            {
+                log.Warn($"Account with username {newAccount.Username} already exist.");
+                return DatabaseResult.ACCOUNT_AlREADY_EXIST;
+            }
+            catch (Exception e)
+            {
+                LogException.Log(log, e);
+                return DatabaseResult.UNKNOWN_ERROR;
+            }
+        }
+
+        public async Task<DatabaseResult> AssociateFaceID(Account account, int faceID)
+        {
+            bool faceAlreadyAssociated = await FaceAlreadyAssociated(faceID);
+            if (faceAlreadyAssociated)
+            {
+                return DatabaseResult.FACE_ALREADY_ASSOCIATED;
+            }
+
+            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Username, account.Username.ToLower());
+            var update = Builders<AccountDTO>.Update.Set(a => a.FaceID, faceID);
+
+            try
+            {
+                var result = await dbContext.AccountsCollection.UpdateOneAsync(filter, update);
+                if (result.MatchedCount == 0)
+                {
+                    return DatabaseResult.ACCOUNT_NOT_FOUND;
+                }
+
+                log.Info($"FaceID associated with account ID {account.Username}.");
                 return DatabaseResult.OK;
             }
             catch (Exception e)
@@ -39,35 +78,32 @@ namespace VisualAccess.DataAccess.Repositories
             }
         }
 
-        public async Task<DTOBase?> GetAccountByUsername(string username)
+        public async Task<bool> EmailExist(string email)
         {
-            AccountDTO? searchedAccount = await dbContext.Accounts.FirstOrDefaultAsync(a => a.Username == username.ToLower());
-
-            if (searchedAccount is not null)
-            {
-                log.Info($"Account with username {username.ToLower()} was found in database");
-            }
-            else
-            {
-                log.Warn($"Account with username {username.ToLower()} was not found in database");
-            }
-
-            return searchedAccount;
+            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Email, email);
+            var count = await dbContext.AccountsCollection.CountDocumentsAsync(filter);
+            return count > 0;
         }
 
-        public async Task<DatabaseResult> AssociateFaceID(DTOBase accountDTO, int faceID)
+        public async Task<DTOBase?> GetAccountByUsername(string username)
         {
-            if (accountDTO is not AccountDTO accountDTOCasted)
-            {
-                log.Error($"Invalid operation: Provided DTOBase is not an AccountDTO.");
-                return DatabaseResult.INVALID_OPERATION;
-            }
+            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Username, username.ToLower());
+            return await dbContext.AccountsCollection.Find(filter).FirstOrDefaultAsync();
+        }
 
-            accountDTOCasted.FaceID = faceID;
+        public async Task<DatabaseResult> RemoveAccount(Account account)
+        {
+            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Id, account.Id);
+
             try
             {
-                await dbContext.SaveChangesAsync();
-                log.Info($"Succesfuly associate FaceID with account {accountDTOCasted.Username}");
+                var result = await dbContext.AccountsCollection.DeleteOneAsync(filter);
+                if (result.DeletedCount == 0)
+                {
+                    return DatabaseResult.ACCOUNT_NOT_FOUND;
+                }
+
+                log.Info($"Account with username {account.Username} deleted successfully.");
                 return DatabaseResult.OK;
             }
             catch (Exception e)
@@ -79,29 +115,27 @@ namespace VisualAccess.DataAccess.Repositories
 
         public async Task<bool> UsernameExist(string username)
         {
-            var account = await dbContext.Accounts.FirstOrDefaultAsync(a => a.Username == username.ToLower());
-            return account != null ? true : false;
+            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Username, username.ToLower());
+            var count = await dbContext.AccountsCollection.CountDocumentsAsync(filter);
+            return count > 0;
         }
 
-        public async Task<bool> EmailExist(string email)
+        public async Task<DatabaseResult> AddRoomPermission(Account account, Room room)
         {
-            var account = await dbContext.Accounts.FirstOrDefaultAsync(a => a.Email == email);
-            return account != null ? true : false;
-        }
-
-        public async Task<DatabaseResult> RemoveAccount(DTOBase accountDTO)
-        {
-            if (accountDTO is not AccountDTO accountDTOCasted)
-            {
-                log.Error($"Invalid operation: Provided DTOBase is not an AccountDTO.");
-                return DatabaseResult.INVALID_OPERATION;
-            }
+            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Id, account.Id);
+            var update = Builders<AccountDTO>.Update.AddToSet(a => a.AllowedRooms, room.Name);
 
             try
             {
-                dbContext.Accounts.Remove(accountDTOCasted);
-                await dbContext.SaveChangesAsync();
-                log.Info($"Succesfuly removed the account with username {accountDTOCasted.Username} from database");
+                var updateResult = await dbContext.AccountsCollection.UpdateOneAsync(filter, update);
+
+                if (updateResult.MatchedCount == 0)
+                {
+                    log.Warn($"Account with ID {account.Id} not found for adding room permission.");
+                    return DatabaseResult.ACCOUNT_NOT_FOUND;
+                }
+
+                log.Info($"Room permission for {room.Name} added to account with ID {account.Id}.");
                 return DatabaseResult.OK;
             }
             catch (Exception e)
@@ -109,6 +143,38 @@ namespace VisualAccess.DataAccess.Repositories
                 LogException.Log(log, e);
                 return DatabaseResult.UNKNOWN_ERROR;
             }
+        }
+
+        public async Task<DatabaseResult> RemoveRoomPermission(Account account, Room room)
+        {
+            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Id, account.Id);
+            var update = Builders<AccountDTO>.Update.Pull(a => a.AllowedRooms, room.Name);
+
+            try
+            {
+                var updateResult = await dbContext.AccountsCollection.UpdateOneAsync(filter, update);
+
+                if (updateResult.MatchedCount == 0)
+                {
+                    log.Warn($"Account with ID {account.Id} not found for removing room permission.");
+                    return DatabaseResult.ACCOUNT_NOT_FOUND;
+                }
+
+                log.Info($"Room permission for {room.Name} removed from account with ID {account.Id}.");
+                return DatabaseResult.OK;
+            }
+            catch (Exception e)
+            {
+                LogException.Log(log, e);
+                return DatabaseResult.UNKNOWN_ERROR;
+            }
+        }
+
+        public async Task<bool> FaceAlreadyAssociated(int faceId)
+        {
+            var filter = Builders<AccountDTO>.Filter.Eq(a => a.FaceID, faceId);
+            var count = await dbContext.AccountsCollection.CountDocumentsAsync(filter);
+            return count > 0;
         }
     }
 }

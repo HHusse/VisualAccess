@@ -8,10 +8,13 @@ namespace VisualAccess.Domain.Interfaces.Repositories
     {
         public Task<DatabaseResult> CreateAccount(Account account);
         public Task<DTOBase?> GetAccountByUsername(string username);
-        public Task<DatabaseResult> AssociateFaceID(DTOBase accountDTO, int faceID);
+        public Task<DatabaseResult> AssociateFaceID(Account account, int faceID);
         public Task<bool> UsernameExist(string username);
         public Task<bool> EmailExist(string email);
-        public Task<DatabaseResult> RemoveAccount(DTOBase accountDTO);
+        public Task<DatabaseResult> RemoveAccount(Account account);
+        public Task<DatabaseResult> AddRoomPermission(Account account, Room room);
+        public Task<DatabaseResult> RemoveRoomPermission(Account account, Room room);
+        public Task<bool> FaceAlreadyAssociated(int faceId);
     }
 }
 

@@ -14,13 +14,11 @@ namespace VisualAccess.Business.Services.AccountServices
         private readonly ILog log = LogManager.GetLogger(typeof(RemoveRoomPermissionService));
         private readonly IAccountRepository accountRepository;
         private readonly IRoomRepository roomRepository;
-        private readonly IRoomPermissionRepository roomPermissionRepository;
 
-        public RemoveRoomPermissionService(IAccountRepository accountRepository, IRoomRepository roomRepository, IRoomPermissionRepository roomPermissionRepository)
+        public RemoveRoomPermissionService(IAccountRepository accountRepository, IRoomRepository roomRepository)
         {
             this.accountRepository = accountRepository;
             this.roomRepository = roomRepository;
-            this.roomPermissionRepository = roomPermissionRepository;
         }
 
         public async Task<ServiceResult> Execute(string username, string roomName)
@@ -42,7 +40,7 @@ namespace VisualAccess.Business.Services.AccountServices
             Account account = Mapper<AccountDTO, Account>.Map(accountDTO);
             Room room = Mapper<RoomDTO, Room>.Map(roomDTO);
 
-            DatabaseResult result = await roomPermissionRepository.RemoveRoomPermissionToAccount(account, room);
+            DatabaseResult result = await accountRepository.RemoveRoomPermission(account, room);
 
             if (result != DatabaseResult.OK)
             {

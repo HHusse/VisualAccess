@@ -6,6 +6,7 @@ using Grpc.Core;
 using VisualAccess.Domain.Enumerations;
 using VisualAccess.DataAccess.Models;
 using VisualAccess.DataAccess.Repositories;
+using VisualAccess.Domain.Mappers;
 
 namespace VisualAccess.FaceRecognition.Services
 {
@@ -30,10 +31,11 @@ namespace VisualAccess.FaceRecognition.Services
                 return ServiceResult.ACCOUNT_NOT_FOUND;
             }
 
+            Account account = Mapper<AccountDTO, Account>.Map(accountDTO);
             FaceRecognitionResult faceRecognitionResult = await client.RegisterFaceAsync(faceStream);
             if (faceRecognitionResult.StatusCode == 0)
             {
-                if (await repository.AssociateFaceID(accountDTO, (int)faceRecognitionResult.Id) != DatabaseResult.OK)
+                if (await repository.AssociateFaceID(account, (int)faceRecognitionResult.Id) != DatabaseResult.OK)
                 {
                     log.Error($"Somthing went wrong when trying to associte the face ID: {faceRecognitionResult.Id} with username: {username}");
                     return ServiceResult.FACE_ASSOCIATION_FAIL;

@@ -1,6 +1,6 @@
 ﻿using System;
 using log4net;
-using VisualAccess.DataAccess.Context;
+using VisualAccess.DataAccess.Contexts;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Interfaces.Validators;

@@ -31,7 +31,7 @@ namespace VisualAccess.Business.Services.AccountServices
 
             Account account = Mapper<AccountDTO, Account>.Map(accountDTO);
 
-            if (await accountRepository.RemoveAccount(accountDTO) == DatabaseResult.UNKNOWN_ERROR)
+            if (await accountRepository.RemoveAccount(account) == DatabaseResult.UNKNOWN_ERROR)
             {
                 log.Error($"Somthing went wrong when trying to remove account with username: {username}");
                 return ServiceResult.DATABASE_ERROR;
@@ -39,14 +39,7 @@ namespace VisualAccess.Business.Services.AccountServices
 
             if (account.FaceID is not null && account.FaceID > 0)
             {
-                FaceDTO? faceDTO = (FaceDTO?)await faceRepository.GetFace((int)account.FaceID);
-                if (faceDTO is null)
-                {
-                    log.Error($"Something went wrong when trying to find face with id {(int)account.FaceID}");
-                    return ServiceResult.DATABASE_ERROR;
-                }
-
-                DatabaseResult dbResult = await faceRepository.RemoveFace(faceDTO);
+                DatabaseResult dbResult = await faceRepository.RemoveFace((int)account.FaceID);
                 if (dbResult == DatabaseResult.UNKNOWN_ERROR)
                 {
                     log.Error($"Something went wrong when trying to remove face with id {(int)account.FaceID} associated with account {username}");

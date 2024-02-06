@@ -6,8 +6,7 @@ namespace VisualAccess.Domain.Interfaces.Repositories
 {
     public interface IFaceRepository
     {
-        public Task<DTOBase?> GetFace(int id);
-        public Task<DatabaseResult> RemoveFace(DTOBase faceDTO);
+        public Task<DatabaseResult> RemoveFace(int id);
     }
 }
 

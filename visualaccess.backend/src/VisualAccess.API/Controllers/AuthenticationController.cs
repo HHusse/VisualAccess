@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualAccess.API.RequestModels.AuthenticationModels;
 using VisualAccess.Business.Services.AuthenticationServices;
-using VisualAccess.DataAccess.Context;
+using VisualAccess.DataAccess.Contexts;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
 using VisualAccess.Domain.Interfaces.Factories;
@@ -22,7 +22,7 @@ namespace VisualAccess.API.Controllers
         private IAccountValidator accountValidator;
         private ITokenFactory tokenFactory;
 
-        public AuthenticationController(VisualAccessDbContext dbContext, ILog log, IAccountRepository accountRepository, IAccountValidator accountValidator, ITokenFactory tokenFactory)
+        public AuthenticationController(VisualAccessDbContextPgSQL dbContext, ILog log, IAccountRepository accountRepository, IAccountValidator accountValidator, ITokenFactory tokenFactory)
         {
             this.log = log;
             this.accountRepository = accountRepository;

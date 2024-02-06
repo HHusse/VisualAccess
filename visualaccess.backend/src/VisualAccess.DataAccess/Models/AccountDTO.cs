@@ -1,4 +1,6 @@
 ﻿using System;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
 
@@ -6,43 +8,53 @@ namespace VisualAccess.DataAccess.Models
 {
     public class AccountDTO : DTOBase
     {
-        public AccountDTO(string firstName, string lastName, string username, string email, string password, string address, string phoneNumber, Role role)
-        {
-            FirstName = firstName;
-            LastName = lastName;
-            Username = username;
-            Email = email;
-            Password = password;
-            Address = address;
-            PhoneNumber = phoneNumber;
-            Role = role;
-        }
 
-        public AccountDTO(int id, string firstName, string lastName, string username, string email, string password, string address, string phoneNumber, Role role, int? faceID)
-        {
-            Id = id;
-            FirstName = firstName;
-            LastName = lastName;
-            Username = username;
-            Email = email;
-            Password = password;
-            Address = address;
-            PhoneNumber = phoneNumber;
-            Role = role;
-            FaceID = faceID;
-        }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
 
-        public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public string Address { get; set; }
-        public string PhoneNumber { get; set; }
+        [BsonElement("firstName")]
+        [BsonRequired]
+        public string? FirstName { get; set; }
+
+        [BsonElement("lastName")]
+        [BsonRequired]
+        public string? LastName { get; set; }
+
+        [BsonElement("username")]
+        [BsonRequired]
+        public string? Username { get; set; }
+
+        [BsonElement("email")]
+        [BsonRequired]
+        public string? Email { get; set; }
+
+        [BsonElement("password")]
+        [BsonRequired]
+        public string? Password { get; set; }
+
+        [BsonElement("address")]
+        [BsonRequired]
+        public string? Address { get; set; }
+
+        [BsonElement("phoneNumber")]
+        [BsonRequired]
+        public string? PhoneNumber { get; set; }
+
+        [BsonElement("role")]
+        [BsonRequired]
+        [BsonRepresentation(BsonType.String)]
         public Role Role { get; set; }
+
+        [BsonElement("faceId")]
         public int? FaceID { get; set; }
-        public virtual FaceDTO? Face { get; set; }
+
+        [BsonElement("allowedRooms")]
+        public List<string> AllowedRooms { get; set; } = new();
+
+        [BsonElement("createdAt")]
+        [BsonRequired]
+        public long CreatedAt { get; set; }
     }
 }
 

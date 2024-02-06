@@ -2,7 +2,7 @@
 using System.Security.Principal;
 using log4net;
 using Microsoft.EntityFrameworkCore;
-using VisualAccess.DataAccess.Context;
+using VisualAccess.DataAccess.Contexts;
 using VisualAccess.DataAccess.Models;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
@@ -13,43 +13,28 @@ namespace VisualAccess.DataAccess.Repositories
 {
     public class FaceRepository : IFaceRepository
     {
-        private readonly VisualAccessDbContext dbContext;
+        private readonly VisualAccessDbContextPgSQL dbContext;
         private readonly ILog log = LogManager.GetLogger("Database");
 
-        public FaceRepository(VisualAccessDbContext dbContext)
+        public FaceRepository(VisualAccessDbContextPgSQL dbContext)
         {
             this.dbContext = dbContext;
         }
 
-        public async Task<DTOBase?> GetFace(int id)
+        public async Task<DatabaseResult> RemoveFace(int id)
         {
-            FaceDTO? searchedFace = await dbContext.Faces.FirstOrDefaultAsync(f => f.Id == id);
-
-            if (searchedFace is not null)
+            var faceId = await dbContext.Faces.FirstOrDefaultAsync(f => f.Id == id);
+            if (faceId is null)
             {
-                log.Info($"Face with id {id} was found in database");
-            }
-            else
-            {
-                log.Warn($"Face with id {id} was not found in database");
-            }
-
-            return searchedFace;
-        }
-
-        public async Task<DatabaseResult> RemoveFace(DTOBase faceDTO)
-        {
-            if (faceDTO is not FaceDTO faceDTOCasted)
-            {
-                log.Error($"Invalid operation: Provided DTOBase is not an FaceDTO.");
-                return DatabaseResult.INVALID_OPERATION;
+                log.Error($"The face with id {id} was not found in database");
+                return DatabaseResult.FACE_NOT_FOUND;
             }
 
             try
             {
-                dbContext.Faces.Remove(faceDTOCasted);
+                dbContext.Faces.Remove(faceId);
                 await dbContext.SaveChangesAsync();
-                log.Info($"Succesfuly removed the face with id {faceDTOCasted.Id} from database");
+                log.Info($"Succesfuly removed the face with id {faceId.Id} from database");
                 return DatabaseResult.OK;
             }
             catch (Exception e)

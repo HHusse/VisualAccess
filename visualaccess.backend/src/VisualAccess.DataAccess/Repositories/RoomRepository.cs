@@ -2,35 +2,44 @@
 using System.Security.Principal;
 using log4net;
 using Microsoft.EntityFrameworkCore;
-using VisualAccess.DataAccess.Context;
+using MongoDB.Driver;
+using VisualAccess.DataAccess.Contexts;
 using VisualAccess.DataAccess.Models;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
 using VisualAccess.Domain.Exceptions;
+using VisualAccess.Domain.Interfaces.Contexts;
 using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Mappers;
+using static MongoDB.Driver.WriteConcern;
 
 namespace VisualAccess.DataAccess.Repositories
 {
     public class RoomRepository : IRoomRepository
     {
-        private readonly VisualAccessDbContext dbContext;
+        private readonly VisualAccessDbContextMongoDB dbContext;
         private readonly ILog log = LogManager.GetLogger("Database");
 
-        public RoomRepository(VisualAccessDbContext dbContext)
+        public RoomRepository(IVisualAccessDbContextMongoDB dbContext)
         {
-            this.dbContext = dbContext;
+            this.dbContext = (VisualAccessDbContextMongoDB)dbContext;
         }
 
         public async Task<DatabaseResult> AddNewRoom(Room room)
         {
-            RoomDTO roomDTO = new(room.Name);
+            RoomDTO newRoom = Mapper<Room, RoomDTO>.Map(room);
+            newRoom.CreatedAt = DateTimeOffset.Now.ToUnixTimeSeconds();
+
             try
             {
-                await dbContext.Rooms.AddAsync(roomDTO);
-                await dbContext.SaveChangesAsync();
-                log.Info($"Succesfuly added new room {room.Name}");
+                await dbContext.RoomsCollection.InsertOneAsync(newRoom);
+                log.Info($"Room with name {newRoom.Name} created successfully.");
                 return DatabaseResult.OK;
+            }
+            catch (MongoWriteException ex) when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
+            {
+                log.Warn($"Room with name {newRoom.Name} already exist.");
+                return DatabaseResult.ACCOUNT_AlREADY_EXIST;
             }
             catch (Exception e)
             {
@@ -41,32 +50,39 @@ namespace VisualAccess.DataAccess.Repositories
 
         public async Task<DTOBase?> GetRoom(string roomName)
         {
-            RoomDTO? searchedRoom = await dbContext.Rooms.FirstOrDefaultAsync(r => r.Name == roomName.ToLower());
-            if (searchedRoom is not null)
+            var filter = Builders<RoomDTO>.Filter.Eq(r => r.Name, roomName);
+            try
             {
-                log.Info($"Room with name {roomName.ToLower()} was found in database");
-            }
-            else
-            {
-                log.Warn($"Room with name {roomName.ToLower()} was not found in database");
-            }
+                var roomDTO = await dbContext.RoomsCollection.Find(filter).FirstOrDefaultAsync();
+                if (roomDTO == null)
+                {
+                    log.Info($"Room with name {roomName} not found.");
+                    return null;
+                }
 
-            return searchedRoom;
+                log.Info($"Room with name {roomName} retrieved successfully.");
+                return roomDTO;
+            }
+            catch (Exception e)
+            {
+                LogException.Log(log, e);
+                return null;
+            }
         }
 
-        public async Task<DatabaseResult> RemoveRoom(DTOBase roomDTO)
+        public async Task<DatabaseResult> RemoveRoom(Room room)
         {
-            if (roomDTO is not RoomDTO roomDTOCasted)
-            {
-                log.Error($"Invalid operation: Provided DTOBase is not an RoomDTO.");
-                return DatabaseResult.INVALID_OPERATION;
-            }
+            var filter = Builders<RoomDTO>.Filter.Eq(r => r.Id, room.Id);
 
             try
             {
-                dbContext.Rooms.Remove(roomDTOCasted);
-                await dbContext.SaveChangesAsync();
-                log.Info($"Succesfuly removed the room with name {roomDTOCasted.Name}");
+                var result = await dbContext.RoomsCollection.DeleteOneAsync(filter);
+                if (result.DeletedCount == 0)
+                {
+                    return DatabaseResult.ROOM_NOT_FOUND;
+                }
+
+                log.Info($"Room with ID {room.Id} deleted successfully.");
                 return DatabaseResult.OK;
             }
             catch (Exception e)
@@ -74,6 +90,13 @@ namespace VisualAccess.DataAccess.Repositories
                 LogException.Log(log, e);
                 return DatabaseResult.UNKNOWN_ERROR;
             }
+        }
+
+        public async Task<DatabaseResult> RoomExist(string roomName)
+        {
+            var filter = Builders<RoomDTO>.Filter.Eq(r => r.Name, roomName.ToLower());
+            var count = await dbContext.RoomsCollection.CountDocumentsAsync(filter);
+            return count > 0 ? DatabaseResult.ROOM_EXIST : DatabaseResult.ROOM_NOT_FOUND;
         }
     }
 }

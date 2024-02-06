@@ -1,7 +1,7 @@
 ﻿using System;
 using log4net;
 using Microsoft.EntityFrameworkCore;
-using VisualAccess.DataAccess.Context;
+using VisualAccess.DataAccess.Contexts;
 using VisualAccess.DataAccess.Repositories;
 using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Interfaces.Validators;
@@ -12,6 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using VisualAccess.Domain.Interfaces.ServicesClient;
 using VisualAccess.FaceRecognition.ServicesClient;
+using MongoDB.Driver;
+using VisualAccess.Domain.Interfaces.Contexts;
 
 namespace VisualAccess.API
 {
@@ -38,15 +40,20 @@ namespace VisualAccess.API
                 }
             );
             services.AddHttpClient();
-            services.AddDbContext<VisualAccessDbContext>(opt => opt.UseNpgsql(Environment.GetEnvironmentVariable("DBCONNECTIONSTRING")!));
+            var mongoClient = new MongoClient(Environment.GetEnvironmentVariable("MONGODB_CONNECTION_STRING"));
+            var mongoDatabase = mongoClient.GetDatabase(Environment.GetEnvironmentVariable("MONGODB_DATABASE_NAME"));
+
+            services.AddSingleton(mongoDatabase);
+            services.AddDbContext<VisualAccessDbContextPgSQL>(opt => opt.UseNpgsql(Environment.GetEnvironmentVariable("PGSQL")!));
             services.AddSingleton(LogManager.GetLogger("API"));
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IAccountValidator, AccountValidator>();
             services.AddScoped<IFaceRepository, FaceRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
-            services.AddScoped<IRoomPermissionRepository, RoomPermissionRepository>();
             services.AddScoped<ITokenFactory, TokenFactory>();
             services.AddScoped<IFaceRecognitionServiceClient, FaceRecognitionServiceClient>();
+            services.AddScoped<IVisualAccessDbContextMongoDB, VisualAccessDbContextMongoDB>();
+
         }
     }
 }
