@@ -5,7 +5,7 @@ using VisualAccess.Domain.Interfaces.ServicesClient;
 using log4net;
 
 using GrpcFaceRecognitionClient = Facerecognition.FaceRecognition.FaceRecognitionClient;
-using VisualAccess.Domain.Entities;
+using VisualAccess.Domain.Enumerations;
 
 namespace VisualAccess.FaceRecognition.ServicesClient
 {
@@ -20,7 +20,7 @@ namespace VisualAccess.FaceRecognition.ServicesClient
             grpcClient = new GrpcFaceRecognitionClient(channel);
         }
 
-        public async Task<FaceRecognitionResult> RegisterFaceAsync(MemoryStream faceStream)
+        public async Task<(FaceRecognitionResult, int?)> RegisterFaceAsync(MemoryStream faceStream)
         {
             var image = new Facerecognition.Image { Content = Google.Protobuf.ByteString.CopyFrom(faceStream.ToArray()) };
             try
@@ -28,21 +28,30 @@ namespace VisualAccess.FaceRecognition.ServicesClient
                 var response = await grpcClient.RegisterFaceAsync(image);
 
                 log.Info($"gRPC response: Id = {response.Id}, Message = {response.Message}");
-                return new FaceRecognitionResult((uint)response.Id, 0, response.Message);
+                return new(FaceRecognitionResult.OK, response.Id);
             }
             catch (RpcException e)
             {
                 log.Warn($"gRPC response: {e.Status.Detail}");
-                return new FaceRecognitionResult(0, (uint)e.StatusCode, e.Status.Detail);
+                switch (e.StatusCode)
+                {
+                    case StatusCode.NotFound:
+                        return new(FaceRecognitionResult.NOT_FOUND, null);
+                    case StatusCode.AlreadyExists:
+                        return new(FaceRecognitionResult.ALREADY_EXIST, null);
+                    default:
+                        return new(FaceRecognitionResult.UNKNOWN_ERROR, null);
+
+                }
             }
             catch (Exception e)
             {
                 log.Error($"Unknown error: {e.Message}");
-                return new FaceRecognitionResult(0, (uint)StatusCode.Unknown, e.Message);
+                return new(FaceRecognitionResult.UNKNOWN_ERROR, null);
             }
         }
 
-        public async Task<FaceRecognitionResult> VerifyFaceAsync(MemoryStream faceStream)
+        public async Task<(FaceRecognitionResult, int?)> VerifyFaceAsync(MemoryStream faceStream)
         {
             var image = new Facerecognition.Image { Content = Google.Protobuf.ByteString.CopyFrom(faceStream.ToArray()) };
             try
@@ -50,17 +59,26 @@ namespace VisualAccess.FaceRecognition.ServicesClient
                 var response = await grpcClient.VerifyFaceAsync(image);
 
                 log.Info($"gRPC response: Id = {response.Id}, Message = {response.Message}");
-                return new FaceRecognitionResult((uint)response.Id, 0, response.Message);
+                return new(FaceRecognitionResult.OK, response.Id);
             }
             catch (RpcException e)
             {
                 log.Warn($"gRPC response: {e.Status.Detail}");
-                return new FaceRecognitionResult(0, (uint)e.StatusCode, e.Status.Detail);
+                switch (e.StatusCode)
+                {
+                    case StatusCode.NotFound:
+                        return new(FaceRecognitionResult.NOT_FOUND, null);
+                    case StatusCode.OutOfRange:
+                        return new(FaceRecognitionResult.NOT_REGISTERD, null);
+                    default:
+                        return new(FaceRecognitionResult.UNKNOWN_ERROR, null);
+
+                }
             }
             catch (Exception e)
             {
                 log.Error($"Unknown error: {e.Message}");
-                return new FaceRecognitionResult(0, (uint)StatusCode.Unknown, e.Message);
+                return new(FaceRecognitionResult.UNKNOWN_ERROR, null);
             }
         }
     }

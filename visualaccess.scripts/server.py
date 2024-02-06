@@ -161,7 +161,7 @@ class FaceRecognitionServicer(facerecognition_pb2_grpc.FaceRecognitionServicer):
         if verified_id == -1:
             context.abort(StatusCode.NOT_FOUND, "Face not found")
         elif verified_id == 0:
-            context.abort(StatusCode.NOT_FOUND, "Face is not registered")
+            context.abort(StatusCode.OUT_OF_RANGE, "Face is not registered")
         else:
             message = "Face verified successfully"
             return facerecognition_pb2.VerifyFaceResponse(id=verified_id, message=message)

@@ -7,12 +7,10 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Services\" />
-		<None Remove="ServicesClient\" />
 		<None Remove="Protos\" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Services\" />
-		<Folder Include="ServicesClient\" />
 		<Folder Include="Protos\" />
 	</ItemGroup>
 	<ItemGroup>

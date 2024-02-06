@@ -176,6 +176,12 @@ namespace VisualAccess.DataAccess.Repositories
             var count = await dbContext.AccountsCollection.CountDocumentsAsync(filter);
             return count > 0;
         }
+
+        public async Task<DTOBase?> GetAccountByFaceId(int faceId)
+        {
+            var filter = Builders<AccountDTO>.Filter.Eq(a => a.FaceID, faceId);
+            return await dbContext.AccountsCollection.Find(filter).FirstOrDefaultAsync();
+        }
     }
 }
 

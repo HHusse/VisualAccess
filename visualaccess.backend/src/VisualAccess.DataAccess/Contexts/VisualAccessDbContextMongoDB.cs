@@ -12,12 +12,14 @@ namespace VisualAccess.DataAccess.Contexts
         private readonly IMongoDatabase database;
         public IMongoCollection<AccountDTO> AccountsCollection { get; set; }
         public IMongoCollection<RoomDTO> RoomsCollection { get; set; }
+        public IMongoCollection<EntranceRecordDTO> EntranceRecordsCollection { get; set; }
 
         public VisualAccessDbContextMongoDB(IMongoDatabase database)
         {
             this.database = database;
             AccountsCollection = database.GetCollection<AccountDTO>("accounts");
             RoomsCollection = database.GetCollection<RoomDTO>("rooms");
+            EntranceRecordsCollection = database.GetCollection<EntranceRecordDTO>("entranceRecords");
         }
 
         public void Configure()

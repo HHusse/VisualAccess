@@ -32,26 +32,26 @@ namespace VisualAccess.FaceRecognition.Services
             }
 
             Account account = Mapper<AccountDTO, Account>.Map(accountDTO);
-            FaceRecognitionResult faceRecognitionResult = await client.RegisterFaceAsync(faceStream);
-            if (faceRecognitionResult.StatusCode == 0)
+            var faceRecognitionResult = await client.RegisterFaceAsync(faceStream);
+            if (faceRecognitionResult.Item1 == FaceRecognitionResult.OK)
             {
-                if (await repository.AssociateFaceID(account, (int)faceRecognitionResult.Id) != DatabaseResult.OK)
+                if (await repository.AssociateFaceID(account, (int)faceRecognitionResult.Item2!) != DatabaseResult.OK)
                 {
-                    log.Error($"Somthing went wrong when trying to associte the face ID: {faceRecognitionResult.Id} with username: {username}");
+                    log.Error($"Somthing went wrong when trying to associte the face ID: {faceRecognitionResult.Item1} with username: {username}");
                     return ServiceResult.FACE_ASSOCIATION_FAIL;
                 }
 
-                log.Info($"Face registered successfully for username: {username} - ID: {faceRecognitionResult.Id}");
+                log.Info($"Face registered successfully for username: {username} - ID: {faceRecognitionResult.Item1}");
                 return ServiceResult.OK;
 
             }
 
-            if (faceRecognitionResult.StatusCode == (uint)StatusCode.NotFound)
+            if (faceRecognitionResult.Item1 == FaceRecognitionResult.NOT_FOUND)
             {
                 return ServiceResult.FACE_NOT_FOUND;
             }
 
-            if (faceRecognitionResult.StatusCode == (uint)StatusCode.AlreadyExists)
+            if (faceRecognitionResult.Item1 == FaceRecognitionResult.ALREADY_EXIST)
             {
                 return ServiceResult.FACE_ALREADY_EXIST;
             }

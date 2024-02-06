@@ -15,6 +15,7 @@ namespace VisualAccess.Domain.Interfaces.Repositories
         public Task<DatabaseResult> AddRoomPermission(Account account, Room room);
         public Task<DatabaseResult> RemoveRoomPermission(Account account, Room room);
         public Task<bool> FaceAlreadyAssociated(int faceId);
+        public Task<DTOBase?> GetAccountByFaceId(int faceId);
     }
 }
 

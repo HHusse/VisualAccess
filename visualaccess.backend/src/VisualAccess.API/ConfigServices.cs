@@ -50,6 +50,7 @@ namespace VisualAccess.API
             services.AddScoped<IAccountValidator, AccountValidator>();
             services.AddScoped<IFaceRepository, FaceRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
+            services.AddScoped<IEntranceRecordRepository, EntranceRecordRepository>();
             services.AddScoped<ITokenFactory, TokenFactory>();
             services.AddScoped<IFaceRecognitionServiceClient, FaceRecognitionServiceClient>();
             services.AddScoped<IVisualAccessDbContextMongoDB, VisualAccessDbContextMongoDB>();
