@@ -17,7 +17,7 @@ namespace VisualAccess.Business.Validators
             this.accountRepository = accountRepository;
         }
 
-        public bool VerifyAccountPassword(Account account, string password)
+        public bool VerifyPassword(Account account, string password)
         {
             return BCrypt.Net.BCrypt.Verify(password, account.Password);
         }

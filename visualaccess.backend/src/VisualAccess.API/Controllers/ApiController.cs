@@ -19,7 +19,8 @@ namespace VisualAccess.API.Controllers
         {
             var response = new
             {
-                apiVersion = "v1",
+                name = "visual access",
+                apiVersion = "v1"
             };
             return Task.FromResult<IActionResult>(StatusCode(200, response));
         }

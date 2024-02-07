@@ -36,10 +36,13 @@ namespace VisualAccess.FaceRecognition.ServicesClient
                 switch (e.StatusCode)
                 {
                     case StatusCode.NotFound:
+                        log.Warn($"gRPC response: {e.Status.Detail}");
                         return new(FaceRecognitionResult.NOT_FOUND, null);
                     case StatusCode.AlreadyExists:
+                        log.Warn($"gRPC response: {e.Status.Detail}");
                         return new(FaceRecognitionResult.ALREADY_EXIST, null);
                     default:
+                        log.Error($"gRPC response: {e.Status.Detail}");
                         return new(FaceRecognitionResult.UNKNOWN_ERROR, null);
 
                 }
@@ -63,14 +66,16 @@ namespace VisualAccess.FaceRecognition.ServicesClient
             }
             catch (RpcException e)
             {
-                log.Warn($"gRPC response: {e.Status.Detail}");
                 switch (e.StatusCode)
                 {
                     case StatusCode.NotFound:
+                        log.Warn($"gRPC response: {e.Status.Detail}");
                         return new(FaceRecognitionResult.NOT_FOUND, null);
                     case StatusCode.OutOfRange:
+                        log.Warn($"gRPC response: {e.Status.Detail}");
                         return new(FaceRecognitionResult.NOT_REGISTERD, null);
                     default:
+                        log.Error($"gRPC response: {e.Status.Detail}");
                         return new(FaceRecognitionResult.UNKNOWN_ERROR, null);
 
                 }

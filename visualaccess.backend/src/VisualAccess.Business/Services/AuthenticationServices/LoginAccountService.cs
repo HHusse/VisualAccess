@@ -13,14 +13,14 @@ using VisualAccess.Domain.Mappers;
 
 namespace VisualAccess.Business.Services.AuthenticationServices
 {
-    public class LoginService
+    public class LoginAccountService
     {
-        private readonly ILog log = LogManager.GetLogger(typeof(LoginService));
+        private readonly ILog log = LogManager.GetLogger(typeof(LoginAccountService));
         private readonly IAccountRepository repository;
         private readonly IAccountValidator validator;
         private readonly ITokenFactory factory;
 
-        public LoginService(IAccountRepository repository, IAccountValidator validator, ITokenFactory factory)
+        public LoginAccountService(IAccountRepository repository, IAccountValidator validator, ITokenFactory factory)
         {
             this.repository = repository;
             this.validator = validator;
@@ -39,14 +39,14 @@ namespace VisualAccess.Business.Services.AuthenticationServices
 
             Account account = Mapper<AccountDTO, Account>.Map(accountDTO);
 
-            if (!validator.VerifyAccountPassword(account, password))
+            if (!validator.VerifyPassword(account, password))
             {
                 log.Warn($"Incorrect password for user {account.Username}");
                 return new(ServiceResult.WRONG_PASSWORD, "");
             }
 
             var token = factory.Create(account);
-            log.Info($"Token was succesfuly created for user {username}");
+            log.Info($"Token was succesfuly created for user {account.Username}");
             return new(ServiceResult.OK, token);
         }
     }

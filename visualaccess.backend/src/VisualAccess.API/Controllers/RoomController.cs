@@ -11,6 +11,8 @@ using VisualAccess.FaceRecognition.Services;
 using VisualAccess.Domain.Interfaces.ServicesClient;
 using System.IO;
 using VisualAccess.Domain.Interfaces.Factories;
+using Amazon.Auth.AccessControlPolicy;
+using System.Security.Claims;
 
 namespace VisualAccess.API.Controllers
 {
@@ -62,6 +64,7 @@ namespace VisualAccess.API.Controllers
         }
 
         [HttpPost("access")]
+        [Authorize(Policy = "RoomRequest")]
         public async Task<IActionResult> Access([FromForm] RoomAccessRequestModel requestModel)
         {
             if (!ModelState.IsValid)
@@ -70,12 +73,20 @@ namespace VisualAccess.API.Controllers
                 return BadRequest(ModelState);
             }
 
+            var roomName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (roomName is null)
+            {
+                log.Error("Room name not found in token claims.");
+                return Unauthorized();
+            }
+
             var faceStream = new MemoryStream();
             await requestModel.FaceImg!.CopyToAsync(faceStream);
             faceStream.Position = 0;
 
             VerifyFaceService service = new(accountRepository, faceRecognitionClient, roomRepository, entranceRecordRepository);
-            ServiceResult result = await service.Execute(faceStream, requestModel.RoomName!);
+            ServiceResult result = await service.Execute(faceStream, roomName);
 
             if (result != ServiceResult.OK)
             {
@@ -91,7 +102,7 @@ namespace VisualAccess.API.Controllers
                         return StatusCode(403, new { message = "Face not registerd" });
                     case ServiceResult.ACCOUNT_HAS_NO_PERMISSION:
                         return StatusCode(403, new { message = "Account has no permission in this room" });
-                    case ServiceResult.DATABASE_ERROR:
+                    case ServiceResult.UNKNOWN_ERROR:
                         return StatusCode(500, new { message = "Something went wrong" });
                 }
             }

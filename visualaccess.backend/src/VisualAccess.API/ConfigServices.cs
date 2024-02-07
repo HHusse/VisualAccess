@@ -14,6 +14,7 @@ using VisualAccess.Domain.Interfaces.ServicesClient;
 using VisualAccess.FaceRecognition.ServicesClient;
 using MongoDB.Driver;
 using VisualAccess.Domain.Interfaces.Contexts;
+using System.Security.Claims;
 
 namespace VisualAccess.API
 {
@@ -21,6 +22,9 @@ namespace VisualAccess.API
     {
         public static void AddConfig(this IServiceCollection services)
         {
+            var mongoClient = new MongoClient(Environment.GetEnvironmentVariable("MONGODB_CONNECTION_STRING"));
+            var mongoDatabase = mongoClient.GetDatabase(Environment.GetEnvironmentVariable("MONGODB_DATABASE_NAME"));
+
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
@@ -39,15 +43,19 @@ namespace VisualAccess.API
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRETKEY")!))
                 }
             );
-            services.AddHttpClient();
-            var mongoClient = new MongoClient(Environment.GetEnvironmentVariable("MONGODB_CONNECTION_STRING"));
-            var mongoDatabase = mongoClient.GetDatabase(Environment.GetEnvironmentVariable("MONGODB_DATABASE_NAME"));
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RoomRequest", policy =>
+                    policy.RequireClaim(ClaimTypes.Actor, "ROOM"));
+            });
 
+            services.AddHttpClient();
             services.AddSingleton(mongoDatabase);
             services.AddDbContext<VisualAccessDbContextPgSQL>(opt => opt.UseNpgsql(Environment.GetEnvironmentVariable("PGSQL")!));
             services.AddSingleton(LogManager.GetLogger("API"));
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IAccountValidator, AccountValidator>();
+            services.AddScoped<IRoomValidator, RoomValidator>();
             services.AddScoped<IFaceRepository, FaceRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
             services.AddScoped<IEntranceRecordRepository, EntranceRecordRepository>();

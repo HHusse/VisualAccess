@@ -6,7 +6,7 @@ namespace VisualAccess.Business.Validators
 {
     public class RoomValidator : IRoomValidator
     {
-        public bool VerifyAccountPassword(Room room, string password)
+        public bool VerifyPassword(Room room, string password)
         {
             return BCrypt.Net.BCrypt.Verify(password, room.Password);
         }

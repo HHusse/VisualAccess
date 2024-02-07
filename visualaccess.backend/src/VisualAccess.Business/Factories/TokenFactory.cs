@@ -36,6 +36,31 @@ namespace VisualAccess.Business.Factories
 
             return jwtToken;
         }
+
+        public string Create(Room room)
+        {
+            List<Claim> claims = new List<Claim> {
+                new Claim(ClaimTypes.Actor, "ROOM"),
+                new Claim(ClaimTypes.NameIdentifier, room.Name),
+            };
+
+            string secretKey = Environment.GetEnvironmentVariable("SECRETKEY")!;
+            string issuer = Environment.GetEnvironmentVariable("ISSUER")!;
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
+
+            var token = new JwtSecurityToken(
+                    issuer: issuer,
+                    claims: claims,
+                    expires: DateTime.Now.AddDays(1),
+                    signingCredentials: creds
+                );
+            var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwtToken;
+        }
     }
 }
 
