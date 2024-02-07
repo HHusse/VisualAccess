@@ -18,11 +18,11 @@ import cv2
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 api_route = "/api/v1"
 face_threshold = 0.5
-database_url = os.environ.get('DATABASE_URL')
-redis_url = os.environ.get('REDIS_URL')
+database_url = os.environ.get('VSAC_PGSQL')
+redis_url = os.environ.get('VSAC_REDIS')
 
 if database_url is None or redis_url is None:
-    raise ValueError("The DATABASE_URL and REDIS_URL environment variables are required.")
+    raise ValueError("The VSAC_PGSQL and VSAC_REDIS environment variables are required.")
 
 def parse_connection_string(conn_str):
     params = conn_str.split(';')

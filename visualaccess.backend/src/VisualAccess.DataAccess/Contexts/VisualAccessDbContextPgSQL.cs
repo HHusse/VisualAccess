@@ -32,7 +32,7 @@ namespace VisualAccess.DataAccess.Contexts
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql(Environment.GetEnvironmentVariable("PGSQL")!);
+                optionsBuilder.UseNpgsql(Environment.GetEnvironmentVariable("VSAC_PGSQL")!);
             }
         }
 

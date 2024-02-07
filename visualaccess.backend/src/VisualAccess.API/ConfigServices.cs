@@ -22,8 +22,8 @@ namespace VisualAccess.API
     {
         public static void AddConfig(this IServiceCollection services)
         {
-            var mongoClient = new MongoClient(Environment.GetEnvironmentVariable("MONGODB_CONNECTION_STRING"));
-            var mongoDatabase = mongoClient.GetDatabase(Environment.GetEnvironmentVariable("MONGODB_DATABASE_NAME"));
+            var mongoClient = new MongoClient(Environment.GetEnvironmentVariable("VSAC_MONGODB_CONNECTION_STRING"));
+            var mongoDatabase = mongoClient.GetDatabase(Environment.GetEnvironmentVariable("VSAC_MONGODB_DATABASE_NAME"));
 
             services.AddCors(options =>
             {
@@ -38,9 +38,9 @@ namespace VisualAccess.API
                 optional.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = Environment.GetEnvironmentVariable("ISSUER")!,
+                    ValidIssuer = Environment.GetEnvironmentVariable("VSAC_ISSUER")!,
                     ValidateAudience = false,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRETKEY")!))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("VSAC_SECRETKEY")!))
                 }
             );
             services.AddAuthorization(options =>
@@ -51,7 +51,7 @@ namespace VisualAccess.API
 
             services.AddHttpClient();
             services.AddSingleton(mongoDatabase);
-            services.AddDbContext<VisualAccessDbContextPgSQL>(opt => opt.UseNpgsql(Environment.GetEnvironmentVariable("PGSQL")!));
+            services.AddDbContext<VisualAccessDbContextPgSQL>(opt => opt.UseNpgsql(Environment.GetEnvironmentVariable("VSAC_PGSQL")!));
             services.AddSingleton(LogManager.GetLogger("API"));
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IAccountValidator, AccountValidator>();

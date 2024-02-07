@@ -19,8 +19,8 @@ namespace VisualAccess.Business.Factories
                 new Claim(ClaimTypes.Role, account.Role.ToString())
             };
 
-            string secretKey = Environment.GetEnvironmentVariable("SECRETKEY")!;
-            string issuer = Environment.GetEnvironmentVariable("ISSUER")!;
+            string secretKey = Environment.GetEnvironmentVariable("VSAC_SECRETKEY")!;
+            string issuer = Environment.GetEnvironmentVariable("VSAC_ISSUER")!;
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
@@ -44,8 +44,8 @@ namespace VisualAccess.Business.Factories
                 new Claim(ClaimTypes.NameIdentifier, room.Name),
             };
 
-            string secretKey = Environment.GetEnvironmentVariable("SECRETKEY")!;
-            string issuer = Environment.GetEnvironmentVariable("ISSUER")!;
+            string secretKey = Environment.GetEnvironmentVariable("VSAC_SECRETKEY")!;
+            string issuer = Environment.GetEnvironmentVariable("VSAC_ISSUER")!;
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 

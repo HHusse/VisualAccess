@@ -16,7 +16,7 @@ namespace VisualAccess.FaceRecognition.ServicesClient
 
         public FaceRecognitionServiceClient()
         {
-            var channel = GrpcChannel.ForAddress(Environment.GetEnvironmentVariable("FACERECOGNITIONURL")!);
+            var channel = GrpcChannel.ForAddress(Environment.GetEnvironmentVariable("VSAC_FACE_RECOGNITION_SERVICE_URL")!);
             grpcClient = new GrpcFaceRecognitionClient(channel);
         }
 
