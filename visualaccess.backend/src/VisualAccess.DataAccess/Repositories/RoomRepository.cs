@@ -28,7 +28,6 @@ namespace VisualAccess.DataAccess.Repositories
         public async Task<DatabaseResult> AddNewRoom(Room room)
         {
             RoomDTO newRoom = Mapper<Room, RoomDTO>.Map(room);
-            newRoom.CreatedAt = DateTimeOffset.Now.ToUnixTimeSeconds();
 
             try
             {
@@ -50,7 +49,7 @@ namespace VisualAccess.DataAccess.Repositories
 
         public async Task<DTOBase?> GetRoom(string roomName)
         {
-            var filter = Builders<RoomDTO>.Filter.Eq(r => r.Name, roomName);
+            var filter = Builders<RoomDTO>.Filter.Eq(r => r.Name, roomName.ToLower());
             try
             {
                 var roomDTO = await dbContext.RoomsCollection.Find(filter).FirstOrDefaultAsync();

@@ -27,9 +27,6 @@ namespace VisualAccess.DataAccess.Repositories
         public async Task<DatabaseResult> CreateAccount(Account account)
         {
             AccountDTO newAccount = Mapper<Account, AccountDTO>.Map(account);
-            newAccount.CreatedAt = DateTimeOffset.Now.ToUnixTimeSeconds();
-            newAccount.Username = newAccount.Username!.ToLower();
-            newAccount.Email = newAccount.Email!.ToLower();
 
             try
             {
@@ -181,6 +178,31 @@ namespace VisualAccess.DataAccess.Repositories
         {
             var filter = Builders<AccountDTO>.Filter.Eq(a => a.FaceID, faceId);
             return await dbContext.AccountsCollection.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public async Task<DatabaseResult> CleanupPermissionsAfterRoomRemoval(string roomName)
+        {
+            var filter = Builders<AccountDTO>.Filter.AnyEq(a => a.AllowedRooms, roomName);
+            var update = Builders<AccountDTO>.Update.Pull(a => a.AllowedRooms, roomName);
+
+            try
+            {
+                var updateResult = await dbContext.AccountsCollection.UpdateManyAsync(filter, update);
+
+                if (updateResult.MatchedCount == 0)
+                {
+                    log.Warn($"No accounts found with room permission for {roomName} to remove.");
+                    return DatabaseResult.ACCOUNT_NOT_FOUND;
+                }
+
+                log.Info($"Room permission for {roomName} removed from all accounts.");
+                return DatabaseResult.OK;
+            }
+            catch (Exception e)
+            {
+                LogException.Log(log, e);
+                return DatabaseResult.UNKNOWN_ERROR;
+            }
         }
     }
 }

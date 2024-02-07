@@ -6,6 +6,7 @@ using VisualAccess.API.RequestModels.AccountModels;
 using VisualAccess.Business.Services.AccountServices;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
+using VisualAccess.Domain.Interfaces.Factories;
 using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Interfaces.ServicesClient;
 using VisualAccess.Domain.Interfaces.Validators;
@@ -22,8 +23,9 @@ namespace VisualAccess.API.Controllers
         private readonly IFaceRecognitionServiceClient faceRecognitionClient;
         private readonly IFaceRepository faceRepository;
         private readonly IRoomRepository roomRepository;
+        private readonly IAccountFactory accountFactory;
 
-        public AccountController(ILog log, IAccountRepository accountRepository, IAccountValidator accountValidator, IFaceRecognitionServiceClient faceRecognitionClient, IFaceRepository faceRepository, IRoomRepository roomRepository)
+        public AccountController(ILog log, IAccountRepository accountRepository, IAccountValidator accountValidator, IFaceRecognitionServiceClient faceRecognitionClient, IFaceRepository faceRepository, IRoomRepository roomRepository, IAccountFactory accountFactory)
         {
             this.log = log;
             this.accountRepository = accountRepository;
@@ -31,6 +33,7 @@ namespace VisualAccess.API.Controllers
             this.faceRecognitionClient = faceRecognitionClient;
             this.faceRepository = faceRepository;
             this.roomRepository = roomRepository;
+            this.accountFactory = accountFactory;
         }
 
         [HttpPost("register")]
@@ -43,8 +46,12 @@ namespace VisualAccess.API.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (!Enum.TryParse<Role>(requestModel.Role, out var accountRole))
+            {
+                return StatusCode(400, new { message = "Invalid role value" });
+            }
+            Account newAccount = accountFactory.Create(requestModel.FirstName!, requestModel.LastName!, requestModel.Username!, requestModel.Email!, requestModel.Password!, requestModel.Address!, requestModel.PhoneNumber!, accountRole, DateTimeOffset.Now.ToUnixTimeSeconds());
             RegisterService service = new(accountRepository, accountValidator);
-            Account newAccount = new(requestModel.FirstName!, requestModel.LastName!, requestModel.Username!.ToLower(), requestModel.Email!.ToLower(), requestModel.Password!, requestModel.Address!, requestModel.PhoneNumber!, requestModel.Role!);
             ServiceResult result = await service.Execute(newAccount);
             if (result != ServiceResult.OK)
             {

@@ -12,16 +12,18 @@ namespace VisualAccess.Business.Services.RoomServices
     public class RemoveService
     {
         private readonly ILog log = LogManager.GetLogger(typeof(RemoveService));
-        private readonly IRoomRepository repository;
+        private readonly IRoomRepository roomRepository;
+        private readonly IAccountRepository accountRepository;
 
-        public RemoveService(IRoomRepository repository)
+        public RemoveService(IRoomRepository roomRepository, IAccountRepository accountRepository)
         {
-            this.repository = repository;
+            this.roomRepository = roomRepository;
+            this.accountRepository = accountRepository;
         }
 
         public async Task<ServiceResult> Execute(string roomName)
         {
-            RoomDTO? roomDTO = (RoomDTO?)await repository.GetRoom(roomName);
+            RoomDTO? roomDTO = (RoomDTO?)await roomRepository.GetRoom(roomName);
             if (roomDTO is null)
             {
                 log.Warn($"Room with name {roomName.ToLower()} dosen't exist");
@@ -29,12 +31,17 @@ namespace VisualAccess.Business.Services.RoomServices
             }
             Room room = Mapper<RoomDTO, Room>.Map(roomDTO);
 
-            DatabaseResult result = await repository.RemoveRoom(room);
-            if (result == DatabaseResult.UNKNOWN_ERROR)
+            DatabaseResult removeResult = await roomRepository.RemoveRoom(room);
+            if (removeResult == DatabaseResult.UNKNOWN_ERROR)
             {
                 return ServiceResult.DATABASE_ERROR;
             }
 
+            DatabaseResult cleanupResult = await accountRepository.CleanupPermissionsAfterRoomRemoval(room.Name);
+            if (cleanupResult == DatabaseResult.UNKNOWN_ERROR)
+            {
+                return ServiceResult.DATABASE_ERROR;
+            }
             return ServiceResult.OK;
         }
     }

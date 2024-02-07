@@ -12,11 +12,16 @@ namespace VisualAccess.DataAccess.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
 
-        [BsonElement("firstName")]
+        [BsonElement("name")]
         [BsonRequired]
         public string? Name { get; set; }
 
+        [BsonElement("password")]
+        [BsonRequired]
+        public string? Password { get; set; }
+
         [BsonElement("createdAt")]
+        [BsonRequired]
         public long CreatedAt { get; set; }
     }
 }

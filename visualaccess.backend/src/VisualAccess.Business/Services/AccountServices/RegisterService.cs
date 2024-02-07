@@ -23,7 +23,6 @@ namespace VisualAccess.Business.Services.AccountServices
 
         public async Task<ServiceResult> Execute(Account account)
         {
-            account.Password = BCrypt.Net.BCrypt.HashPassword(account.Password);
             if (!validator.IsValidUsername(account.Username))
             {
                 log.Warn($"The provided username is invalid: {account.Username}");

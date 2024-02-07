@@ -9,6 +9,8 @@ using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
 using VisualAccess.FaceRecognition.Services;
 using VisualAccess.Domain.Interfaces.ServicesClient;
+using System.IO;
+using VisualAccess.Domain.Interfaces.Factories;
 
 namespace VisualAccess.API.Controllers
 {
@@ -20,14 +22,16 @@ namespace VisualAccess.API.Controllers
         private readonly IEntranceRecordRepository entranceRecordRepository;
         private readonly IAccountRepository accountRepository;
         private readonly IFaceRecognitionServiceClient faceRecognitionClient;
+        private readonly IRoomFactory roomFactory;
 
-        public RoomController(ILog log, IRoomRepository roomRepository, IEntranceRecordRepository entranceRecordRepository, IAccountRepository accountRepository, IFaceRecognitionServiceClient faceRecognitionClient)
+        public RoomController(ILog log, IRoomRepository roomRepository, IEntranceRecordRepository entranceRecordRepository, IAccountRepository accountRepository, IFaceRecognitionServiceClient faceRecognitionClient, IRoomFactory roomFactory)
         {
             this.log = log;
             this.roomRepository = roomRepository;
             this.entranceRecordRepository = entranceRecordRepository;
             this.accountRepository = accountRepository;
             this.faceRecognitionClient = faceRecognitionClient;
+            this.roomFactory = roomFactory;
         }
 
         [HttpPost("register")]
@@ -39,10 +43,9 @@ namespace VisualAccess.API.Controllers
                 log.Error($"Wrong body request");
                 return BadRequest(ModelState);
             }
-
-            Room room = new(requestModel.Name!);
+            Room newRoom = roomFactory.Create(requestModel.Name!, requestModel.Password!, DateTimeOffset.Now.ToUnixTimeSeconds());
             RegisterService service = new(roomRepository);
-            ServiceResult result = await service.Execute(room);
+            ServiceResult result = await service.Execute(newRoom);
 
             if (result != ServiceResult.OK)
             {
@@ -59,7 +62,6 @@ namespace VisualAccess.API.Controllers
         }
 
         [HttpPost("access")]
-        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Access([FromForm] RoomAccessRequestModel requestModel)
         {
             if (!ModelState.IsValid)
@@ -89,6 +91,33 @@ namespace VisualAccess.API.Controllers
                         return StatusCode(403, new { message = "Face not registerd" });
                     case ServiceResult.ACCOUNT_HAS_NO_PERMISSION:
                         return StatusCode(403, new { message = "Account has no permission in this room" });
+                    case ServiceResult.DATABASE_ERROR:
+                        return StatusCode(500, new { message = "Something went wrong" });
+                }
+            }
+
+            return StatusCode(200, new { });
+        }
+
+        [HttpDelete]
+        [Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> Remove([FromBody] RemoveRoomRequestModel requestModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                log.Error($"Wrong body request");
+                return BadRequest(ModelState);
+            }
+
+            RemoveService service = new(roomRepository, accountRepository);
+            ServiceResult result = await service.Execute(requestModel.Name!);
+
+            if (result != ServiceResult.OK)
+            {
+                switch (result)
+                {
+                    case ServiceResult.ROOM_NOT_FOUND:
+                        return StatusCode(404, new { message = "Room with provided name not found" });
                     case ServiceResult.DATABASE_ERROR:
                         return StatusCode(500, new { message = "Something went wrong" });
                 }
