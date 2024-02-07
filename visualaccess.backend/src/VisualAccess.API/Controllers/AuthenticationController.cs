@@ -2,10 +2,11 @@
 using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VisualAccess.API.RequestModels;
-using VisualAccess.Business.Services.Authentication;
-using VisualAccess.DataAccess.Context;
+using VisualAccess.API.RequestModels.AuthenticationModels;
+using VisualAccess.Business.Services.AuthenticationServices;
+using VisualAccess.DataAccess.Contexts;
 using VisualAccess.Domain.Entities;
+using VisualAccess.Domain.Enumerations;
 using VisualAccess.Domain.Interfaces.Factories;
 using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Interfaces.Validators;
@@ -17,20 +18,24 @@ namespace VisualAccess.API.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly ILog log;
-        private IAccountRepository accountRepository;
-        private IAccountValidator accountValidator;
-        private ITokenFactory tokenFactory;
+        private readonly IAccountRepository accountRepository;
+        private readonly IAccountValidator accountValidator;
+        private readonly ITokenFactory tokenFactory;
+        private readonly IRoomRepository roomRepository;
+        private readonly IRoomValidator roomValidator;
 
-        public AuthenticationController(VisualAccessDbContext dbContext, ILog log, IAccountRepository accountRepository, IAccountValidator accountValidator, ITokenFactory tokenFactory)
+        public AuthenticationController(ILog log, IAccountRepository accountRepository, IAccountValidator accountValidator, ITokenFactory tokenFactory, IRoomRepository roomRepository, IRoomValidator roomValidator)
         {
             this.log = log;
             this.accountRepository = accountRepository;
             this.accountValidator = accountValidator;
             this.tokenFactory = tokenFactory;
+            this.roomRepository = roomRepository;
+            this.roomValidator = roomValidator;
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequestModel requestModel)
+        [HttpPost("account/login")]
+        public async Task<IActionResult> LoginAccount([FromBody] LoginAccountRequestModel requestModel)
         {
             if (!ModelState.IsValid)
             {
@@ -38,10 +43,37 @@ namespace VisualAccess.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            LoginService service = new(accountRepository, accountValidator, tokenFactory);
-            Result result = await service.Execute(requestModel.Username!.ToLower(), requestModel.Password!);
+            LoginAccountService service = new(accountRepository, accountValidator, tokenFactory);
+            var result = await service.Execute(requestModel.Username!, requestModel.Password!);
+            ServiceResult serviceResult = result.Item1;
+            if (serviceResult != ServiceResult.OK)
+            {
+                return StatusCode(401, new { message = "Invalid credentials" });
+            }
 
-            return result.Succed ? StatusCode(200, new { token = result.Message }) : StatusCode(401);
+            string token = result.Item2;
+            return StatusCode(200, new { token = token });
+        }
+
+        [HttpPost("room/login")]
+        public async Task<IActionResult> LoginRoom([FromBody] LoginRoomRequestModel requestModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                log.Error($"Wrong body request");
+                return BadRequest(ModelState);
+            }
+
+            LoginRoomService service = new(roomRepository, roomValidator, tokenFactory);
+            var result = await service.Execute(requestModel.Name!, requestModel.Password!);
+            ServiceResult serviceResult = result.Item1;
+            if (serviceResult != ServiceResult.OK)
+            {
+                return StatusCode(401, new { message = "Invalid credentials" });
+            }
+
+            string token = result.Item2;
+            return StatusCode(200, new { token = token });
         }
     }
 }

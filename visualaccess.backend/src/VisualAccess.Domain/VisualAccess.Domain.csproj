@@ -7,25 +7,32 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Entities\" />
     <None Remove="Enumerations\" />
     <None Remove="Interfaces\" />
     <None Remove="Interfaces\Repositories\" />
     <None Remove="Exceptions\" />
     <None Remove="Interfaces\Factories\" />
     <None Remove="Interfaces\Validators\" />
+    <None Remove="Interfaces\ServicesClient\" />
+    <None Remove="Entities\" />
+    <None Remove="Mappers\" />
+    <None Remove="Interfaces\Contexts\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Entities\" />
     <Folder Include="Enumerations\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Interfaces\Repositories\" />
     <Folder Include="Exceptions\" />
     <Folder Include="Interfaces\Factories\" />
     <Folder Include="Interfaces\Validators\" />
+    <Folder Include="Interfaces\ServicesClient\" />
+    <Folder Include="Entities\" />
+    <Folder Include="Mappers\" />
+    <Folder Include="Interfaces\Contexts\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.15" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
   </ItemGroup>
 </Project>

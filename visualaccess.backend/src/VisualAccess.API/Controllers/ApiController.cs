@@ -1,10 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Security.Claims;
-using log4net;
+﻿using log4net;
 using Microsoft.AspNetCore.Mvc;
-using VisualAccess.Domain.Interfaces.Repositories;
-using VisualAccess.Domain.Interfaces.Validators;
 
 namespace VisualAccess.API.Controllers
 {
@@ -24,7 +19,8 @@ namespace VisualAccess.API.Controllers
         {
             var response = new
             {
-                apiVersion = "v1",
+                name = "visual access",
+                apiVersion = "v1"
             };
             return Task.FromResult<IActionResult>(StatusCode(200, response));
         }
