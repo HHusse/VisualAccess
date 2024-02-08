@@ -2,7 +2,7 @@
 using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VisualAccess.API.RequestModels.AccountModels;
+using VisualAccess.API.RequestModels.ManageAccountModels;
 using VisualAccess.Business.Services.AccountServices;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
@@ -14,8 +14,8 @@ using VisualAccess.FaceRecognition.Services;
 
 namespace VisualAccess.API.Controllers
 {
-    [Route("api/v1/[controller]")]
-    public class AccountController : ControllerBase
+    [Route("api/v1/manage/account")]
+    public class ManageAccountController : ControllerBase
     {
         private readonly ILog log;
         private readonly IAccountRepository accountRepository;
@@ -25,7 +25,7 @@ namespace VisualAccess.API.Controllers
         private readonly IRoomRepository roomRepository;
         private readonly IAccountFactory accountFactory;
 
-        public AccountController(ILog log, IAccountRepository accountRepository, IAccountValidator accountValidator, IFaceRecognitionServiceClient faceRecognitionClient, IFaceRepository faceRepository, IRoomRepository roomRepository, IAccountFactory accountFactory)
+        public ManageAccountController(ILog log, IAccountRepository accountRepository, IAccountValidator accountValidator, IFaceRecognitionServiceClient faceRecognitionClient, IFaceRepository faceRepository, IRoomRepository roomRepository, IAccountFactory accountFactory)
         {
             this.log = log;
             this.accountRepository = accountRepository;

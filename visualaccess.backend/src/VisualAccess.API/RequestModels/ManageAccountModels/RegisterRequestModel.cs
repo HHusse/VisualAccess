@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using VisualAccess.Domain.Enumerations;
 
-namespace VisualAccess.API.RequestModels.AccountModels
+namespace VisualAccess.API.RequestModels.ManageAccountModels
 {
     public class RegisterAccountRequestModel
     {

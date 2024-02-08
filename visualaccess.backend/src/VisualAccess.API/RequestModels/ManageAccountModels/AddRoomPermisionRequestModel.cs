@@ -1,15 +1,14 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace VisualAccess.API.RequestModels.AccountModels
+namespace VisualAccess.API.RequestModels.ManageAccountModels
 {
-    public class RegisterFaceRequestModel
+    public class AddOrRemoveRoomPermissionRequestModel
     {
         [Required]
         public string? Username { get; set; }
-
         [Required]
-        public IFormFile? FaceImg { get; set; }
+        public string? RoomName { get; set; }
     }
 }
 

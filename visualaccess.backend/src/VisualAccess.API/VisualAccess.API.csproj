@@ -26,16 +26,18 @@
 		<None Remove="Middlewares\" />
 		<None Remove="RequestModels\" />
 		<None Remove="RequestModels\AuthenticationModels\" />
-		<None Remove="RequestModels\AccountModels\" />
 		<None Remove="RequestModels\RoomModels\" />
+		<None Remove="RequestModels\ManageAccountModels\" />
+		<None Remove="RequestModels\ManageRoomModels\" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Controllers\" />
 		<Folder Include="Middlewares\" />
 		<Folder Include="RequestModels\" />
 		<Folder Include="RequestModels\AuthenticationModels\" />
-		<Folder Include="RequestModels\AccountModels\" />
 		<Folder Include="RequestModels\RoomModels\" />
+		<Folder Include="RequestModels\ManageAccountModels\" />
+		<Folder Include="RequestModels\ManageRoomModels\" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\VisualAccess.DataAccess\VisualAccess.DataAccess.csproj">

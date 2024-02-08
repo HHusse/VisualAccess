@@ -24,43 +24,14 @@ namespace VisualAccess.API.Controllers
         private readonly IEntranceRecordRepository entranceRecordRepository;
         private readonly IAccountRepository accountRepository;
         private readonly IFaceRecognitionServiceClient faceRecognitionClient;
-        private readonly IRoomFactory roomFactory;
 
-        public RoomController(ILog log, IRoomRepository roomRepository, IEntranceRecordRepository entranceRecordRepository, IAccountRepository accountRepository, IFaceRecognitionServiceClient faceRecognitionClient, IRoomFactory roomFactory)
+        public RoomController(ILog log, IRoomRepository roomRepository, IEntranceRecordRepository entranceRecordRepository, IAccountRepository accountRepository, IFaceRecognitionServiceClient faceRecognitionClient)
         {
             this.log = log;
             this.roomRepository = roomRepository;
             this.entranceRecordRepository = entranceRecordRepository;
             this.accountRepository = accountRepository;
             this.faceRecognitionClient = faceRecognitionClient;
-            this.roomFactory = roomFactory;
-        }
-
-        [HttpPost("register")]
-        [Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> Register([FromBody] RegisterRoomRequestModel requestModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                log.Error($"Wrong body request");
-                return BadRequest(ModelState);
-            }
-            Room newRoom = roomFactory.Create(requestModel.Name!, requestModel.Password!, DateTimeOffset.Now.ToUnixTimeSeconds());
-            RegisterService service = new(roomRepository);
-            ServiceResult result = await service.Execute(newRoom);
-
-            if (result != ServiceResult.OK)
-            {
-                switch (result)
-                {
-                    case ServiceResult.ROOM_ALREADY_EXIST:
-                        return StatusCode(400, new { message = "Room with provided name already exist" });
-                    case ServiceResult.DATABASE_ERROR:
-                        return StatusCode(500, new { message = "Something went wrong" });
-                }
-            }
-
-            return StatusCode(200, new { });
         }
 
         [HttpPost("access")]
@@ -103,33 +74,6 @@ namespace VisualAccess.API.Controllers
                     case ServiceResult.ACCOUNT_HAS_NO_PERMISSION:
                         return StatusCode(403, new { message = "Account has no permission in this room" });
                     case ServiceResult.UNKNOWN_ERROR:
-                        return StatusCode(500, new { message = "Something went wrong" });
-                }
-            }
-
-            return StatusCode(200, new { });
-        }
-
-        [HttpDelete]
-        [Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> Remove([FromBody] RemoveRoomRequestModel requestModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                log.Error($"Wrong body request");
-                return BadRequest(ModelState);
-            }
-
-            RemoveService service = new(roomRepository, accountRepository);
-            ServiceResult result = await service.Execute(requestModel.Name!);
-
-            if (result != ServiceResult.OK)
-            {
-                switch (result)
-                {
-                    case ServiceResult.ROOM_NOT_FOUND:
-                        return StatusCode(404, new { message = "Room with provided name not found" });
-                    case ServiceResult.DATABASE_ERROR:
                         return StatusCode(500, new { message = "Something went wrong" });
                 }
             }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace VisualAccess.API.RequestModels.RoomModels
+namespace VisualAccess.API.RequestModels.ManageRoomModels
 {
     public class RemoveRoomRequestModel
     {
