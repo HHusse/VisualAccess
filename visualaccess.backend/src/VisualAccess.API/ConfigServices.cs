@@ -13,7 +13,6 @@ using System.Text;
 using VisualAccess.Domain.Interfaces.ServicesClient;
 using VisualAccess.FaceRecognition.ServicesClient;
 using MongoDB.Driver;
-using VisualAccess.Domain.Interfaces.Contexts;
 using System.Security.Claims;
 
 namespace VisualAccess.API
@@ -63,7 +62,7 @@ namespace VisualAccess.API
             services.AddScoped<IAccountFactory, AccountFactory>();
             services.AddScoped<IRoomFactory, RoomFactory>();
             services.AddScoped<IFaceRecognitionServiceClient, FaceRecognitionServiceClient>();
-            services.AddScoped<IVisualAccessDbContextMongoDB, VisualAccessDbContextMongoDB>();
+            services.AddScoped<VisualAccessDbContextMongoDB>();
 
         }
     }

@@ -3,11 +3,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MongoDB.Driver;
 using VisualAccess.DataAccess.Models;
 using VisualAccess.Domain.Entities;
-using VisualAccess.Domain.Interfaces.Contexts;
 
 namespace VisualAccess.DataAccess.Contexts
 {
-    public class VisualAccessDbContextMongoDB : IVisualAccessDbContextMongoDB
+    public class VisualAccessDbContextMongoDB
     {
         private readonly IMongoDatabase database;
         public IMongoCollection<AccountDTO> AccountsCollection { get; set; }

@@ -8,7 +8,6 @@ using VisualAccess.DataAccess.Models;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
 using VisualAccess.Domain.Exceptions;
-using VisualAccess.Domain.Interfaces.Contexts;
 using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Mappers;
 using static MongoDB.Driver.WriteConcern;
@@ -20,9 +19,9 @@ namespace VisualAccess.DataAccess.Repositories
         private readonly VisualAccessDbContextMongoDB dbContext;
         private readonly ILog log = LogManager.GetLogger("Database");
 
-        public RoomRepository(IVisualAccessDbContextMongoDB dbContext)
+        public RoomRepository(VisualAccessDbContextMongoDB dbContext)
         {
-            this.dbContext = (VisualAccessDbContextMongoDB)dbContext;
+            this.dbContext = dbContext;
         }
 
         public async Task<DatabaseResult> AddNewRoom(Room room)

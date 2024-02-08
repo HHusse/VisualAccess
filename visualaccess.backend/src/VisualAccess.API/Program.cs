@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using VisualAccess.API;
 using VisualAccess.API.Middlewares;
 using VisualAccess.DataAccess.Contexts;
-using VisualAccess.Domain.Interfaces.Contexts;
 
 XmlConfigurator.Configure(new FileInfo("Log/log.config"));
 ILog log = LogManager.GetLogger("API");
@@ -27,7 +26,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var dbContextPgSQL = services.GetRequiredService<VisualAccessDbContextPgSQL>();
     dbContextPgSQL.Database.Migrate();
-    var dbContextMongoDB = services.GetRequiredService<IVisualAccessDbContextMongoDB>();
+    var dbContextMongoDB = services.GetRequiredService<VisualAccessDbContextMongoDB>();
     dbContextMongoDB.Configure();
 }
 

@@ -16,7 +16,6 @@
     <None Remove="Interfaces\ServicesClient\" />
     <None Remove="Entities\" />
     <None Remove="Mappers\" />
-    <None Remove="Interfaces\Contexts\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Enumerations\" />
@@ -28,7 +27,6 @@
     <Folder Include="Interfaces\ServicesClient\" />
     <Folder Include="Entities\" />
     <Folder Include="Mappers\" />
-    <Folder Include="Interfaces\Contexts\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.15" />
