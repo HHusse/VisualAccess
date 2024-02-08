@@ -3,21 +3,23 @@ using log4net;
 using VisualAccess.DataAccess.Models;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
+using VisualAccess.Domain.Interfaces.Mappers;
 using VisualAccess.Domain.Interfaces.Repositories;
-using VisualAccess.Domain.Mappers;
 
-namespace VisualAccess.Business.Services.AccountServices
+namespace VisualAccess.Business.Services.ManageAccountServices
 {
     public class RemoveService
     {
         private readonly ILog log = LogManager.GetLogger(typeof(RemoveService));
         private readonly IAccountRepository accountRepository;
         private readonly IFaceRepository faceRepository;
+        private readonly IGenericMapper mapper;
 
-        public RemoveService(IAccountRepository accountRepository, IFaceRepository faceRepository)
+        public RemoveService(IAccountRepository accountRepository, IFaceRepository faceRepository, IGenericMapper mapper)
         {
             this.accountRepository = accountRepository;
             this.faceRepository = faceRepository;
+            this.mapper = mapper;
         }
 
         public async Task<ServiceResult> Execute(string username)
@@ -29,7 +31,7 @@ namespace VisualAccess.Business.Services.AccountServices
                 return ServiceResult.ACCOUNT_NOT_FOUND;
             }
 
-            Account account = Mapper<AccountDTO, Account>.Map(accountDTO);
+            Account account = mapper.Map<AccountDTO, Account>(accountDTO);
 
             if (await accountRepository.RemoveAccount(account) == DatabaseResult.UNKNOWN_ERROR)
             {

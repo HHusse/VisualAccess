@@ -4,22 +4,24 @@ using log4net;
 using VisualAccess.DataAccess.Models;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
+using VisualAccess.Domain.Interfaces.Mappers;
 using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Interfaces.Validators;
-using VisualAccess.Domain.Mappers;
 
-namespace VisualAccess.Business.Services.AccountServices
+namespace VisualAccess.Business.Services.ManageAccountServices
 {
     public class AddRoomPremissionService
     {
         private readonly ILog log = LogManager.GetLogger(typeof(AddRoomPremissionService));
         private readonly IAccountRepository accountRepository;
         private readonly IRoomRepository roomRepository;
+        private readonly IGenericMapper mapper;
 
-        public AddRoomPremissionService(IAccountRepository accountRepository, IRoomRepository roomRepository)
+        public AddRoomPremissionService(IAccountRepository accountRepository, IRoomRepository roomRepository, IGenericMapper mapper)
         {
             this.accountRepository = accountRepository;
             this.roomRepository = roomRepository;
+            this.mapper = mapper;
         }
 
         public async Task<ServiceResult> Execute(string username, string roomName)
@@ -38,8 +40,8 @@ namespace VisualAccess.Business.Services.AccountServices
                 return ServiceResult.ROOM_NOT_FOUND;
             }
 
-            Account account = Mapper<AccountDTO, Account>.Map(accountDTO);
-            Room room = Mapper<RoomDTO, Room>.Map(roomDTO);
+            Account account = mapper.Map<AccountDTO, Account>(accountDTO);
+            Room room = mapper.Map<RoomDTO, Room>(roomDTO);
 
             account.AllowedRooms.Add(room.Name);
             DatabaseResult result = await accountRepository.UpdateAccount(account);

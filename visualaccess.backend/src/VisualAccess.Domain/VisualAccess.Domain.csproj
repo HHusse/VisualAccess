@@ -15,7 +15,7 @@
     <None Remove="Interfaces\Validators\" />
     <None Remove="Interfaces\ServicesClient\" />
     <None Remove="Entities\" />
-    <None Remove="Mappers\" />
+    <None Remove="Interfaces\Mappers\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Enumerations\" />
@@ -26,7 +26,7 @@
     <Folder Include="Interfaces\Validators\" />
     <Folder Include="Interfaces\ServicesClient\" />
     <Folder Include="Entities\" />
-    <Folder Include="Mappers\" />
+    <Folder Include="Interfaces\Mappers\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.15" />

@@ -14,6 +14,8 @@ using VisualAccess.Domain.Interfaces.ServicesClient;
 using VisualAccess.FaceRecognition.ServicesClient;
 using MongoDB.Driver;
 using System.Security.Claims;
+using VisualAccess.Domain.Interfaces.Mappers;
+using VisualAccess.Business.Mappers;
 
 namespace VisualAccess.API
 {
@@ -62,6 +64,7 @@ namespace VisualAccess.API
             services.AddScoped<IAccountFactory, AccountFactory>();
             services.AddScoped<IRoomFactory, RoomFactory>();
             services.AddScoped<IFaceRecognitionServiceClient, FaceRecognitionServiceClient>();
+            services.AddScoped<IGenericMapper, GenericMapper>();
             services.AddScoped<VisualAccessDbContextMongoDB>();
 
         }

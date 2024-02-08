@@ -10,17 +10,19 @@
     <None Remove="Services\" />
     <None Remove="Validators\" />
     <None Remove="Factories\" />
-    <None Remove="Services\AccountServices\" />
     <None Remove="Services\AuthenticationServices\" />
-    <None Remove="Services\RoomServices\" />
+    <None Remove="Services\ManageAccountServices\" />
+    <None Remove="Services\ManageRoomServices\" />
+    <None Remove="Mappers\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="Validators\" />
     <Folder Include="Factories\" />
-    <Folder Include="Services\AccountServices\" />
     <Folder Include="Services\AuthenticationServices\" />
-    <Folder Include="Services\RoomServices\" />
+    <Folder Include="Services\ManageAccountServices\" />
+    <Folder Include="Services\ManageRoomServices\" />
+    <Folder Include="Mappers\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.2.0" />

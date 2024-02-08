@@ -4,9 +4,8 @@ using VisualAccess.DataAccess.Models;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
 using VisualAccess.Domain.Interfaces.Repositories;
-using VisualAccess.Domain.Mappers;
 
-namespace VisualAccess.Business.Services.RoomServices
+namespace VisualAccess.Business.Services.ManageRoomServices
 {
     public class RegisterService
     {

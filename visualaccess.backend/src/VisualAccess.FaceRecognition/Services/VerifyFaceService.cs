@@ -3,9 +3,9 @@ using log4net;
 using VisualAccess.DataAccess.Models;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
+using VisualAccess.Domain.Interfaces.Mappers;
 using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Interfaces.ServicesClient;
-using VisualAccess.Domain.Mappers;
 
 namespace VisualAccess.FaceRecognition.Services
 {
@@ -16,13 +16,15 @@ namespace VisualAccess.FaceRecognition.Services
         private readonly IFaceRecognitionServiceClient client;
         private readonly IRoomRepository roomRepository;
         private readonly IEntranceRecordRepository entranceRecordRepository;
+        private readonly IGenericMapper mapper;
 
-        public VerifyFaceService(IAccountRepository accountRepository, IFaceRecognitionServiceClient client, IRoomRepository roomRepository, IEntranceRecordRepository entranceRecordRepository)
+        public VerifyFaceService(IAccountRepository accountRepository, IFaceRecognitionServiceClient client, IRoomRepository roomRepository, IEntranceRecordRepository entranceRecordRepository, IGenericMapper mapper)
         {
             this.accountRepository = accountRepository;
             this.client = client;
             this.roomRepository = roomRepository;
             this.entranceRecordRepository = entranceRecordRepository;
+            this.mapper = mapper;
         }
 
         public async Task<ServiceResult> Execute(MemoryStream faceStream, string roomName)
@@ -33,7 +35,7 @@ namespace VisualAccess.FaceRecognition.Services
                 log.Warn($"Room with name {roomName.ToLower()} dosen't exist");
                 return ServiceResult.ROOM_NOT_FOUND;
             }
-            Room room = Mapper<RoomDTO, Room>.Map(roomDTO);
+            Room room = mapper.Map<RoomDTO, Room>(roomDTO);
 
 
             var faceRecognitionResult = await client.VerifyFaceAsync(faceStream);
@@ -46,7 +48,7 @@ namespace VisualAccess.FaceRecognition.Services
                     return ServiceResult.ACCOUNT_NOT_FOUND;
                 }
 
-                Account account = Mapper<AccountDTO, Account>.Map(accountDTO);
+                Account account = mapper.Map<AccountDTO, Account>(accountDTO);
                 if (!account.AllowedRooms.Contains(room.Name))
                 {
                     EntranceRecord notAllowedRecord = new(account.Username, room.Name, DateTimeOffset.Now.ToUnixTimeSeconds(), false);

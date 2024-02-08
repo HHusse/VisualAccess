@@ -8,24 +8,26 @@ using VisualAccess.DataAccess.Models;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
 using VisualAccess.Domain.Exceptions;
+using VisualAccess.Domain.Interfaces.Mappers;
 using VisualAccess.Domain.Interfaces.Repositories;
-using VisualAccess.Domain.Mappers;
 
 namespace VisualAccess.DataAccess.Repositories
 {
     public class RoomRepository : IRoomRepository
     {
-        private readonly VisualAccessDbContextMongoDB dbContext;
         private readonly ILog log = LogManager.GetLogger("Database");
+        private readonly VisualAccessDbContextMongoDB dbContext;
+        private readonly IGenericMapper mapper;
 
-        public RoomRepository(VisualAccessDbContextMongoDB dbContext)
+        public RoomRepository(VisualAccessDbContextMongoDB dbContext, IGenericMapper mapper)
         {
             this.dbContext = dbContext;
+            this.mapper = mapper;
         }
 
         public async Task<DatabaseResult> AddNewRoom(Room room)
         {
-            RoomDTO newRoom = Mapper<Room, RoomDTO>.Map(room);
+            RoomDTO newRoom = mapper.Map<Room, RoomDTO>(room);
 
             try
             {

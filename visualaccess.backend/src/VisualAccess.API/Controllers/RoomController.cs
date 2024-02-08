@@ -3,7 +3,7 @@ using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualAccess.Domain.Interfaces.Repositories;
-using VisualAccess.Business.Services.RoomServices;
+using VisualAccess.Business.Services.ManageRoomServices;
 using VisualAccess.API.RequestModels.RoomModels;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
@@ -13,6 +13,7 @@ using System.IO;
 using VisualAccess.Domain.Interfaces.Factories;
 using Amazon.Auth.AccessControlPolicy;
 using System.Security.Claims;
+using VisualAccess.Domain.Interfaces.Mappers;
 
 namespace VisualAccess.API.Controllers
 {
@@ -24,14 +25,16 @@ namespace VisualAccess.API.Controllers
         private readonly IEntranceRecordRepository entranceRecordRepository;
         private readonly IAccountRepository accountRepository;
         private readonly IFaceRecognitionServiceClient faceRecognitionClient;
+        private readonly IGenericMapper mapper;
 
-        public RoomController(ILog log, IRoomRepository roomRepository, IEntranceRecordRepository entranceRecordRepository, IAccountRepository accountRepository, IFaceRecognitionServiceClient faceRecognitionClient)
+        public RoomController(ILog log, IRoomRepository roomRepository, IEntranceRecordRepository entranceRecordRepository, IAccountRepository accountRepository, IFaceRecognitionServiceClient faceRecognitionClient, IGenericMapper mapper)
         {
             this.log = log;
             this.roomRepository = roomRepository;
             this.entranceRecordRepository = entranceRecordRepository;
             this.accountRepository = accountRepository;
             this.faceRecognitionClient = faceRecognitionClient;
+            this.mapper = mapper;
         }
 
         [HttpPost("access")]
@@ -56,7 +59,7 @@ namespace VisualAccess.API.Controllers
             await requestModel.FaceImg!.CopyToAsync(faceStream);
             faceStream.Position = 0;
 
-            VerifyFaceService service = new(accountRepository, faceRecognitionClient, roomRepository, entranceRecordRepository);
+            VerifyFaceService service = new(accountRepository, faceRecognitionClient, roomRepository, entranceRecordRepository, mapper);
             ServiceResult result = await service.Execute(faceStream, roomName);
 
             if (result != ServiceResult.OK)

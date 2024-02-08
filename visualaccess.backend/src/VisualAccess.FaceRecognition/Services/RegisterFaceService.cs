@@ -6,7 +6,7 @@ using Grpc.Core;
 using VisualAccess.Domain.Enumerations;
 using VisualAccess.DataAccess.Models;
 using VisualAccess.DataAccess.Repositories;
-using VisualAccess.Domain.Mappers;
+using VisualAccess.Domain.Interfaces.Mappers;
 
 namespace VisualAccess.FaceRecognition.Services
 {
@@ -15,11 +15,13 @@ namespace VisualAccess.FaceRecognition.Services
         private readonly ILog log = LogManager.GetLogger(typeof(RegisterFaceService));
         private readonly IAccountRepository repository;
         private readonly IFaceRecognitionServiceClient client;
+        private readonly IGenericMapper mapper;
 
-        public RegisterFaceService(IAccountRepository repository, IFaceRecognitionServiceClient client)
+        public RegisterFaceService(IAccountRepository repository, IFaceRecognitionServiceClient client, IGenericMapper mapper)
         {
             this.repository = repository;
             this.client = client;
+            this.mapper = mapper;
         }
 
         public async Task<ServiceResult> Execute(string username, MemoryStream faceStream)
@@ -31,7 +33,7 @@ namespace VisualAccess.FaceRecognition.Services
                 return ServiceResult.ACCOUNT_NOT_FOUND;
             }
 
-            Account account = Mapper<AccountDTO, Account>.Map(accountDTO);
+            Account account = mapper.Map<AccountDTO, Account>(accountDTO);
             var faceRecognitionResult = await client.RegisterFaceAsync(faceStream);
             if (faceRecognitionResult.Item1 == FaceRecognitionResult.OK)
             {

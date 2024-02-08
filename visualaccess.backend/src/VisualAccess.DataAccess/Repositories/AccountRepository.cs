@@ -8,24 +8,26 @@ using VisualAccess.DataAccess.Models;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
 using VisualAccess.Domain.Exceptions;
+using VisualAccess.Domain.Interfaces.Mappers;
 using VisualAccess.Domain.Interfaces.Repositories;
-using VisualAccess.Domain.Mappers;
 
 namespace VisualAccess.DataAccess.Repositories
 {
     public class AccountRepository : IAccountRepository
     {
-        private readonly VisualAccessDbContextMongoDB dbContext;
         private readonly ILog log = LogManager.GetLogger("Database");
+        private readonly VisualAccessDbContextMongoDB dbContext;
+        private readonly IGenericMapper mapper;
 
-        public AccountRepository(VisualAccessDbContextMongoDB dbContext)
+        public AccountRepository(VisualAccessDbContextMongoDB dbContext, IGenericMapper mapper)
         {
             this.dbContext = dbContext;
+            this.mapper = mapper;
         }
 
         public async Task<DatabaseResult> CreateAccount(Account account)
         {
-            AccountDTO newAccount = Mapper<Account, AccountDTO>.Map(account);
+            AccountDTO newAccount = mapper.Map<Account, AccountDTO>(account);
 
             try
             {
@@ -47,7 +49,7 @@ namespace VisualAccess.DataAccess.Repositories
 
         public async Task<DatabaseResult> UpdateAccount(Account account)
         {
-            AccountDTO updatedAccountDto = Mapper<Account, AccountDTO>.Map(account);
+            AccountDTO updatedAccountDto = mapper.Map<Account, AccountDTO>(account);
 
             updatedAccountDto.Id = account.Id;
 
@@ -63,7 +65,7 @@ namespace VisualAccess.DataAccess.Repositories
                     return DatabaseResult.ACCOUNT_NOT_FOUND;
                 }
 
-                log.Info($"Account with ID {account.Id} updated successfully.");
+                log.Info($"Account with username {account.Username} updated successfully.");
                 return DatabaseResult.OK;
             }
             catch (Exception e)

@@ -7,7 +7,7 @@ using VisualAccess.Domain.Interfaces.Validators;
 using VisualAccess.Business.Validators;
 using VisualAccess.Domain.Enumerations;
 
-namespace VisualAccess.Business.Services.AccountServices
+namespace VisualAccess.Business.Services.ManageAccountServices
 {
     public class RegisterService
     {

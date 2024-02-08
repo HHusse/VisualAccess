@@ -5,9 +5,9 @@ using VisualAccess.DataAccess.Repositories;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
 using VisualAccess.Domain.Interfaces.Factories;
+using VisualAccess.Domain.Interfaces.Mappers;
 using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Interfaces.Validators;
-using VisualAccess.Domain.Mappers;
 
 namespace VisualAccess.Business.Services.AuthenticationServices
 {
@@ -17,12 +17,14 @@ namespace VisualAccess.Business.Services.AuthenticationServices
         private readonly IRoomRepository repository;
         private readonly IRoomValidator validator;
         private readonly ITokenFactory factory;
+        private readonly IGenericMapper mapper;
 
-        public LoginRoomService(IRoomRepository repository, IRoomValidator validator, ITokenFactory factory)
+        public LoginRoomService(IRoomRepository repository, IRoomValidator validator, ITokenFactory factory, IGenericMapper mapper)
         {
             this.repository = repository;
             this.validator = validator;
             this.factory = factory;
+            this.mapper = mapper;
         }
 
         public async Task<(ServiceResult, string)> Execute(string name, string password)
@@ -33,7 +35,7 @@ namespace VisualAccess.Business.Services.AuthenticationServices
                 log.Warn($"Room with name {name.ToLower()} dosen't exist");
                 return new(ServiceResult.ROOM_NOT_FOUND, "");
             }
-            Room room = Mapper<RoomDTO, Room>.Map(roomDTO);
+            Room room = mapper.Map<RoomDTO, Room>(roomDTO);
 
             if (!validator.VerifyPassword(room, password))
             {

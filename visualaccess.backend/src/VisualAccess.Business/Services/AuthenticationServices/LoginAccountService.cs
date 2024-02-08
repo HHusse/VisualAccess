@@ -9,7 +9,7 @@ using VisualAccess.Domain.Interfaces.Validators;
 using VisualAccess.Business.Factories;
 using VisualAccess.Business.Validators;
 using VisualAccess.Domain.Enumerations;
-using VisualAccess.Domain.Mappers;
+using VisualAccess.Domain.Interfaces.Mappers;
 
 namespace VisualAccess.Business.Services.AuthenticationServices
 {
@@ -19,12 +19,14 @@ namespace VisualAccess.Business.Services.AuthenticationServices
         private readonly IAccountRepository repository;
         private readonly IAccountValidator validator;
         private readonly ITokenFactory factory;
+        private readonly IGenericMapper mapper;
 
-        public LoginAccountService(IAccountRepository repository, IAccountValidator validator, ITokenFactory factory)
+        public LoginAccountService(IAccountRepository repository, IAccountValidator validator, ITokenFactory factory, IGenericMapper mapper)
         {
             this.repository = repository;
             this.validator = validator;
             this.factory = factory;
+            this.mapper = mapper;
         }
 
         public async Task<(ServiceResult, string)> Execute(string username, string password)
@@ -37,7 +39,7 @@ namespace VisualAccess.Business.Services.AuthenticationServices
                 return new(ServiceResult.ACCOUNT_NOT_FOUND, "");
             }
 
-            Account account = Mapper<AccountDTO, Account>.Map(accountDTO);
+            Account account = mapper.Map<AccountDTO, Account>(accountDTO);
 
             if (!validator.VerifyPassword(account, password))
             {

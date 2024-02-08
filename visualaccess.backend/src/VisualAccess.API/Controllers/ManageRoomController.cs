@@ -3,10 +3,11 @@ using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualAccess.API.RequestModels.ManageRoomModels;
-using VisualAccess.Business.Services.RoomServices;
+using VisualAccess.Business.Services.ManageRoomServices;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
 using VisualAccess.Domain.Interfaces.Factories;
+using VisualAccess.Domain.Interfaces.Mappers;
 using VisualAccess.Domain.Interfaces.Repositories;
 
 namespace VisualAccess.API.Controllers
@@ -18,13 +19,15 @@ namespace VisualAccess.API.Controllers
         private readonly IRoomRepository roomRepository;
         private readonly IAccountRepository accountRepository;
         private readonly IRoomFactory roomFactory;
+        private readonly IGenericMapper mapper;
 
-        public ManageRoomController(ILog log, IRoomRepository roomRepository, IAccountRepository accountRepository, IRoomFactory roomFactory)
+        public ManageRoomController(ILog log, IRoomRepository roomRepository, IAccountRepository accountRepository, IRoomFactory roomFactory, IGenericMapper mapper)
         {
             this.log = log;
             this.roomRepository = roomRepository;
             this.accountRepository = accountRepository;
             this.roomFactory = roomFactory;
+            this.mapper = mapper;
         }
 
         [HttpPost("register")]
@@ -64,7 +67,7 @@ namespace VisualAccess.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            RemoveService service = new(roomRepository, accountRepository);
+            RemoveService service = new(roomRepository, accountRepository, mapper);
             ServiceResult result = await service.Execute(requestModel.Name!);
 
             if (result != ServiceResult.OK)

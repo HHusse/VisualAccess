@@ -4,21 +4,23 @@ using VisualAccess.DataAccess.Models;
 using VisualAccess.DataAccess.Repositories;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
+using VisualAccess.Domain.Interfaces.Mappers;
 using VisualAccess.Domain.Interfaces.Repositories;
-using VisualAccess.Domain.Mappers;
 
-namespace VisualAccess.Business.Services.RoomServices
+namespace VisualAccess.Business.Services.ManageRoomServices
 {
     public class RemoveService
     {
         private readonly ILog log = LogManager.GetLogger(typeof(RemoveService));
         private readonly IRoomRepository roomRepository;
         private readonly IAccountRepository accountRepository;
+        private readonly IGenericMapper mapper;
 
-        public RemoveService(IRoomRepository roomRepository, IAccountRepository accountRepository)
+        public RemoveService(IRoomRepository roomRepository, IAccountRepository accountRepository, IGenericMapper mapper)
         {
             this.roomRepository = roomRepository;
             this.accountRepository = accountRepository;
+            this.mapper = mapper;
         }
 
         public async Task<ServiceResult> Execute(string roomName)
@@ -29,7 +31,7 @@ namespace VisualAccess.Business.Services.RoomServices
                 log.Warn($"Room with name {roomName.ToLower()} dosen't exist");
                 return ServiceResult.ROOM_NOT_FOUND;
             }
-            Room room = Mapper<RoomDTO, Room>.Map(roomDTO);
+            Room room = mapper.Map<RoomDTO, Room>(roomDTO);
 
             DatabaseResult removeResult = await roomRepository.RemoveRoom(room);
             if (removeResult == DatabaseResult.UNKNOWN_ERROR)

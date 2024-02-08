@@ -3,10 +3,11 @@ using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualAccess.API.RequestModels.ManageAccountModels;
-using VisualAccess.Business.Services.AccountServices;
+using VisualAccess.Business.Services.ManageAccountServices;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
 using VisualAccess.Domain.Interfaces.Factories;
+using VisualAccess.Domain.Interfaces.Mappers;
 using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Interfaces.ServicesClient;
 using VisualAccess.Domain.Interfaces.Validators;
@@ -24,8 +25,9 @@ namespace VisualAccess.API.Controllers
         private readonly IFaceRepository faceRepository;
         private readonly IRoomRepository roomRepository;
         private readonly IAccountFactory accountFactory;
+        private readonly IGenericMapper mapper;
 
-        public ManageAccountController(ILog log, IAccountRepository accountRepository, IAccountValidator accountValidator, IFaceRecognitionServiceClient faceRecognitionClient, IFaceRepository faceRepository, IRoomRepository roomRepository, IAccountFactory accountFactory)
+        public ManageAccountController(ILog log, IAccountRepository accountRepository, IAccountValidator accountValidator, IFaceRecognitionServiceClient faceRecognitionClient, IFaceRepository faceRepository, IRoomRepository roomRepository, IAccountFactory accountFactory, IGenericMapper mapper)
         {
             this.log = log;
             this.accountRepository = accountRepository;
@@ -34,6 +36,7 @@ namespace VisualAccess.API.Controllers
             this.faceRepository = faceRepository;
             this.roomRepository = roomRepository;
             this.accountFactory = accountFactory;
+            this.mapper = mapper;
         }
 
         [HttpPost("register")]
@@ -89,7 +92,7 @@ namespace VisualAccess.API.Controllers
             await requestModel.FaceImg!.CopyToAsync(faceStream);
             faceStream.Position = 0;
 
-            RegisterFaceService service = new(accountRepository, faceRecognitionClient);
+            RegisterFaceService service = new(accountRepository, faceRecognitionClient, mapper);
             ServiceResult result = await service.Execute(requestModel.Username!, faceStream);
             if (result != ServiceResult.OK)
             {
@@ -121,7 +124,7 @@ namespace VisualAccess.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            RemoveService service = new(accountRepository, faceRepository);
+            RemoveService service = new(accountRepository, faceRepository, mapper);
             ServiceResult result = await service.Execute(requestModel.Username!);
 
             if (result != ServiceResult.OK)
@@ -147,7 +150,7 @@ namespace VisualAccess.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            AddRoomPremissionService service = new(accountRepository, roomRepository);
+            AddRoomPremissionService service = new(accountRepository, roomRepository, mapper);
             ServiceResult result = await service.Execute(requestModel.Username!, requestModel.RoomName!);
 
             if (result != ServiceResult.OK)
@@ -177,7 +180,7 @@ namespace VisualAccess.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            RemoveRoomPermissionService service = new(accountRepository, roomRepository);
+            RemoveRoomPermissionService service = new(accountRepository, roomRepository, mapper);
             ServiceResult result = await service.Execute(requestModel.Username!, requestModel.RoomName!);
 
             if (result != ServiceResult.OK)
