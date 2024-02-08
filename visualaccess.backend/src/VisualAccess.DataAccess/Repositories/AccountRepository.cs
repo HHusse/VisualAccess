@@ -45,26 +45,25 @@ namespace VisualAccess.DataAccess.Repositories
             }
         }
 
-        public async Task<DatabaseResult> AssociateFaceID(Account account, int faceID)
+        public async Task<DatabaseResult> UpdateAccount(Account account)
         {
-            bool faceAlreadyAssociated = await FaceAlreadyAssociated(faceID);
-            if (faceAlreadyAssociated)
-            {
-                return DatabaseResult.FACE_ALREADY_ASSOCIATED;
-            }
+            AccountDTO updatedAccountDto = Mapper<Account, AccountDTO>.Map(account);
 
-            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Username, account.Username.ToLower());
-            var update = Builders<AccountDTO>.Update.Set(a => a.FaceID, faceID);
+            updatedAccountDto.Id = account.Id;
+
+            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Id, updatedAccountDto.Id);
 
             try
             {
-                var result = await dbContext.AccountsCollection.UpdateOneAsync(filter, update);
-                if (result.MatchedCount == 0)
+                var replaceResult = await dbContext.AccountsCollection.ReplaceOneAsync(filter, updatedAccountDto, new ReplaceOptions { IsUpsert = false });
+
+                if (replaceResult.MatchedCount == 0)
                 {
+                    log.Warn($"Account with ID {account.Id} not found for update.");
                     return DatabaseResult.ACCOUNT_NOT_FOUND;
                 }
 
-                log.Info($"FaceID associated with account ID {account.Username}.");
+                log.Info($"Account with ID {account.Id} updated successfully.");
                 return DatabaseResult.OK;
             }
             catch (Exception e)
@@ -72,19 +71,6 @@ namespace VisualAccess.DataAccess.Repositories
                 LogException.Log(log, e);
                 return DatabaseResult.UNKNOWN_ERROR;
             }
-        }
-
-        public async Task<bool> EmailExist(string email)
-        {
-            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Email, email);
-            var count = await dbContext.AccountsCollection.CountDocumentsAsync(filter);
-            return count > 0;
-        }
-
-        public async Task<DTOBase?> GetAccountByUsername(string username)
-        {
-            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Username, username.ToLower());
-            return await dbContext.AccountsCollection.Find(filter).FirstOrDefaultAsync();
         }
 
         public async Task<DatabaseResult> RemoveAccount(Account account)
@@ -109,6 +95,20 @@ namespace VisualAccess.DataAccess.Repositories
             }
         }
 
+        public async Task<DTOBase?> GetAccount(string username)
+        {
+            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Username, username.ToLower());
+            return await dbContext.AccountsCollection.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public async Task<DTOBase?> GetAccount(int faceId)
+        {
+            var filter = Builders<AccountDTO>.Filter.Eq(a => a.FaceID, faceId);
+            return await dbContext.AccountsCollection.Find(filter).FirstOrDefaultAsync();
+        }
+
+
+
         public async Task<bool> UsernameExist(string username)
         {
             var filter = Builders<AccountDTO>.Filter.Eq(a => a.Username, username.ToLower());
@@ -116,54 +116,11 @@ namespace VisualAccess.DataAccess.Repositories
             return count > 0;
         }
 
-        public async Task<DatabaseResult> AddRoomPermission(Account account, Room room)
+        public async Task<bool> EmailExist(string email)
         {
-            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Id, account.Id);
-            var update = Builders<AccountDTO>.Update.AddToSet(a => a.AllowedRooms, room.Name);
-
-            try
-            {
-                var updateResult = await dbContext.AccountsCollection.UpdateOneAsync(filter, update);
-
-                if (updateResult.MatchedCount == 0)
-                {
-                    log.Warn($"Account with ID {account.Id} not found for adding room permission.");
-                    return DatabaseResult.ACCOUNT_NOT_FOUND;
-                }
-
-                log.Info($"Room permission for {room.Name} added to account with ID {account.Id}.");
-                return DatabaseResult.OK;
-            }
-            catch (Exception e)
-            {
-                LogException.Log(log, e);
-                return DatabaseResult.UNKNOWN_ERROR;
-            }
-        }
-
-        public async Task<DatabaseResult> RemoveRoomPermission(Account account, Room room)
-        {
-            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Id, account.Id);
-            var update = Builders<AccountDTO>.Update.Pull(a => a.AllowedRooms, room.Name);
-
-            try
-            {
-                var updateResult = await dbContext.AccountsCollection.UpdateOneAsync(filter, update);
-
-                if (updateResult.MatchedCount == 0)
-                {
-                    log.Warn($"Account with ID {account.Id} not found for removing room permission.");
-                    return DatabaseResult.ACCOUNT_NOT_FOUND;
-                }
-
-                log.Info($"Room permission for {room.Name} removed from account with ID {account.Id}.");
-                return DatabaseResult.OK;
-            }
-            catch (Exception e)
-            {
-                LogException.Log(log, e);
-                return DatabaseResult.UNKNOWN_ERROR;
-            }
+            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Email, email);
+            var count = await dbContext.AccountsCollection.CountDocumentsAsync(filter);
+            return count > 0;
         }
 
         public async Task<bool> FaceAlreadyAssociated(int faceId)
@@ -171,12 +128,6 @@ namespace VisualAccess.DataAccess.Repositories
             var filter = Builders<AccountDTO>.Filter.Eq(a => a.FaceID, faceId);
             var count = await dbContext.AccountsCollection.CountDocumentsAsync(filter);
             return count > 0;
-        }
-
-        public async Task<DTOBase?> GetAccountByFaceId(int faceId)
-        {
-            var filter = Builders<AccountDTO>.Filter.Eq(a => a.FaceID, faceId);
-            return await dbContext.AccountsCollection.Find(filter).FirstOrDefaultAsync();
         }
 
         public async Task<DatabaseResult> CleanupPermissionsAfterRoomRemoval(string roomName)
@@ -203,6 +154,8 @@ namespace VisualAccess.DataAccess.Repositories
                 return DatabaseResult.UNKNOWN_ERROR;
             }
         }
+
+
     }
 }
 

@@ -24,7 +24,7 @@ namespace VisualAccess.FaceRecognition.Services
 
         public async Task<ServiceResult> Execute(string username, MemoryStream faceStream)
         {
-            AccountDTO? accountDTO = (AccountDTO?)await repository.GetAccountByUsername(username);
+            AccountDTO? accountDTO = (AccountDTO?)await repository.GetAccount(username);
             if (accountDTO is null)
             {
                 log.Warn($"Account with username {username.ToLower()} dosen't exist");
@@ -35,7 +35,8 @@ namespace VisualAccess.FaceRecognition.Services
             var faceRecognitionResult = await client.RegisterFaceAsync(faceStream);
             if (faceRecognitionResult.Item1 == FaceRecognitionResult.OK)
             {
-                if (await repository.AssociateFaceID(account, (int)faceRecognitionResult.Item2!) != DatabaseResult.OK)
+                account.FaceID = faceRecognitionResult.Item2!;
+                if (await repository.UpdateAccount(account) != DatabaseResult.OK)
                 {
                     log.Error($"Somthing went wrong when trying to associte the face ID: {faceRecognitionResult.Item1} with username: {username}");
                     return ServiceResult.FACE_ASSOCIATION_FAIL;

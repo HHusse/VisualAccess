@@ -10,7 +10,6 @@ using VisualAccess.Domain.Enumerations;
 using VisualAccess.Domain.Exceptions;
 using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Mappers;
-using static MongoDB.Driver.WriteConcern;
 
 namespace VisualAccess.DataAccess.Repositories
 {

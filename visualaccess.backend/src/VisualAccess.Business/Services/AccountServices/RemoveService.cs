@@ -22,7 +22,7 @@ namespace VisualAccess.Business.Services.AccountServices
 
         public async Task<ServiceResult> Execute(string username)
         {
-            AccountDTO? accountDTO = (AccountDTO?)await accountRepository.GetAccountByUsername(username);
+            AccountDTO? accountDTO = (AccountDTO?)await accountRepository.GetAccount(username);
             if (accountDTO is null)
             {
                 log.Warn($"Account with username {username.ToLower()} dosen't exist");

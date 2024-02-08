@@ -29,7 +29,7 @@ namespace VisualAccess.Business.Services.AuthenticationServices
 
         public async Task<(ServiceResult, string)> Execute(string username, string password)
         {
-            AccountDTO? accountDTO = (AccountDTO?)await repository.GetAccountByUsername(username);
+            AccountDTO? accountDTO = (AccountDTO?)await repository.GetAccount(username);
 
             if (accountDTO is null)
             {

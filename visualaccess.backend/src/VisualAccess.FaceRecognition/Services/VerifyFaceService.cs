@@ -39,7 +39,7 @@ namespace VisualAccess.FaceRecognition.Services
             var faceRecognitionResult = await client.VerifyFaceAsync(faceStream);
             if (faceRecognitionResult.Item1 == FaceRecognitionResult.OK)
             {
-                AccountDTO? accountDTO = (AccountDTO?)await accountRepository.GetAccountByFaceId((int)faceRecognitionResult.Item2!);
+                AccountDTO? accountDTO = (AccountDTO?)await accountRepository.GetAccount((int)faceRecognitionResult.Item2!);
                 if (accountDTO is null)
                 {
                     log.Warn($"No account found for user {faceRecognitionResult.Item2}");
