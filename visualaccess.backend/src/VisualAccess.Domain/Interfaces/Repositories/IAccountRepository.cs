@@ -11,6 +11,7 @@ namespace VisualAccess.Domain.Interfaces.Repositories
         public Task<DatabaseResult> RemoveAccount(Account account);
         public Task<DTOBase?> GetAccount(string username);
         public Task<DTOBase?> GetAccount(int faceId);
+        public Task<IEnumerable<DTOBase>> GetAccountsByPage(int pageNumber, int pageSize = 5);
 
         public Task<bool> UsernameExist(string username);
         public Task<bool> EmailExist(string email);

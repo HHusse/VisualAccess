@@ -199,6 +199,39 @@ namespace VisualAccess.API.Controllers
             }
             return StatusCode(200, new { });
         }
+
+        [HttpGet("/api/v1/manage/accounts/{page}")]
+        [Authorize(Roles = "ADMIN,HR")]
+        public async Task<IActionResult> GetAccounts([FromRoute] int page)
+        {
+
+            GetByPageService service = new(accountRepository, mapper);
+            var result = await service.Execute(page);
+
+            if (result.Item1 != ServiceResult.OK)
+            {
+                switch (result.Item1)
+                {
+                    case ServiceResult.NOT_FOUND:
+                        return StatusCode(404, new { message = "No accounts found for the requested page" });
+                }
+            }
+
+            var response = result.Item2!.Select(account => new
+            {
+                account.Username,
+                account.FirstName,
+                account.LastName,
+                account.Email,
+                account.Address,
+                account.PhoneNumber,
+                account.FaceID,
+                account.AllowedRooms,
+                role = account.Role.ToString()
+            });
+
+            return StatusCode(200, response);
+        }
     }
 }
 

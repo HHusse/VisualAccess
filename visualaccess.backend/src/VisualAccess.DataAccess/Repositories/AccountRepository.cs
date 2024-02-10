@@ -109,6 +109,29 @@ namespace VisualAccess.DataAccess.Repositories
             return await dbContext.AccountsCollection.Find(filter).FirstOrDefaultAsync();
         }
 
+        public async Task<IEnumerable<DTOBase>> GetAccountsByPage(int pageNumber, int pageSize = 5)
+        {
+            try
+            {
+                int skip = (pageNumber - 1) * pageSize;
+
+                var filter = Builders<AccountDTO>.Filter.Empty;
+
+                var accounts = await dbContext.AccountsCollection
+                    .Find(filter)
+                    .Skip(skip)
+                    .Limit(pageSize)
+                    .ToListAsync();
+
+                log.Info($"Found {accounts.Count()} acounts on page {pageNumber}");
+                return accounts;
+            }
+            catch (Exception e)
+            {
+                LogException.Log(log, e);
+                throw;
+            }
+        }
 
 
         public async Task<bool> UsernameExist(string username)
