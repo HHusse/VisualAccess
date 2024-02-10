@@ -3,9 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VisualAccess.API.RequestModels.ManageAccountModels
 {
-    public class GetAccountsRequestModel
+    public class GetAccountRequestModel
     {
-        public int Page { get; set; }
+        [Required]
+        public string? Username { get; set; }
     }
 }
 

@@ -20,6 +20,7 @@ namespace VisualAccess.Domain.Enumerations
         FACE_NOT_REGISTERD,
         ACCOUNT_HAS_NO_PERMISSION,
         NOT_FOUND,
+        SAME_PASSWORD,
         UNKNOWN_ERROR,
         DATABASE_ERROR
     }

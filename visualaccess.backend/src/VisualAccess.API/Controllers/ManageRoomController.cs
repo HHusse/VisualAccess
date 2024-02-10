@@ -13,6 +13,7 @@ using VisualAccess.Domain.Interfaces.Repositories;
 namespace VisualAccess.API.Controllers
 {
     [Route("api/v1/manage/room")]
+    [Authorize(Policy = "AccountRequest")]
     public class ManageRoomController : ControllerBase
     {
         private readonly ILog log;
@@ -43,17 +44,13 @@ namespace VisualAccess.API.Controllers
             RegisterService service = new(roomRepository);
             ServiceResult result = await service.Execute(newRoom);
 
-            if (result != ServiceResult.OK)
+            switch (result)
             {
-                switch (result)
-                {
-                    case ServiceResult.ROOM_ALREADY_EXIST:
-                        return StatusCode(400, new { message = "Room with provided name already exist" });
-                    case ServiceResult.DATABASE_ERROR:
-                        return StatusCode(500, new { message = "Something went wrong" });
-                }
+                case ServiceResult.ROOM_ALREADY_EXIST:
+                    return StatusCode(400, new { message = "Room with provided name already exist" });
+                case ServiceResult.DATABASE_ERROR:
+                    return StatusCode(500, new { message = "Something went wrong" });
             }
-
             return StatusCode(200, new { });
         }
 
@@ -70,17 +67,13 @@ namespace VisualAccess.API.Controllers
             RemoveService service = new(roomRepository, accountRepository, mapper);
             ServiceResult result = await service.Execute(requestModel.Name!);
 
-            if (result != ServiceResult.OK)
+            switch (result)
             {
-                switch (result)
-                {
-                    case ServiceResult.ROOM_NOT_FOUND:
-                        return StatusCode(404, new { message = "Room with provided name not found" });
-                    case ServiceResult.DATABASE_ERROR:
-                        return StatusCode(500, new { message = "Something went wrong" });
-                }
+                case ServiceResult.ROOM_NOT_FOUND:
+                    return StatusCode(404, new { message = "Room with provided name not found" });
+                case ServiceResult.DATABASE_ERROR:
+                    return StatusCode(500, new { message = "Something went wrong" });
             }
-
             return StatusCode(200, new { });
         }
     }

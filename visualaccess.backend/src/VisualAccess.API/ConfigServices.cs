@@ -48,6 +48,8 @@ namespace VisualAccess.API
             {
                 options.AddPolicy("RoomRequest", policy =>
                     policy.RequireClaim(ClaimTypes.Actor, "ROOM"));
+                options.AddPolicy("AccountRequest", policy =>
+                    policy.RequireClaim(ClaimTypes.Actor, "ACCOUNT"));
             });
 
             services.AddHttpClient();

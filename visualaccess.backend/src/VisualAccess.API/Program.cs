@@ -42,6 +42,8 @@ app.UseMiddleware<StartRequestMiddleware>();
 
 app.UseMiddleware<EndRequestMiddleware>();
 
+app.UseMiddleware<ExtractionMiddleware>();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

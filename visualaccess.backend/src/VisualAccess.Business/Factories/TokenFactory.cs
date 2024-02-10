@@ -15,6 +15,7 @@ namespace VisualAccess.Business.Factories
         public string Create(Account account)
         {
             List<Claim> claims = new List<Claim> {
+                new Claim(ClaimTypes.Actor, "ACCOUNT"),
                 new Claim(ClaimTypes.NameIdentifier, account.Username),
                 new Claim(ClaimTypes.Role, account.Role.ToString())
             };

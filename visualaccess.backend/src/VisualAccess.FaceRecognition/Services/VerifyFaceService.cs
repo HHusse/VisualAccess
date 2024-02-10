@@ -12,32 +12,25 @@ namespace VisualAccess.FaceRecognition.Services
     public class VerifyFaceService
     {
         private readonly ILog log = LogManager.GetLogger(typeof(RegisterFaceService));
+        private Room room;
         private readonly IAccountRepository accountRepository;
         private readonly IFaceRecognitionServiceClient client;
         private readonly IRoomRepository roomRepository;
         private readonly IEntranceRecordRepository entranceRecordRepository;
         private readonly IGenericMapper mapper;
 
-        public VerifyFaceService(IAccountRepository accountRepository, IFaceRecognitionServiceClient client, IRoomRepository roomRepository, IEntranceRecordRepository entranceRecordRepository, IGenericMapper mapper)
+        public VerifyFaceService(Room room, IAccountRepository accountRepository, IFaceRecognitionServiceClient client, IRoomRepository roomRepository, IEntranceRecordRepository entranceRecordRepository, IGenericMapper mapper)
         {
             this.accountRepository = accountRepository;
             this.client = client;
             this.roomRepository = roomRepository;
             this.entranceRecordRepository = entranceRecordRepository;
             this.mapper = mapper;
+            this.room = room;
         }
 
-        public async Task<ServiceResult> Execute(MemoryStream faceStream, string roomName)
+        public async Task<ServiceResult> Execute(MemoryStream faceStream)
         {
-            RoomDTO? roomDTO = (RoomDTO?)await roomRepository.GetRoom(roomName);
-            if (roomDTO is null)
-            {
-                log.Warn($"Room with name {roomName.ToLower()} dosen't exist");
-                return ServiceResult.ROOM_NOT_FOUND;
-            }
-            Room room = mapper.Map<RoomDTO, Room>(roomDTO);
-
-
             var faceRecognitionResult = await client.VerifyFaceAsync(faceStream);
             if (faceRecognitionResult.Item1 == FaceRecognitionResult.OK)
             {

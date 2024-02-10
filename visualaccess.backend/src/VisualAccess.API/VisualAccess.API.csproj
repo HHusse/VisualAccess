@@ -29,6 +29,8 @@
 		<None Remove="RequestModels\RoomModels\" />
 		<None Remove="RequestModels\ManageAccountModels\" />
 		<None Remove="RequestModels\ManageRoomModels\" />
+		<None Remove="Contexts\" />
+		<None Remove="RequestModels\AccountModels\" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Controllers\" />
@@ -38,6 +40,8 @@
 		<Folder Include="RequestModels\RoomModels\" />
 		<Folder Include="RequestModels\ManageAccountModels\" />
 		<Folder Include="RequestModels\ManageRoomModels\" />
+		<Folder Include="Contexts\" />
+		<Folder Include="RequestModels\AccountModels\" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\VisualAccess.DataAccess\VisualAccess.DataAccess.csproj">

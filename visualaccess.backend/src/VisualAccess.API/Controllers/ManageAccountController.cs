@@ -3,6 +3,7 @@ using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualAccess.API.RequestModels.ManageAccountModels;
+using VisualAccess.Business.Services.AccountServices;
 using VisualAccess.Business.Services.ManageAccountServices;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
@@ -16,6 +17,7 @@ using VisualAccess.FaceRecognition.Services;
 namespace VisualAccess.API.Controllers
 {
     [Route("api/v1/manage/account")]
+    [Authorize(Policy = "AccountRequest")]
     public class ManageAccountController : ControllerBase
     {
         private readonly ILog log;
@@ -56,29 +58,27 @@ namespace VisualAccess.API.Controllers
             Account newAccount = accountFactory.Create(requestModel.FirstName!, requestModel.LastName!, requestModel.Username!, requestModel.Email!, requestModel.Password!, requestModel.Address!, requestModel.PhoneNumber!, accountRole, DateTimeOffset.Now.ToUnixTimeSeconds());
             RegisterService service = new(accountRepository, accountValidator);
             ServiceResult result = await service.Execute(newAccount);
-            if (result != ServiceResult.OK)
+            switch (result)
             {
-                switch (result)
-                {
-                    case ServiceResult.INVALID_USERNAME:
-                        return StatusCode(400, new { message = "Invalid username" });
-                    case ServiceResult.INVALID_EMAIL:
-                        return StatusCode(400, new { message = "Invalid email address" });
-                    case ServiceResult.INVALID_PHONE_NUMBER:
-                        return StatusCode(400, new { message = "Invalid phone number" });
-                    case ServiceResult.ACCOUNT_ALREADY_EXIST:
-                        return StatusCode(400, new { message = "Account with provided username already exist" });
-                    case ServiceResult.EMAIL_ALREADY_EXIST:
-                        return StatusCode(400, new { message = "Account with provided email already exist" });
-                    case ServiceResult.DATABASE_ERROR:
-                        return StatusCode(500, new { message = "Somthing went wrong" });
+                case ServiceResult.INVALID_USERNAME:
+                    return StatusCode(400, new { message = "Invalid username" });
+                case ServiceResult.INVALID_EMAIL:
+                    return StatusCode(400, new { message = "Invalid email address" });
+                case ServiceResult.INVALID_PHONE_NUMBER:
+                    return StatusCode(400, new { message = "Invalid phone number" });
+                case ServiceResult.ACCOUNT_ALREADY_EXIST:
+                    return StatusCode(400, new { message = "Account with provided username already exist" });
+                case ServiceResult.EMAIL_ALREADY_EXIST:
+                    return StatusCode(400, new { message = "Account with provided email already exist" });
+                case ServiceResult.DATABASE_ERROR:
+                    return StatusCode(500, new { message = "Somthing went wrong" });
 
-                }
             }
+
             return StatusCode(200, new { });
         }
 
-        [HttpPost("register/face")]
+        [HttpPost("face")]
         [Authorize(Roles = "ADMIN,HR")]
         public async Task<IActionResult> RegisterFace([FromForm] RegisterFaceRequestModel requestModel)
         {
@@ -94,21 +94,18 @@ namespace VisualAccess.API.Controllers
 
             RegisterFaceService service = new(accountRepository, faceRecognitionClient, mapper);
             ServiceResult result = await service.Execute(requestModel.Username!, faceStream);
-            if (result != ServiceResult.OK)
+            switch (result)
             {
-                switch (result)
-                {
-                    case ServiceResult.ACCOUNT_NOT_FOUND:
-                        return StatusCode(404, new { message = "Account with provided username not found" });
-                    case ServiceResult.FACE_ASSOCIATION_FAIL:
-                        return StatusCode(500, "Somthing went wrong when trying to associte the face with provided username");
-                    case ServiceResult.FACE_NOT_FOUND:
-                        return StatusCode(400, new { message = "No face could be detected" });
-                    case ServiceResult.FACE_ALREADY_EXIST:
-                        return StatusCode(400, new { message = "Face already registered" });
-                    case ServiceResult.UNKNOWN_ERROR:
-                        return StatusCode(500, new { message = "Something went wrong" });
-                }
+                case ServiceResult.ACCOUNT_NOT_FOUND:
+                    return StatusCode(404, new { message = "Account with provided username not found" });
+                case ServiceResult.FACE_ASSOCIATION_FAIL:
+                    return StatusCode(500, "Somthing went wrong when trying to associte the face with provided username");
+                case ServiceResult.FACE_NOT_FOUND:
+                    return StatusCode(400, new { message = "No face could be detected" });
+                case ServiceResult.FACE_ALREADY_EXIST:
+                    return StatusCode(400, new { message = "Face already registered" });
+                case ServiceResult.UNKNOWN_ERROR:
+                    return StatusCode(500, new { message = "Something went wrong" });
             }
 
             return StatusCode(200, new { });
@@ -153,19 +150,16 @@ namespace VisualAccess.API.Controllers
             AddRoomPremissionService service = new(accountRepository, roomRepository, mapper);
             ServiceResult result = await service.Execute(requestModel.Username!, requestModel.RoomName!);
 
-            if (result != ServiceResult.OK)
+            switch (result)
             {
-                switch (result)
-                {
-                    case ServiceResult.ACCOUNT_NOT_FOUND:
-                        return StatusCode(404, new { message = "Account with provided username was not found" });
-                    case ServiceResult.ROOM_NOT_FOUND:
-                        return StatusCode(404, new { message = "Room with provided name was not found" });
-                    case ServiceResult.DATABASE_ERROR:
-                        return StatusCode(500, new { message = "Something went wrong" });
-                    case ServiceResult.INVALID_OPERATION:
-                        return StatusCode(400, new { message = "Invalid operation" });
-                }
+                case ServiceResult.ACCOUNT_NOT_FOUND:
+                    return StatusCode(404, new { message = "Account with provided username was not found" });
+                case ServiceResult.ROOM_NOT_FOUND:
+                    return StatusCode(404, new { message = "Room with provided name was not found" });
+                case ServiceResult.DATABASE_ERROR:
+                    return StatusCode(500, new { message = "Something went wrong" });
+                case ServiceResult.INVALID_OPERATION:
+                    return StatusCode(400, new { message = "Invalid operation" });
             }
             return StatusCode(200, new { });
         }
@@ -183,19 +177,17 @@ namespace VisualAccess.API.Controllers
             RemoveRoomPermissionService service = new(accountRepository, roomRepository, mapper);
             ServiceResult result = await service.Execute(requestModel.Username!, requestModel.RoomName!);
 
-            if (result != ServiceResult.OK)
+
+            switch (result)
             {
-                switch (result)
-                {
-                    case ServiceResult.ACCOUNT_NOT_FOUND:
-                        return StatusCode(404, new { message = "Account with provided username was not found" });
-                    case ServiceResult.ROOM_NOT_FOUND:
-                        return StatusCode(404, new { message = "Room with provided name was not found" });
-                    case ServiceResult.DATABASE_ERROR:
-                        return StatusCode(500, new { message = "Something went wrong" });
-                    case ServiceResult.INVALID_OPERATION:
-                        return StatusCode(400, new { message = "Invalid operation" });
-                }
+                case ServiceResult.ACCOUNT_NOT_FOUND:
+                    return StatusCode(404, new { message = "Account with provided username was not found" });
+                case ServiceResult.ROOM_NOT_FOUND:
+                    return StatusCode(404, new { message = "Room with provided name was not found" });
+                case ServiceResult.DATABASE_ERROR:
+                    return StatusCode(500, new { message = "Something went wrong" });
+                case ServiceResult.INVALID_OPERATION:
+                    return StatusCode(400, new { message = "Invalid operation" });
             }
             return StatusCode(200, new { });
         }
@@ -208,13 +200,10 @@ namespace VisualAccess.API.Controllers
             GetByPageService service = new(accountRepository, mapper);
             var result = await service.Execute(page);
 
-            if (result.Item1 != ServiceResult.OK)
+            switch (result.Item1)
             {
-                switch (result.Item1)
-                {
-                    case ServiceResult.NOT_FOUND:
-                        return StatusCode(404, new { message = "No accounts found for the requested page" });
-                }
+                case ServiceResult.NOT_FOUND:
+                    return StatusCode(404, new { message = "No accounts found for the requested page" });
             }
 
             var response = result.Item2!.Select(account => new
@@ -230,6 +219,43 @@ namespace VisualAccess.API.Controllers
                 role = account.Role.ToString()
             });
 
+            return StatusCode(200, response);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "ADMIN,HR")]
+        public async Task<IActionResult> GetAccount([FromBody] GetAccountRequestModel requestModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                log.Error($"Wrong body request");
+                return BadRequest(ModelState);
+            }
+
+            GetService service = new(accountRepository, mapper);
+            var result = await service.Execute(requestModel.Username!);
+
+            switch (result.Item1)
+            {
+                case ServiceResult.ACCOUNT_NOT_FOUND:
+                    return StatusCode(404, new { message = "Account with provided username not found" });
+                case ServiceResult.DATABASE_ERROR:
+                    return StatusCode(500, new { message = "Something went wrong" });
+            }
+
+            Account account = result.Item2!;
+            var response = new
+            {
+                account.Username,
+                account.FirstName,
+                account.LastName,
+                account.Email,
+                account.Address,
+                account.PhoneNumber,
+                account.FaceID,
+                account.AllowedRooms,
+                role = account.Role.ToString()
+            };
             return StatusCode(200, response);
         }
     }
