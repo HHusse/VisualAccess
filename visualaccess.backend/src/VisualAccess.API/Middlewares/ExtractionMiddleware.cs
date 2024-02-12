@@ -40,44 +40,56 @@ namespace VisualAccess.API.Middlewares
 
                 if (isAccountClaim is not null)
                 {
-                    log.Info($"Account claim found in token");
+                    log.Info("Request is made by an Account");
                     var usernameClaim = context.User.FindFirst(ClaimTypes.NameIdentifier);
                     if (usernameClaim is not null)
                     {
-                        log.Info($"Account username claim found in token: {usernameClaim.Value}");
                         GetAccountervice getAccountService = new(accountRepository, mapper);
                         var serviceResponse = await getAccountService.Execute(usernameClaim.Value);
                         var account = serviceResponse.Item2;
                         if (account is not null)
                         {
-                            log.Info($"Account with username {usernameClaim.Value} found");
                             context.SetAccount(account);
                         }
+                        else
+                        {
+                            log.Error($"Account with username {usernameClaim.Value} couldn't be found");
+                        }
+                    }
+                    else
+                    {
+                        log.Error($"Could not found the usernameClaim");
                     }
 
                 }
                 else if (isRoomClaim is not null)
                 {
-                    log.Info($"Room claim found in token");
-                    var roomName = context.User.FindFirst(ClaimTypes.NameIdentifier);
-                    if (roomName is not null)
+                    log.Info("Request is made by a Room");
+                    var roomNameClaim = context.User.FindFirst(ClaimTypes.NameIdentifier);
+                    if (roomNameClaim is not null)
                     {
-                        log.Info($"Room name claim found in token: {roomName.Value}");
                         GetRoomService getRoomService = new(roomRepository, mapper);
-                        var serviceResponse = await getRoomService.Execute(roomName.Value);
+                        var serviceResponse = await getRoomService.Execute(roomNameClaim.Value);
                         var room = serviceResponse.Item2;
                         if (room is not null)
                         {
-                            log.Info($"Room with name {roomName.Value} found in token");
                             context.SetRoom(room);
                         }
+                        else
+                        {
+                            log.Error($"Room with name {roomNameClaim.Value} couldn't be found");
+                        }
+                    }
+                    else
+                    {
+                        log.Error($"Could not found the roomNameClaim");
                     }
                 }
 
             }
-
             await next(context);
         }
     }
 }
+
 

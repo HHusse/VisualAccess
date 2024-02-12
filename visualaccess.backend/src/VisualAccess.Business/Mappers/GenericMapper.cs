@@ -18,6 +18,8 @@ namespace VisualAccess.Business.Mappers
                 cfg.CreateMap<RoomDTO, Room>();
                 cfg.CreateMap<Account, AccountDTO>();
                 cfg.CreateMap<AccountDTO, Account>();
+                cfg.CreateMap<EntranceRecord, EntranceRecordDTO>();
+                cfg.CreateMap<EntranceRecordDTO, EntranceRecord>();
             });
 
             mapper = config.CreateMapper();

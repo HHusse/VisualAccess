@@ -6,6 +6,7 @@ using VisualAccess.API.Middlewares;
 using VisualAccess.DataAccess.Contexts;
 
 XmlConfigurator.Configure(new FileInfo("Log/log.config"));
+LogicalThreadContext.Properties["CorrelationId"] = Guid.NewGuid().ToString();
 ILog log = LogManager.GetLogger("API");
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +38,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseMiddleware<StartRequestMiddleware>();
 
