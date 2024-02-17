@@ -62,8 +62,10 @@ namespace VisualAccess.API
             services.AddScoped<IFaceRepository, FaceRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
             services.AddScoped<IEntranceRecordRepository, EntranceRecordRepository>();
+            services.AddScoped<IRequestRoomPermissionRepository, RequestRoomPermissionRepository>();
             services.AddScoped<ITokenFactory, TokenFactory>();
             services.AddScoped<IAccountFactory, AccountFactory>();
+            services.AddScoped<IRequestRoomPermissionFactory, RequestRoomPermissionFactory>();
             services.AddScoped<IRoomFactory, RoomFactory>();
             services.AddScoped<IFaceRecognitionServiceClient, FaceRecognitionServiceClient>();
             services.AddScoped<IGenericMapper, GenericMapper>();

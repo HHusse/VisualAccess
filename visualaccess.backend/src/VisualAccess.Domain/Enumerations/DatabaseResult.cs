@@ -14,6 +14,7 @@ namespace VisualAccess.Domain.Enumerations
         ROOM_NOT_FOUND,
         ROOM_PERMISSION_NOT_FOUND,
         ROOM_PERMISSION_ALREADY_EXIST,
+        REQUEST_NOT_FOUND,
         INVALID_OPERATION,
         UNKNOWN_ERROR
     }

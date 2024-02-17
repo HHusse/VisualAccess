@@ -16,6 +16,7 @@
     <None Remove="Mappers\" />
     <None Remove="Services\AccountServices\" />
     <None Remove="Services\RoomServices\" />
+    <None Remove="Services\RequestRoomPermissionServices\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
@@ -27,6 +28,7 @@
     <Folder Include="Mappers\" />
     <Folder Include="Services\AccountServices\" />
     <Folder Include="Services\RoomServices\" />
+    <Folder Include="Services\RequestRoomPermissionServices\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.2.0" />
