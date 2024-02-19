@@ -5,7 +5,10 @@ package facerecognition;
 service FaceRecognition {
   rpc RegisterFace (Image) returns (RegisterFaceResponse) {}
   rpc VerifyFace (Image) returns (VerifyFaceResponse) {}
+  rpc RefreshCache (Empty) returns (Empty) {}
 }
+
+message Empty {}
 
 message Image {
   bytes content = 1;

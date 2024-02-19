@@ -7,6 +7,7 @@ namespace VisualAccess.Domain.Interfaces.ServicesClient
     {
         public Task<(FaceRecognitionResult, int?)> RegisterFaceAsync(MemoryStream faceStream);
         public Task<(FaceRecognitionResult, int?)> VerifyFaceAsync(MemoryStream faceStream);
+        public Task RefreshCache();
     }
 }
 

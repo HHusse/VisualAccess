@@ -6,6 +6,7 @@ using log4net;
 
 using GrpcFaceRecognitionClient = Facerecognition.FaceRecognition.FaceRecognitionClient;
 using VisualAccess.Domain.Enumerations;
+using ZstdSharp.Unsafe;
 
 namespace VisualAccess.FaceRecognition.ServicesClient
 {
@@ -84,6 +85,24 @@ namespace VisualAccess.FaceRecognition.ServicesClient
             {
                 log.Error($"Unknown error: {e.Message}");
                 return new(FaceRecognitionResult.UNKNOWN_ERROR, null);
+            }
+        }
+
+        public async Task RefreshCache()
+        {
+            var emptyParam = new Facerecognition.Empty();
+            try
+            {
+                _ = await grpcClient.RefreshCacheAsync(emptyParam);
+                log.Info($"gRPC response: refresh cache succesfuly");
+            }
+            catch (RpcException e)
+            {
+                log.Error($"gRPC response: {e.Status.Detail}");
+            }
+            catch (Exception e)
+            {
+                log.Error($"Unknown error: {e.Message}");
             }
         }
     }

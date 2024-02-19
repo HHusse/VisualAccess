@@ -121,7 +121,7 @@ namespace VisualAccess.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            RemoveAccountService service = new(accountRepository, faceRepository, mapper);
+            RemoveAccountService service = new(accountRepository, faceRepository, mapper, faceRecognitionClient);
             ServiceResult result = await service.Execute(requestModel.Username!);
 
             if (result != ServiceResult.OK)

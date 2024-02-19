@@ -5,6 +5,8 @@ using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
 using VisualAccess.Domain.Interfaces.Mappers;
 using VisualAccess.Domain.Interfaces.Repositories;
+using VisualAccess.Domain.Interfaces.ServicesClient;
+using ZstdSharp.Unsafe;
 
 namespace VisualAccess.Business.Services.ManageAccountServices
 {
@@ -14,12 +16,14 @@ namespace VisualAccess.Business.Services.ManageAccountServices
         private readonly IAccountRepository accountRepository;
         private readonly IFaceRepository faceRepository;
         private readonly IGenericMapper mapper;
+        private readonly IFaceRecognitionServiceClient client;
 
-        public RemoveAccountService(IAccountRepository accountRepository, IFaceRepository faceRepository, IGenericMapper mapper)
+        public RemoveAccountService(IAccountRepository accountRepository, IFaceRepository faceRepository, IGenericMapper mapper, IFaceRecognitionServiceClient client)
         {
             this.accountRepository = accountRepository;
             this.faceRepository = faceRepository;
             this.mapper = mapper;
+            this.client = client;
         }
 
         public async Task<ServiceResult> Execute(string username)
@@ -47,6 +51,7 @@ namespace VisualAccess.Business.Services.ManageAccountServices
                     log.Error($"Something went wrong when trying to remove face with id {(int)account.FaceID} associated with account {username}");
                     return ServiceResult.DATABASE_ERROR;
                 }
+                _ = client.RefreshCache();
             }
 
             return ServiceResult.OK;

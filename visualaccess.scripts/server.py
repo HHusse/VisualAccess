@@ -112,6 +112,13 @@ def register_face(image):
     logging.info(f"Face registered successfully with ID: {inserted_id}")
     return inserted_id
 
+def refresh_cache():
+    logging.info("Refresh cache started")
+    redis_client.delete('known_faces', 'known_ids')
+    load_known_faces()
+    logging.info("Refresh cache ended")
+    
+
 def verify_face(image, known_faces, known_ids):
     if not is_face_present(image):
         logging.warning("Verification failed: Face not found")
@@ -165,6 +172,12 @@ class FaceRecognitionServicer(facerecognition_pb2_grpc.FaceRecognitionServicer):
         else:
             message = "Face verified successfully"
             return facerecognition_pb2.VerifyFaceResponse(id=verified_id, message=message)
+    def RefreshCache(self, request, context):
+        try:
+            refresh_cache()
+            return facerecognition_pb2.Empty()
+        except Exception as e:
+            context.abort(grpc.StatusCode.INTERNAL, str(e))
 
 # Server Setup
 def serve():
