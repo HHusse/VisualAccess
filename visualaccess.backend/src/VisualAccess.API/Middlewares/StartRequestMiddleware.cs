@@ -16,7 +16,8 @@ namespace VisualAccess.API.Middlewares
 
         public async Task Invoke(HttpContext context)
         {
-            var ipAddress = context.Connection.RemoteIpAddress?.ToString();
+            var forwardedFor = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            var ipAddress = forwardedFor ?? context.Connection.RemoteIpAddress?.ToString();
 
             log.Info($"Request: {context.Request.Protocol} {context.Request.Method} {context.Request.Path} from IP: {ipAddress}");
 
