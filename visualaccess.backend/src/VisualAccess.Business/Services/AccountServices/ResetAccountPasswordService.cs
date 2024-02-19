@@ -10,15 +10,15 @@ using VisualAccess.Domain.Interfaces.Validators;
 
 namespace VisualAccess.Business.Services.AccountServices
 {
-    public class ResetPasswordService
+    public class ResetAccountPasswordService
     {
-        private readonly ILog log = LogManager.GetLogger(typeof(AddRoomPremissionService));
+        private readonly ILog log = LogManager.GetLogger(typeof(ResetAccountPasswordService));
         private Account account;
         private readonly IAccountRepository accountRepository;
         private readonly IAccountValidator accountValidator;
         private readonly IGenericMapper mapper;
 
-        public ResetPasswordService(Account account, IAccountRepository accountRepository, IAccountValidator accountValidator, IGenericMapper mapper)
+        public ResetAccountPasswordService(Account account, IAccountRepository accountRepository, IAccountValidator accountValidator, IGenericMapper mapper)
         {
             this.account = account;
             this.accountRepository = accountRepository;

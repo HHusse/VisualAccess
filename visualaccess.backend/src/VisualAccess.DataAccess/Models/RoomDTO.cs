@@ -8,8 +8,8 @@ namespace VisualAccess.DataAccess.Models
     public class RoomDTO : DTOBase
     {
 
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonElement("id")]
+        [BsonRequired]
         public string? Id { get; set; }
 
         [BsonElement("name")]

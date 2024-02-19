@@ -8,9 +8,8 @@ namespace VisualAccess.DataAccess.Models
 {
     public class AccountDTO : DTOBase
     {
-
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonElement("id")]
+        [BsonRequired]
         public string? Id { get; set; }
 
         [BsonElement("firstName")]
@@ -51,6 +50,12 @@ namespace VisualAccess.DataAccess.Models
 
         [BsonElement("allowedRooms")]
         public List<string> AllowedRooms { get; set; } = new();
+
+        [BsonElement("notifications")]
+        public List<NotificationDTO> Notifications { get; set; } = new();
+
+        [BsonElement("temporaryRoomPermissions")]
+        public List<TemporaryRoomPermissionDTO> TemporaryRoomPermissions = new();
 
         [BsonElement("createdAt")]
         [BsonRequired]

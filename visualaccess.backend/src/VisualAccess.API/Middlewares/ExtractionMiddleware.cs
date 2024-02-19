@@ -10,9 +10,6 @@ using VisualAccess.Domain.Interfaces.Repositories;
 
 namespace VisualAccess.API.Middlewares
 {
-    using GetAccountervice = Business.Services.AccountServices.GetService;
-    using GetRoomService = Business.Services.RoomServices.GetService;
-
     public class ExtractionMiddleware
     {
         private readonly RequestDelegate next;
@@ -40,15 +37,15 @@ namespace VisualAccess.API.Middlewares
 
                 if (isAccountClaim is not null)
                 {
-                    log.Info("Request is made by an Account");
                     var usernameClaim = context.User.FindFirst(ClaimTypes.NameIdentifier);
                     if (usernameClaim is not null)
                     {
-                        GetAccountervice getAccountService = new(accountRepository, mapper);
+                        GetAccountService getAccountService = new(accountRepository, mapper);
                         var serviceResponse = await getAccountService.Execute(usernameClaim.Value);
                         var account = serviceResponse.Item2;
                         if (account is not null)
                         {
+                            log.Info($"Authorization info: Account {account.Username}");
                             context.SetAccount(account);
                         }
                         else
@@ -64,7 +61,6 @@ namespace VisualAccess.API.Middlewares
                 }
                 else if (isRoomClaim is not null)
                 {
-                    log.Info("Request is made by a Room");
                     var roomNameClaim = context.User.FindFirst(ClaimTypes.NameIdentifier);
                     if (roomNameClaim is not null)
                     {
@@ -73,6 +69,7 @@ namespace VisualAccess.API.Middlewares
                         var room = serviceResponse.Item2;
                         if (room is not null)
                         {
+                            log.Info($"Authorization info: Room {room.Name}");
                             context.SetRoom(room);
                         }
                         else

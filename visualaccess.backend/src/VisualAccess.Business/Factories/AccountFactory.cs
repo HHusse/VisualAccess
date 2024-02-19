@@ -11,6 +11,7 @@ namespace VisualAccess.Business.Factories
         {
             return new Account
             {
+                Id = Guid.NewGuid().ToString(),
                 FirstName = firstName,
                 LastName = lastName,
                 Username = username.ToLower(),

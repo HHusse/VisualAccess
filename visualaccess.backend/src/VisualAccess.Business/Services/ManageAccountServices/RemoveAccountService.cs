@@ -8,14 +8,14 @@ using VisualAccess.Domain.Interfaces.Repositories;
 
 namespace VisualAccess.Business.Services.ManageAccountServices
 {
-    public class RemoveService
+    public class RemoveAccountService
     {
-        private readonly ILog log = LogManager.GetLogger(typeof(RemoveService));
+        private readonly ILog log = LogManager.GetLogger(typeof(RemoveAccountService));
         private readonly IAccountRepository accountRepository;
         private readonly IFaceRepository faceRepository;
         private readonly IGenericMapper mapper;
 
-        public RemoveService(IAccountRepository accountRepository, IFaceRepository faceRepository, IGenericMapper mapper)
+        public RemoveAccountService(IAccountRepository accountRepository, IFaceRepository faceRepository, IGenericMapper mapper)
         {
             this.accountRepository = accountRepository;
             this.faceRepository = faceRepository;

@@ -10,6 +10,7 @@ namespace VisualAccess.Business.Factories
         {
             return new Room
             {
+                Id = Guid.NewGuid().ToString(),
                 Name = name.ToLower(),
                 Password = BCrypt.Net.BCrypt.HashPassword(password),
                 CreatedAt = createdAt

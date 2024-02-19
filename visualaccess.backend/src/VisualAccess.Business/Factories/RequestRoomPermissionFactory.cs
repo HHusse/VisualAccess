@@ -10,6 +10,7 @@ namespace VisualAccess.Business.Factories
         {
             return new RequestRoomPermission
             {
+                Id = Guid.NewGuid().ToString(),
                 Type = type,
                 RoomName = roomName,
                 RequestMessage = requestMessage

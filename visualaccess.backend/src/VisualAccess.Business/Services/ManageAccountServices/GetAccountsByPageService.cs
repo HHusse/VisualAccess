@@ -8,13 +8,13 @@ using VisualAccess.Domain.Interfaces.Repositories;
 
 namespace VisualAccess.Business.Services.ManageAccountServices
 {
-    public class GetByPageService
+    public class GetAccountsByPageService
     {
-        private readonly ILog log = LogManager.GetLogger(typeof(GetByPageService));
+        private readonly ILog log = LogManager.GetLogger(typeof(GetAccountsByPageService));
         private readonly IAccountRepository accountRepository;
         private readonly IGenericMapper mapper;
 
-        public GetByPageService(IAccountRepository accountRepository, IGenericMapper mapper)
+        public GetAccountsByPageService(IAccountRepository accountRepository, IGenericMapper mapper)
         {
             this.accountRepository = accountRepository;
             this.mapper = mapper;

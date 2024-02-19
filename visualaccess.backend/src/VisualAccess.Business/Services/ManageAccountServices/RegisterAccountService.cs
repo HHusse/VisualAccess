@@ -9,13 +9,13 @@ using VisualAccess.Domain.Enumerations;
 
 namespace VisualAccess.Business.Services.ManageAccountServices
 {
-    public class RegisterService
+    public class RegisterAccountService
     {
-        private readonly ILog log = LogManager.GetLogger(typeof(RegisterService));
+        private readonly ILog log = LogManager.GetLogger(typeof(RegisterAccountService));
         private readonly IAccountRepository repository;
         private readonly IAccountValidator validator;
 
-        public RegisterService(IAccountRepository repository, IAccountValidator validator)
+        public RegisterAccountService(IAccountRepository repository, IAccountValidator validator)
         {
             this.repository = repository;
             this.validator = validator;

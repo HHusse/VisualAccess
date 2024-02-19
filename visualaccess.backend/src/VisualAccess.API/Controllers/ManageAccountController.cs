@@ -56,7 +56,7 @@ namespace VisualAccess.API.Controllers
                 return StatusCode(400, new { message = "Invalid role value" });
             }
             Account newAccount = accountFactory.Create(requestModel.FirstName!, requestModel.LastName!, requestModel.Username!, requestModel.Email!, requestModel.Password!, requestModel.Address!, requestModel.PhoneNumber!, accountRole, DateTimeOffset.Now.ToUnixTimeSeconds());
-            RegisterService service = new(accountRepository, accountValidator);
+            RegisterAccountService service = new(accountRepository, accountValidator);
             ServiceResult result = await service.Execute(newAccount);
             switch (result)
             {
@@ -78,7 +78,7 @@ namespace VisualAccess.API.Controllers
             return StatusCode(200, new { });
         }
 
-        [HttpPost("face")]
+        [HttpPost("register/face")]
         [Authorize(Roles = "ADMIN,HR")]
         public async Task<IActionResult> RegisterFace([FromForm] RegisterFaceRequestModel requestModel)
         {
@@ -121,7 +121,7 @@ namespace VisualAccess.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            RemoveService service = new(accountRepository, faceRepository, mapper);
+            RemoveAccountService service = new(accountRepository, faceRepository, mapper);
             ServiceResult result = await service.Execute(requestModel.Username!);
 
             if (result != ServiceResult.OK)
@@ -197,7 +197,7 @@ namespace VisualAccess.API.Controllers
         public async Task<IActionResult> GetAccounts([FromRoute] int page)
         {
 
-            GetByPageService service = new(accountRepository, mapper);
+            GetAccountsByPageService service = new(accountRepository, mapper);
             var result = await service.Execute(page);
 
             switch (result.Item1)
@@ -216,6 +216,7 @@ namespace VisualAccess.API.Controllers
                 account.PhoneNumber,
                 account.FaceID,
                 account.AllowedRooms,
+                account.TemporaryRoomPermissions,
                 role = account.Role.ToString()
             });
 
@@ -232,7 +233,7 @@ namespace VisualAccess.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            GetService service = new(accountRepository, mapper);
+            GetAccountService service = new(accountRepository, mapper);
             var result = await service.Execute(requestModel.Username!);
 
             switch (result.Item1)

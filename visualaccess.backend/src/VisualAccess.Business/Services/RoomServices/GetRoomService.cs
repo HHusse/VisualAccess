@@ -10,13 +10,13 @@ using VisualAccess.Domain.Interfaces.Repositories;
 namespace VisualAccess.Business.Services.RoomServices
 {
 
-    public class GetService
+    public class GetRoomService
     {
-        private readonly ILog log = LogManager.GetLogger(typeof(AddRoomPremissionService));
+        private readonly ILog log = LogManager.GetLogger(typeof(GetRoomService));
         private readonly IRoomRepository roomRepository;
         private readonly IGenericMapper mapper;
 
-        public GetService(IRoomRepository roomRepository, IGenericMapper mapper)
+        public GetRoomService(IRoomRepository roomRepository, IGenericMapper mapper)
         {
             this.roomRepository = roomRepository;
             this.mapper = mapper;

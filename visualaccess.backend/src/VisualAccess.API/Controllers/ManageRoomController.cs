@@ -41,7 +41,7 @@ namespace VisualAccess.API.Controllers
                 return BadRequest(ModelState);
             }
             Room newRoom = roomFactory.Create(requestModel.Name!, requestModel.Password!, DateTimeOffset.Now.ToUnixTimeSeconds());
-            RegisterService service = new(roomRepository);
+            RegisterRoomService service = new(roomRepository);
             ServiceResult result = await service.Execute(newRoom);
 
             switch (result)
@@ -64,7 +64,7 @@ namespace VisualAccess.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            RemoveService service = new(roomRepository, accountRepository, mapper);
+            RemoveRoomService service = new(roomRepository, accountRepository, mapper);
             ServiceResult result = await service.Execute(requestModel.Name!);
 
             switch (result)

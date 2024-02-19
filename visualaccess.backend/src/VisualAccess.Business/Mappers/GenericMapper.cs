@@ -20,6 +20,12 @@ namespace VisualAccess.Business.Mappers
                 cfg.CreateMap<AccountDTO, Account>();
                 cfg.CreateMap<EntranceRecord, EntranceRecordDTO>();
                 cfg.CreateMap<EntranceRecordDTO, EntranceRecord>();
+                cfg.CreateMap<Notification, NotificationDTO>();
+                cfg.CreateMap<NotificationDTO, Notification>();
+                cfg.CreateMap<RequestRoomPermission, RequestRoomPermissionDTO>();
+                cfg.CreateMap<RequestRoomPermissionDTO, RequestRoomPermission>();
+                cfg.CreateMap<TemporaryRoomPermission, TemporaryRoomPermissionDTO>();
+                cfg.CreateMap<TemporaryRoomPermissionDTO, TemporaryRoomPermission>();
             });
 
             mapper = config.CreateMapper();

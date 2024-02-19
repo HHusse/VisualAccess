@@ -62,7 +62,7 @@ namespace VisualAccess.DataAccess.Repositories
             }
         }
 
-        public async Task<RequestRoomPermission?> GetById(string requestId)
+        public async Task<DTOBase?> GetById(string requestId)
         {
             try
             {
@@ -76,7 +76,7 @@ namespace VisualAccess.DataAccess.Repositories
                 }
 
                 log.Info($"Found request room permission with ID {requestId}.");
-                return mapper.Map<RequestRoomPermissionDTO, RequestRoomPermission>(requestDto);
+                return requestDto;
             }
             catch (Exception e)
             {
@@ -85,22 +85,23 @@ namespace VisualAccess.DataAccess.Repositories
             }
         }
 
-        public async Task<List<RequestRoomPermission>> GetByPage(int pageNumber, int pageSize = 5)
+        public async Task<IEnumerable<DTOBase>> GetByPage(int pageNumber, int pageSize = 5)
         {
             try
             {
                 int skip = (pageNumber - 1) * pageSize;
 
                 var filter = Builders<RequestRoomPermissionDTO>.Filter.Empty;
-                var requestDtos = await dbContext.RequestRoomPermissionCollection
+
+                var requests = await dbContext.RequestRoomPermissionCollection
                     .Find(filter)
                     .Skip(skip)
                     .Limit(pageSize)
                     .ToListAsync();
 
-                log.Info($"Found {requestDtos.Count} request room permissions on page {pageNumber}.");
+                log.Info($"Found {requests.Count} request room permissions on page {pageNumber}.");
 
-                return requestDtos.Select(dto => mapper.Map<RequestRoomPermissionDTO, RequestRoomPermission>(dto)).ToList();
+                return requests;
             }
             catch (Exception e)
             {

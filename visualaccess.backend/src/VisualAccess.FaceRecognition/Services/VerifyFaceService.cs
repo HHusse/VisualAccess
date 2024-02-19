@@ -42,14 +42,16 @@ namespace VisualAccess.FaceRecognition.Services
                 }
 
                 Account account = mapper.Map<AccountDTO, Account>(accountDTO);
-                if (!account.AllowedRooms.Contains(room.Name))
+                account.TemporaryRoomPermissions.RemoveAll(temp => temp.Until < DateTimeOffset.Now.ToUnixTimeSeconds());
+                _ = accountRepository.UpdateAccount(account);
+                if (!account.AllowedRooms.Contains(room.Name) && !account.TemporaryRoomPermissions.Exists(temp => temp.Room == room.Name && temp.Until > DateTimeOffset.Now.ToUnixTimeSeconds()))
                 {
-                    EntranceRecord notAllowedRecord = new(account.Username, room.Name, DateTimeOffset.Now.ToUnixTimeSeconds(), false);
+                    EntranceRecord notAllowedRecord = new(Guid.NewGuid().ToString(), account.Username, room.Name, DateTimeOffset.Now.ToUnixTimeSeconds(), false);
                     log.Info($"Account {notAllowedRecord.username} tried to enter in room {notAllowedRecord.roomName} at time {notAllowedRecord.time} but has no permission");
                     _ = entranceRecordRepository.CreateEntranceRecord(notAllowedRecord);
                     return ServiceResult.ACCOUNT_HAS_NO_PERMISSION;
                 }
-                EntranceRecord record = new(account.Username, room.Name, DateTimeOffset.Now.ToUnixTimeSeconds(), true);
+                EntranceRecord record = new(Guid.NewGuid().ToString(), account.Username, room.Name, DateTimeOffset.Now.ToUnixTimeSeconds(), true);
                 log.Info($"Account {record.username} tried to enter in room {record.roomName} at time {record.time} and passed");
                 _ = entranceRecordRepository.CreateEntranceRecord(record);
                 return ServiceResult.OK;

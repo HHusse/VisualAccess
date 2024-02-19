@@ -1,14 +1,15 @@
 ﻿using System;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
 
 namespace VisualAccess.DataAccess.Models
 {
-    public class RequestRoomPermissionDTO
+    public class RequestRoomPermissionDTO : DTOBase
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonElement("id")]
+        [BsonRequired]
         public string Id { get; set; } = new("");
 
         [BsonElement("type")]

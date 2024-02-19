@@ -7,12 +7,12 @@ using VisualAccess.Domain.Interfaces.Repositories;
 
 namespace VisualAccess.Business.Services.ManageRoomServices
 {
-    public class RegisterService
+    public class RegisterRoomService
     {
-        private readonly ILog log = LogManager.GetLogger(typeof(RegisterService));
+        private readonly ILog log = LogManager.GetLogger(typeof(RegisterRoomService));
         private readonly IRoomRepository repository;
 
-        public RegisterService(IRoomRepository repository)
+        public RegisterRoomService(IRoomRepository repository)
         {
             this.repository = repository;
         }

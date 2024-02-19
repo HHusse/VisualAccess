@@ -9,14 +9,14 @@ using VisualAccess.Domain.Interfaces.Repositories;
 
 namespace VisualAccess.Business.Services.ManageRoomServices
 {
-    public class RemoveService
+    public class RemoveRoomService
     {
-        private readonly ILog log = LogManager.GetLogger(typeof(RemoveService));
+        private readonly ILog log = LogManager.GetLogger(typeof(RemoveRoomService));
         private readonly IRoomRepository roomRepository;
         private readonly IAccountRepository accountRepository;
         private readonly IGenericMapper mapper;
 
-        public RemoveService(IRoomRepository roomRepository, IAccountRepository accountRepository, IGenericMapper mapper)
+        public RemoveRoomService(IRoomRepository roomRepository, IAccountRepository accountRepository, IGenericMapper mapper)
         {
             this.roomRepository = roomRepository;
             this.accountRepository = accountRepository;

@@ -45,6 +45,7 @@ namespace VisualAccess.DataAccess.Contexts
 
             AccountDTO defaultAccount = new AccountDTO
             {
+                Id = Guid.NewGuid().ToString(),
                 FirstName = "",
                 LastName = "",
                 Username = "setup",

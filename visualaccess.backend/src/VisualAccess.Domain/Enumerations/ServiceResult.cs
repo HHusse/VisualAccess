@@ -23,6 +23,7 @@ namespace VisualAccess.Domain.Enumerations
         SAME_PASSWORD,
         ROOM_PERMISSION_ALREADY_EXIST,
         REQUEST_ALREADY_EXIST,
+        REQUEST_NOT_FOUND,
         UNKNOWN_ERROR,
         DATABASE_ERROR
     }

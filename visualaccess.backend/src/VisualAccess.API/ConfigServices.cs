@@ -65,6 +65,8 @@ namespace VisualAccess.API
             services.AddScoped<IRequestRoomPermissionRepository, RequestRoomPermissionRepository>();
             services.AddScoped<ITokenFactory, TokenFactory>();
             services.AddScoped<IAccountFactory, AccountFactory>();
+            services.AddScoped<ITemporaryRoomPermissionFactory, TemporaryRoomPermissionFactory>();
+            services.AddScoped<INotificationFactory, NotificationFactory>();
             services.AddScoped<IRequestRoomPermissionFactory, RequestRoomPermissionFactory>();
             services.AddScoped<IRoomFactory, RoomFactory>();
             services.AddScoped<IFaceRecognitionServiceClient, FaceRecognitionServiceClient>();

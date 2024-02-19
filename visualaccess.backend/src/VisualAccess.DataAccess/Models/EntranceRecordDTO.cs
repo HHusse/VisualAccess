@@ -6,8 +6,8 @@ namespace VisualAccess.DataAccess.Models
 {
     public class EntranceRecordDTO
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonElement("id")]
+        [BsonRequired]
         public string? Id { get; set; }
 
         [BsonElement("username")]
