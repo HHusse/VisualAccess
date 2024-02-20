@@ -43,9 +43,9 @@ app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseMiddleware<StartRequestMiddleware>();
 
-app.UseMiddleware<EndRequestMiddleware>();
-
 app.UseMiddleware<ExtractionMiddleware>();
+
+app.UseMiddleware<EndRequestMiddleware>();
 
 app.UseHttpsRedirection();
 
