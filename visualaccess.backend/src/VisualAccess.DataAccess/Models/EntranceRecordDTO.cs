@@ -1,10 +1,11 @@
 ﻿using System;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using VisualAccess.Domain.Entities;
 
 namespace VisualAccess.DataAccess.Models
 {
-    public class EntranceRecordDTO
+    public class EntranceRecordDTO : DTOBase
     {
         [BsonElement("id")]
         [BsonRequired]

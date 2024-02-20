@@ -64,6 +64,9 @@ namespace VisualAccess.FaceRecognition.Services
 
             if (faceRecognitionResult.Item1 == FaceRecognitionResult.NOT_REGISTERD)
             {
+                EntranceRecord notRegisteredRecord = new(Guid.NewGuid().ToString(), "unknown", room.Name, DateTimeOffset.Now.ToUnixTimeSeconds(), false);
+                log.Info($"Unknown person tried to enter in room {notRegisteredRecord.roomName} at time {notRegisteredRecord.time}");
+                _ = entranceRecordRepository.CreateEntranceRecord(notRegisteredRecord);
                 return ServiceResult.FACE_NOT_REGISTERD;
             }
 
