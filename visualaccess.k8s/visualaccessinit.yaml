@@ -1,0 +1,228 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodb-container
+          image: mongo
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongodb-data
+              mountPath: /data/db
+      volumes:
+        - name: mongodb-data
+          persistentVolumeClaim:
+            claimName: mongodb-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    app: mongodb
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresdb-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgresdb
+  template:
+    metadata:
+      labels:
+        app: postgresdb
+    spec:
+      containers:
+        - name: postgresdb-container
+          image: postgres
+          env:
+            - name: POSTGRES_PASSWORD
+              value: "P@ssword123"
+            - name: POSTGRES_USER
+              value: "user"
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgresdb-data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgresdb-data
+          persistentVolumeClaim:
+            claimName: postgresdb-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresdb-service
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+  selector:
+    app: postgresdb
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis-container
+          image: redis
+          ports:
+            - containerPort: 6379
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6379
+  selector:
+    app: redis
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: facerecognition-deployment
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: facerecognition
+  template:
+    metadata:
+      labels:
+        app: facerecognition
+    spec:
+      initContainers:
+        - name: initcontainer
+          image: busybox
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z redis-service 6379 && nc -z visualaccess-service 80; do echo waiting for dependencies; sleep 2; done;",
+            ]
+      containers:
+        - name: facerecognition-container
+          image: local.repo/facerecognitionservice
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: VSAC_REDIS
+              value: "redis://redis-service:6379"
+            - name: VSAC_PGSQL
+              value: "Host=postgresdb-service;Port=5432;Database=visualaccessdb;Username=user;Password=P@ssword123"
+          ports:
+            - containerPort: 50051
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: facerecognition-service
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 50051
+      targetPort: 50051
+  selector:
+    app: facerecognition
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: visualaccess-deployment
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: visualaccess
+  template:
+    metadata:
+      labels:
+        app: visualaccess
+    spec:
+      initContainers:
+        - name: initcontainer
+          image: busybox
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z postgresdb-service 5432 && nc -z mongodb-service 27017; do echo waiting for dependencies; sleep 2; done;",
+            ]
+      containers:
+        - name: visualaccess-container
+          image: local.repo/visualaccess
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          env:
+            - name: VSAC_PGSQL
+              value: "Host=postgresdb-service;Port=5432;Database=visualaccessdb;Username=user;Password=P@ssword123"
+            - name: VSAC_SECRETKEY
+              value: "qfEtbmKAgNOP5El/21kowmwdjsQyJp63hI+3d0CU3A0="
+            - name: VSAC_ISSUER
+              value: "VisualAccess"
+            - name: VSAC_MONGODB_CONNECTION_STRING
+              value: "mongodb://mongodb-service:27017"
+            - name: VSAC_MONGODB_DATABASE_NAME
+              value: "visualaccessdb"
+            - name: VSAC_FACE_RECOGNITION_SERVICE_URL
+              value: "http://facerecognition-service:50051"
+          livenessProbe:
+            httpGet:
+              path: /api/v1
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: visualaccess-service
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: visualaccess
