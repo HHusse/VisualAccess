@@ -16,7 +16,7 @@ root.render(
     <Routes>
       <Route
         path="/"
-        element={<PrivateRoute element={<App />} requiredRole="PERSON" />}
+        element={<PrivateRoute element={<App />} requiredRole="ANY" />}
       />
       <Route path="/login" element={<LoginPage />} />
     </Routes>

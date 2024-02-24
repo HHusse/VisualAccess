@@ -40,6 +40,8 @@ export default function LoginPage() {
       const role = await fetchUserRole(token);
       if (role === "PERSON") {
         navigate("/");
+      } else if (role === "ADMIN") {
+        navigate("/");
       }
     } catch (error) {
       setErrorMessage("Invalid credentials");
