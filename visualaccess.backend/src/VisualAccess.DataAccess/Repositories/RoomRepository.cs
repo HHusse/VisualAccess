@@ -97,6 +97,44 @@ namespace VisualAccess.DataAccess.Repositories
             var count = await dbContext.RoomsCollection.CountDocumentsAsync(filter);
             return count > 0 ? DatabaseResult.ROOM_EXIST : DatabaseResult.ROOM_NOT_FOUND;
         }
+
+        public async Task<IEnumerable<DTOBase>> GetRoomsByPage(int pageNumber, int pageSize = 5)
+        {
+            try
+            {
+                int skip = (pageNumber - 1) * pageSize;
+
+                var filter = Builders<RoomDTO>.Filter.Empty;
+
+                var rooms = await dbContext.RoomsCollection
+                    .Find(filter)
+                    .Skip(skip)
+                    .Limit(pageSize)
+                    .ToListAsync();
+
+                log.Info($"Found {rooms.Count} rooms on page {pageNumber}.");
+
+                return rooms;
+            }
+            catch (Exception e)
+            {
+                LogException.Log(log, e);
+                throw;
+            }
+        }
+
+        public async Task<long> GetRoomsCount()
+        {
+            try
+            {
+                return await dbContext.RoomsCollection.CountDocumentsAsync(Builders<RoomDTO>.Filter.Empty);
+            }
+            catch (Exception e)
+            {
+                LogException.Log(log, e);
+                throw;
+            }
+        }
     }
 }
 

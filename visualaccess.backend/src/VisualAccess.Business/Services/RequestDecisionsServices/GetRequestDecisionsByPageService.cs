@@ -7,13 +7,13 @@ using VisualAccess.Domain.Interfaces.Repositories;
 
 namespace VisualAccess.Business.Services.RequestDecisionsServices;
 
-public class GetRequestDecisionsByPage
+public class GetRequestDecisionsByPageService
 {
-    private readonly ILog log = LogManager.GetLogger(typeof(GetRequestDecisionsByPage));
+    private readonly ILog log = LogManager.GetLogger(typeof(GetRequestDecisionsByPageService));
     private readonly IRequestDecisionsRepository requestDecisionsRepository;
     private readonly IGenericMapper mapper;
 
-    public GetRequestDecisionsByPage(IRequestDecisionsRepository requestDecisionsRepository, IGenericMapper mapper)
+    public GetRequestDecisionsByPageService(IRequestDecisionsRepository requestDecisionsRepository, IGenericMapper mapper)
     {
         this.requestDecisionsRepository = requestDecisionsRepository;
         this.mapper = mapper;

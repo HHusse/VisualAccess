@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualAccess.API.RequestModels.ManageRoomModels;
 using VisualAccess.Business.Services.ManageRoomServices;
+using VisualAccess.Business.Services.RoomServices;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Enumerations;
 using VisualAccess.Domain.Interfaces.Factories;
@@ -75,6 +76,27 @@ namespace VisualAccess.API.Controllers
                     return StatusCode(500, new { message = "Something went wrong" });
             }
             return StatusCode(200, new { });
+        }
+
+        [HttpGet("/api/v1/manage/rooms/{page}")]
+        [Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> GetRoomsByPage(int page)
+        {
+            GetRoomsByPageService service = new(roomRepository, mapper);
+            var (result, rooms, maxPages) = await service.Execute(page);
+
+            switch (result)
+            {
+                case ServiceResult.NOT_FOUND:
+                    return StatusCode(404, new { message = "No rooms found for the requested page" });
+            }
+
+            var roomsResponse = rooms!.Select(room => new
+            {
+                roomName = room.Name
+            });
+
+            return StatusCode(200, new { maxPages, rooms = roomsResponse });
         }
     }
 }

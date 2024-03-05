@@ -27,7 +27,7 @@ public class RequestDecisionsControllers : ControllerBase
     [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> GetRequestDecisionsByPage([FromRoute] int page)
     {
-        var service = new GetRequestDecisionsByPage(requestDecisionsRepository, mapper);
+        var service = new GetRequestDecisionsByPageService(requestDecisionsRepository, mapper);
         var (result, requests, maxPages) = await service.Execute(page);
 
         switch (result)
@@ -45,6 +45,6 @@ public class RequestDecisionsControllers : ControllerBase
             req.isApproved
         });
 
-        return Ok(new { maxPages, requestsResponse });
+        return StatusCode(200, new { maxPages, requests = requestsResponse });
     }
 }
