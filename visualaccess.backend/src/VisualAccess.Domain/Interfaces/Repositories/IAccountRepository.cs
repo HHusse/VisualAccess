@@ -12,6 +12,7 @@ namespace VisualAccess.Domain.Interfaces.Repositories
         public Task<DTOBase?> GetAccount(string username);
         public Task<DTOBase?> GetAccount(int faceId);
         public Task<IEnumerable<DTOBase>> GetAccountsByPage(int pageNumber, int pageSize = 5);
+        public Task<long> GetAccountCount();
 
         public Task<bool> UsernameExist(string username);
         public Task<bool> EmailExist(string email);

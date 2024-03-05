@@ -55,6 +55,11 @@ namespace VisualAccess.DataAccess.Repositories
                 throw;
             }
         }
+
+        public async Task<long> GetEntranceRecordsCount()
+        {
+            return await dbContext.EntranceRecordsCollection.CountDocumentsAsync(Builders<EntranceRecordDTO>.Filter.Empty);
+        }
     }
 }
 

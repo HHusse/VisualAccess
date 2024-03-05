@@ -133,6 +133,11 @@ namespace VisualAccess.DataAccess.Repositories
             }
         }
 
+        public async Task<long> GetAccountCount()
+        {
+            var filter = Builders<AccountDTO>.Filter.Empty;
+            return await dbContext.AccountsCollection.CountDocumentsAsync(filter);
+        }
 
         public async Task<bool> UsernameExist(string username)
         {

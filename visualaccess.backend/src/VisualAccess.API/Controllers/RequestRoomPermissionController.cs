@@ -30,18 +30,20 @@ namespace VisualAccess.API.Controllers
         private readonly IRequestRoomPermissionFactory factory;
         private readonly ITemporaryRoomPermissionFactory temporaryRoomPermissionFactory;
         private readonly INotificationFactory notificationFactory;
+        private readonly IRequestDecisionsRepository requestDecisionsRepository;
         private readonly IGenericMapper mapper;
 
-        public RequestRoomPermissionController(ILog log, IAccountRepository accountRepository, IRequestRoomPermissionRepository requestRoomPermissionRepository, IRoomRepository roomRepository, IRequestRoomPermissionFactory factory, IGenericMapper mapper, ITemporaryRoomPermissionFactory temporaryRoomPermissionFactory, INotificationFactory notificationFactory)
+        public RequestRoomPermissionController(ILog log, IAccountRepository accountRepository, IRequestRoomPermissionRepository requestRoomPermissionRepository, IRoomRepository roomRepository, IRequestRoomPermissionFactory factory, ITemporaryRoomPermissionFactory temporaryRoomPermissionFactory, INotificationFactory notificationFactory, IRequestDecisionsRepository requestDecisionsRepository, IGenericMapper mapper)
         {
             this.log = log;
             this.accountRepository = accountRepository;
             this.requestRoomPermissionRepository = requestRoomPermissionRepository;
             this.roomRepository = roomRepository;
             this.factory = factory;
-            this.mapper = mapper;
             this.temporaryRoomPermissionFactory = temporaryRoomPermissionFactory;
             this.notificationFactory = notificationFactory;
+            this.requestDecisionsRepository = requestDecisionsRepository;
+            this.mapper = mapper;
         }
 
         [HttpPost("register")]
@@ -93,10 +95,10 @@ namespace VisualAccess.API.Controllers
             switch (result.Item1)
             {
                 case ServiceResult.NOT_FOUND:
-                    return StatusCode(404, new { message = "No accounts found for the requested page" });
+                    return StatusCode(404, new { message = "No requests found for the requested page" });
             }
 
-            var response = result.Item2!.Select(request => new
+            var requests = result.Item2!.Select(request => new
             {
                 request.Id,
                 type = request.Type.ToString(),
@@ -104,6 +106,12 @@ namespace VisualAccess.API.Controllers
                 request.RoomName,
                 request.RequestMessage
             });
+
+            var response = new
+            {
+                maxPages = result.Item3,
+                requests
+            };
             return StatusCode(200, response);
         }
 
@@ -124,7 +132,7 @@ namespace VisualAccess.API.Controllers
                 return StatusCode(401, new { message = "Invalid token" });
             }
 
-            AcceptRequestRoomPermissionService service = new(accountRepository, requestRoomPermissionRepository, temporaryRoomPermissionFactory, notificationFactory, mapper);
+            AcceptRequestRoomPermissionService service = new(accountRepository, requestRoomPermissionRepository, temporaryRoomPermissionFactory, notificationFactory, requestDecisionsRepository, mapper);
             ServiceResult response = await service.Execute(account, requestModel.RequestId!, requestModel.Days);
             switch (response)
             {
@@ -159,7 +167,7 @@ namespace VisualAccess.API.Controllers
                 return StatusCode(401, new { message = "Invalid token" });
             }
 
-            RemoveRequestRoomPermissionService service = new(accountRepository, requestRoomPermissionRepository, temporaryRoomPermissionFactory, notificationFactory, mapper);
+            RemoveRequestRoomPermissionService service = new(accountRepository, requestRoomPermissionRepository, temporaryRoomPermissionFactory, notificationFactory, requestDecisionsRepository, mapper);
             ServiceResult response = await service.Execute(account, requestModel.RequestId!);
             switch (response)
             {

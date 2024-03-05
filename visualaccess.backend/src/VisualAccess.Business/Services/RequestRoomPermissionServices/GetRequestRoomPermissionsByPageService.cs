@@ -21,18 +21,22 @@ namespace VisualAccess.Business.Services.RequestRoomPermissionServices
             this.mapper = mapper;
         }
 
-        public async Task<(ServiceResult, List<RequestRoomPermission>?)> Execute(int page)
+        public async Task<(ServiceResult, List<RequestRoomPermission>?, long)> Execute(int page)
         {
             List<RequestRoomPermissionDTO> requests = (List<RequestRoomPermissionDTO>)await requestRoomPermissionRepository.GetByPage(page);
+            long requestsCount = await requestRoomPermissionRepository.GetRequestsCount();
+            double pagesDouble = (double)requestsCount / 5;
+            long pages = (long)Math.Ceiling(pagesDouble);
+
             if (requests.Count() == 0)
             {
-                log.Warn($"No accounts found for page {page}");
-                return new(ServiceResult.NOT_FOUND, null);
+                log.Warn($"No request found for page {page}");
+                return new(ServiceResult.NOT_FOUND, null, 0);
             }
 
-            log.Info($"Fetched {requests.Count()} accounts");
+            log.Info($"Fetched {requests.Count()} requests");
             List<RequestRoomPermission> requestsList = mapper.Map<List<RequestRoomPermissionDTO>, List<RequestRoomPermission>>(requests);
-            return new(ServiceResult.OK, requestsList);
+            return new(ServiceResult.OK, requestsList, pages);
         }
     }
 }

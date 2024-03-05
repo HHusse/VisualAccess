@@ -2,6 +2,7 @@
 using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VisualAccess.API.Contexts;
 using VisualAccess.API.RequestModels.ManageAccountModels;
 using VisualAccess.Business.Services.AccountServices;
 using VisualAccess.Business.Services.ManageAccountServices;
@@ -55,11 +56,21 @@ namespace VisualAccess.API.Controllers
             {
                 return StatusCode(400, new { message = "Invalid role value" });
             }
+
+            Account? account = HttpContext.GetAccount();
+            if (account is null)
+            {
+                log.Error("Account was not found in token claims.");
+                return StatusCode(401, new { message = "Invalid token" });
+            }
+
             Account newAccount = accountFactory.Create(requestModel.FirstName!, requestModel.LastName!, requestModel.Username!, requestModel.Email!, requestModel.Password!, requestModel.Address!, requestModel.PhoneNumber!, accountRole, DateTimeOffset.Now.ToUnixTimeSeconds());
             RegisterAccountService service = new(accountRepository, accountValidator);
-            ServiceResult result = await service.Execute(newAccount);
+            ServiceResult result = await service.Execute(account, newAccount);
             switch (result)
             {
+                case ServiceResult.INVALID_OPERATION:
+                    return StatusCode(400, new { message = "You don't have permission to register this account" });
                 case ServiceResult.INVALID_USERNAME:
                     return StatusCode(400, new { message = "Invalid username" });
                 case ServiceResult.INVALID_EMAIL:
@@ -121,13 +132,22 @@ namespace VisualAccess.API.Controllers
                 return BadRequest(ModelState);
             }
 
+            Account? account = HttpContext.GetAccount();
+            if (account is null)
+            {
+                log.Error("Account was not found in token claims.");
+                return StatusCode(401, new { message = "Invalid token" });
+            }
+
             RemoveAccountService service = new(accountRepository, faceRepository, mapper, faceRecognitionClient);
-            ServiceResult result = await service.Execute(requestModel.Username!);
+            ServiceResult result = await service.Execute(account, requestModel.Username!);
 
             if (result != ServiceResult.OK)
             {
                 switch (result)
                 {
+                    case ServiceResult.INVALID_OPERATION:
+                        return StatusCode(400, new { message = "You don't have permission to remove this account" });
                     case ServiceResult.ACCOUNT_NOT_FOUND:
                         return StatusCode(404, new { message = "Account with provided username not found" });
                     case ServiceResult.DATABASE_ERROR:
@@ -177,7 +197,6 @@ namespace VisualAccess.API.Controllers
             RemoveRoomPermissionService service = new(accountRepository, roomRepository, mapper);
             ServiceResult result = await service.Execute(requestModel.Username!, requestModel.RoomName!);
 
-
             switch (result)
             {
                 case ServiceResult.ACCOUNT_NOT_FOUND:
@@ -206,7 +225,7 @@ namespace VisualAccess.API.Controllers
                     return StatusCode(404, new { message = "No accounts found for the requested page" });
             }
 
-            var response = result.Item2!.Select(account => new
+            var accounts = result.Item2!.Select(account => new
             {
                 account.Username,
                 account.FirstName,
@@ -220,12 +239,17 @@ namespace VisualAccess.API.Controllers
                 role = account.Role.ToString()
             });
 
+            var response = new
+            {
+                maxPages = result.Item3,
+                accounts
+            };
             return StatusCode(200, response);
         }
 
         [HttpGet]
         [Authorize(Roles = "ADMIN,HR")]
-        public async Task<IActionResult> GetAccount([FromBody] GetAccountRequestModel requestModel)
+        public async Task<IActionResult> GetAccount([FromQuery] GetAccountRequestModel requestModel)
         {
             if (!ModelState.IsValid)
             {

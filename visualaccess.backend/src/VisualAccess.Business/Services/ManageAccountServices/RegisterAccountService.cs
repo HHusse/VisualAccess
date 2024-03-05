@@ -21,8 +21,14 @@ namespace VisualAccess.Business.Services.ManageAccountServices
             this.validator = validator;
         }
 
-        public async Task<ServiceResult> Execute(Account account)
+        public async Task<ServiceResult> Execute(Account currentAccount, Account account)
         {
+            if (currentAccount.Role != Role.ADMIN && account.Role == Role.ADMIN)
+            {
+                log.Warn($"Account with role {currentAccount.Role} try to register an ADMIN account");
+                return ServiceResult.INVALID_OPERATION;
+            }
+
             if (!validator.IsValidUsername(account.Username))
             {
                 log.Warn($"The provided username is invalid: {account.Username}");

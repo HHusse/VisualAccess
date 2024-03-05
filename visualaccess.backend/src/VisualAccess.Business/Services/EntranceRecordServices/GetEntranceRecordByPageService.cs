@@ -22,18 +22,21 @@ namespace VisualAccess.Business.Services.EntranceRecordServices
             this.mapper = mapper;
         }
 
-        public async Task<(ServiceResult, List<EntranceRecord>?)> Execute(int page)
+        public async Task<(ServiceResult, List<EntranceRecord>?, long)> Execute(int page)
         {
             List<EntranceRecordDTO> entranceRecordsDTOList = (List<EntranceRecordDTO>)await entranceRecordRepository.GetEntranceRecordsByPage(page);
+            long entranceCount = await entranceRecordRepository.GetEntranceRecordsCount();
+            double pagesDouble = (double)entranceCount / 5;
+            long pages = (long)Math.Ceiling(pagesDouble);
             if (entranceRecordsDTOList.Count == 0)
             {
                 log.Warn($"No entrance records found for page {page}");
-                return new(ServiceResult.NOT_FOUND, null);
+                return new(ServiceResult.NOT_FOUND, null, 0);
             }
 
             log.Info($"Fetched {entranceRecordsDTOList.Count} entrance records");
             List<EntranceRecord> entranceRecordsList = mapper.Map<List<EntranceRecordDTO>, List<EntranceRecord>>(entranceRecordsDTOList);
-            return new(ServiceResult.OK, entranceRecordsList);
+            return new(ServiceResult.OK, entranceRecordsList, pages);
         }
     }
 }

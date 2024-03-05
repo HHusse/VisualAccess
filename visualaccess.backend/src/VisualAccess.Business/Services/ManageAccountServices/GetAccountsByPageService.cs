@@ -20,18 +20,22 @@ namespace VisualAccess.Business.Services.ManageAccountServices
             this.mapper = mapper;
         }
 
-        public async Task<(ServiceResult, List<Account>?)> Execute(int page)
+        public async Task<(ServiceResult, List<Account>?, long pages)> Execute(int page)
         {
             List<AccountDTO> accountsDTOList = (List<AccountDTO>)await accountRepository.GetAccountsByPage(page);
+            long accountCount = await accountRepository.GetAccountCount();
+            double pagesDouble = (double)accountCount / 5;
+            long pages = (long)Math.Ceiling(pagesDouble);
+
             if (accountsDTOList.Count() == 0)
             {
                 log.Warn($"No accounts found for page {page}");
-                return new(ServiceResult.NOT_FOUND, null);
+                return new(ServiceResult.NOT_FOUND, null, 0);
             }
 
             log.Info($"Fetched {accountsDTOList.Count()} accounts");
             List<Account> accountsList = mapper.Map<List<AccountDTO>, List<Account>>(accountsDTOList);
-            return new(ServiceResult.OK, accountsList);
+            return new(ServiceResult.OK, accountsList, pages);
 
         }
     }

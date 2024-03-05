@@ -15,13 +15,16 @@ public class AcceptRequestRoomPermissionService
     private readonly IRequestRoomPermissionRepository requestRoomPermissionRepository;
     private readonly ITemporaryRoomPermissionFactory temporaryRoomPermissionFactory;
     private readonly INotificationFactory notificationFactory;
+    private readonly IRequestDecisionsRepository requestDecisionsRepository;
     private readonly IGenericMapper mapper;
-    public AcceptRequestRoomPermissionService(IAccountRepository accountRepository, IRequestRoomPermissionRepository requestRoomPermissionRepository, ITemporaryRoomPermissionFactory temporaryRoomPermissionFactory, INotificationFactory notificationFactory, IGenericMapper mapper)
+
+    public AcceptRequestRoomPermissionService(IAccountRepository accountRepository, IRequestRoomPermissionRepository requestRoomPermissionRepository, ITemporaryRoomPermissionFactory temporaryRoomPermissionFactory, INotificationFactory notificationFactory, IRequestDecisionsRepository requestDecisionsRepository, IGenericMapper mapper)
     {
         this.accountRepository = accountRepository;
         this.requestRoomPermissionRepository = requestRoomPermissionRepository;
         this.temporaryRoomPermissionFactory = temporaryRoomPermissionFactory;
         this.notificationFactory = notificationFactory;
+        this.requestDecisionsRepository = requestDecisionsRepository;
         this.mapper = mapper;
     }
 
@@ -57,6 +60,8 @@ public class AcceptRequestRoomPermissionService
             }
 
             log.Info($"Permission added succesfuly for account {account.Username} in room {request.RoomName}");
+            RequestDecisions requestDecisions = new RequestDecisions(Guid.NewGuid().ToString(), approverAccount.Username, request.Username, request.RoomName, request.Type, true);
+            _ = requestDecisionsRepository.AddRequestDecision(requestDecisions);
             _ = requestRoomPermissionRepository.DeleteRequest(request);
             return ServiceResult.OK;
         }
@@ -78,6 +83,8 @@ public class AcceptRequestRoomPermissionService
             }
 
             log.Info($"Temporary permission added succesfuly for account {account.Username} in room {request.RoomName} for {days} days");
+            RequestDecisions requestDecisions = new RequestDecisions(Guid.NewGuid().ToString(), approverAccount.Username, request.Username, request.RoomName, request.Type, true);
+            _ = requestDecisionsRepository.AddRequestDecision(requestDecisions);
             _ = requestRoomPermissionRepository.DeleteRequest(request);
             return ServiceResult.OK;
         }

@@ -5,6 +5,7 @@ using VisualAccess.Domain.Enumerations;
 using VisualAccess.Domain.Interfaces.Factories;
 using VisualAccess.Domain.Interfaces.Mappers;
 using VisualAccess.Domain.Interfaces.Repositories;
+using ZstdSharp.Unsafe;
 
 namespace VisualAccess.Business.Services.RequestRoomPermissionServices;
 
@@ -15,14 +16,16 @@ public class RemoveRequestRoomPermissionService
     private readonly IRequestRoomPermissionRepository requestRoomPermissionRepository;
     private readonly ITemporaryRoomPermissionFactory temporaryRoomPermissionFactory;
     private readonly INotificationFactory notificationFactory;
+    private readonly IRequestDecisionsRepository requestDecisionsRepository;
     private readonly IGenericMapper mapper;
 
-    public RemoveRequestRoomPermissionService(IAccountRepository accountRepository, IRequestRoomPermissionRepository requestRoomPermissionRepository, ITemporaryRoomPermissionFactory temporaryRoomPermissionFactory, INotificationFactory notificationFactory, IGenericMapper mapper)
+    public RemoveRequestRoomPermissionService(IAccountRepository accountRepository, IRequestRoomPermissionRepository requestRoomPermissionRepository, ITemporaryRoomPermissionFactory temporaryRoomPermissionFactory, INotificationFactory notificationFactory, IRequestDecisionsRepository requestDecisionsRepository, IGenericMapper mapper)
     {
         this.accountRepository = accountRepository;
         this.requestRoomPermissionRepository = requestRoomPermissionRepository;
         this.temporaryRoomPermissionFactory = temporaryRoomPermissionFactory;
         this.notificationFactory = notificationFactory;
+        this.requestDecisionsRepository = requestDecisionsRepository;
         this.mapper = mapper;
     }
 
@@ -59,6 +62,8 @@ public class RemoveRequestRoomPermissionService
         {
             return ServiceResult.DATABASE_ERROR;
         }
+        RequestDecisions requestDecisions = new RequestDecisions(Guid.NewGuid().ToString(), approverAccount.Username, request.Username, request.RoomName, request.Type, false);
+        _ = await requestDecisionsRepository.AddRequestDecision(requestDecisions);
         return ServiceResult.OK;
     }
 }

@@ -63,6 +63,7 @@ namespace VisualAccess.API
             services.AddScoped<IRoomRepository, RoomRepository>();
             services.AddScoped<IEntranceRecordRepository, EntranceRecordRepository>();
             services.AddScoped<IRequestRoomPermissionRepository, RequestRoomPermissionRepository>();
+            services.AddScoped<IRequestDecisionsRepository, RequestDecisionsRepository>();
             services.AddScoped<ITokenFactory, TokenFactory>();
             services.AddScoped<IAccountFactory, AccountFactory>();
             services.AddScoped<ITemporaryRoomPermissionFactory, TemporaryRoomPermissionFactory>();

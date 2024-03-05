@@ -11,6 +11,7 @@ namespace VisualAccess.Domain.Interfaces.Repositories
         public Task<DTOBase?> GetById(string requestId);
         public Task<IEnumerable<DTOBase>> GetByPage(int pageNumber, int pageSize = 5);
         public Task<bool> RequestExists(string username, string roomName);
+        public Task<long> GetRequestsCount();
     }
 }
 

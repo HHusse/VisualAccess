@@ -26,7 +26,7 @@ namespace VisualAccess.Business.Services.ManageAccountServices
             this.client = client;
         }
 
-        public async Task<ServiceResult> Execute(string username)
+        public async Task<ServiceResult> Execute(Account currentAccount, string username)
         {
             AccountDTO? accountDTO = (AccountDTO?)await accountRepository.GetAccount(username);
             if (accountDTO is null)
@@ -35,7 +35,19 @@ namespace VisualAccess.Business.Services.ManageAccountServices
                 return ServiceResult.ACCOUNT_NOT_FOUND;
             }
 
+
             Account account = mapper.Map<AccountDTO, Account>(accountDTO);
+            if (currentAccount.Role != Role.ADMIN && account.Role == Role.ADMIN)
+            {
+                log.Warn($"Account with role {currentAccount.Role} try to remove an ADMIN account");
+                return ServiceResult.INVALID_OPERATION;
+            }
+
+            if (currentAccount.Username == username)
+            {
+                log.Warn($"Account with username {username} try to remove his own account");
+                return ServiceResult.INVALID_OPERATION;
+            }
 
             if (await accountRepository.RemoveAccount(account) == DatabaseResult.UNKNOWN_ERROR)
             {

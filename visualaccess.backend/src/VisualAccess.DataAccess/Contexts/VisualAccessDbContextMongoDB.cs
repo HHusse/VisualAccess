@@ -13,6 +13,7 @@ namespace VisualAccess.DataAccess.Contexts
         public IMongoCollection<RoomDTO> RoomsCollection { get; set; }
         public IMongoCollection<EntranceRecordDTO> EntranceRecordsCollection { get; set; }
         public IMongoCollection<RequestRoomPermissionDTO> RequestRoomPermissionCollection { get; set; }
+        public IMongoCollection<RequestDecisionsDTO> RequestDecisionsCollection { get; set; }
 
 
         public VisualAccessDbContextMongoDB(IMongoDatabase database)
@@ -22,6 +23,7 @@ namespace VisualAccess.DataAccess.Contexts
             RoomsCollection = database.GetCollection<RoomDTO>("rooms");
             EntranceRecordsCollection = database.GetCollection<EntranceRecordDTO>("entranceRecords");
             RequestRoomPermissionCollection = database.GetCollection<RequestRoomPermissionDTO>("requestRoomPermission");
+            RequestDecisionsCollection = database.GetCollection<RequestDecisionsDTO>("requestDecisions");
         }
 
         public void Configure()
@@ -57,7 +59,10 @@ namespace VisualAccess.DataAccess.Contexts
             };
             try
             {
-                AccountsCollection.InsertOne(defaultAccount);
+                if (AccountsCollection.CountDocuments(Builders<AccountDTO>.Filter.Empty) == 0)
+                {
+                    AccountsCollection.InsertOne(defaultAccount);
+                }
             }
             catch (Exception)
             {

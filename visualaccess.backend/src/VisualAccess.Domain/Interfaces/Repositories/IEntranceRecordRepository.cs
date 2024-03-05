@@ -8,6 +8,7 @@ namespace VisualAccess.Domain.Interfaces.Repositories
     {
         public Task<DatabaseResult> CreateEntranceRecord(EntranceRecord entranceRecord);
         public Task<IEnumerable<DTOBase>> GetEntranceRecordsByPage(int pageNumber, int pageSize = 5);
+        public Task<long> GetEntranceRecordsCount();
     }
 }
 

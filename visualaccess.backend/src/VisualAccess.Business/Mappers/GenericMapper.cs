@@ -26,6 +26,8 @@ namespace VisualAccess.Business.Mappers
                 cfg.CreateMap<RequestRoomPermissionDTO, RequestRoomPermission>();
                 cfg.CreateMap<TemporaryRoomPermission, TemporaryRoomPermissionDTO>();
                 cfg.CreateMap<TemporaryRoomPermissionDTO, TemporaryRoomPermission>();
+                cfg.CreateMap<RequestDecisions, RequestDecisionsDTO>();
+                cfg.CreateMap<RequestDecisionsDTO, RequestDecisions>();
             });
 
             mapper = config.CreateMapper();

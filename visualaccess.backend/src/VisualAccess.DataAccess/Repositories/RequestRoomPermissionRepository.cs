@@ -129,6 +129,11 @@ namespace VisualAccess.DataAccess.Repositories
             }
         }
 
+        public async Task<long> GetRequestsCount()
+        {
+            var filter = Builders<RequestRoomPermissionDTO>.Filter.Empty;
+            return await dbContext.RequestRoomPermissionCollection.CountDocumentsAsync(filter);
+        }
 
     }
 }
