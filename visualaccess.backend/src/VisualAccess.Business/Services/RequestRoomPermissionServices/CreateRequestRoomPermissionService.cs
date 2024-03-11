@@ -12,13 +12,11 @@ namespace VisualAccess.Business.Services.RequestRoomPermissionServices
     public class CreateRequestRoomPermissionService
     {
         private readonly ILog log = LogManager.GetLogger(typeof(CreateRequestRoomPermissionService));
-        private readonly IAccountRepository accountRepository;
         private readonly IRoomRepository roomRepository;
         private readonly IRequestRoomPermissionRepository requestRoomPermissionRepository;
 
-        public CreateRequestRoomPermissionService(IAccountRepository accountRepository, IRoomRepository roomRepository, IRequestRoomPermissionRepository requestRoomPermissionRepository, IGenericMapper mapper)
+        public CreateRequestRoomPermissionService(IRoomRepository roomRepository, IRequestRoomPermissionRepository requestRoomPermissionRepository, IGenericMapper mapper)
         {
-            this.accountRepository = accountRepository;
             this.roomRepository = roomRepository;
             this.requestRoomPermissionRepository = requestRoomPermissionRepository;
         }

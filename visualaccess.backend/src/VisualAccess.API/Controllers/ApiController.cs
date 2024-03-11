@@ -7,13 +7,6 @@ namespace VisualAccess.API.Controllers
     [Route("api")]
     public class ApiController : ControllerBase
     {
-        private readonly ILog log;
-
-        public ApiController(ILog log)
-        {
-            this.log = log;
-        }
-
         [HttpGet("v1")]
         public Task<IActionResult> GetApiVersion()
         {

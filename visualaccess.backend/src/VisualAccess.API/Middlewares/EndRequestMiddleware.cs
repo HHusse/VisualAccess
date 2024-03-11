@@ -27,7 +27,7 @@ namespace VisualAccess.API.Middlewares
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 context.Response.Clear();
 
                 var errorMessage = new { message = "Something went wrong with server" };

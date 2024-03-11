@@ -6,7 +6,7 @@ using VisualAccess.Domain.Enumerations;
 
 namespace VisualAccess.DataAccess.Models
 {
-    public class AccountDTO : DTOBase
+    public class AccountDto : IDtoBase
     {
         [BsonElement("id")]
         [BsonRequired]
@@ -52,10 +52,10 @@ namespace VisualAccess.DataAccess.Models
         public List<string> AllowedRooms { get; set; } = new();
 
         [BsonElement("notifications")]
-        public List<NotificationDTO> Notifications { get; set; } = new();
+        public List<NotificationDto> Notifications { get; set; } = new();
 
         [BsonElement("temporaryRoomPermissions")]
-        public List<TemporaryRoomPermissionDTO> TemporaryRoomPermissions = new();
+        public List<TemporaryRoomPermissionDto> TemporaryRoomPermissions { get; set; } = new();
 
         [BsonElement("createdAt")]
         [BsonRequired]

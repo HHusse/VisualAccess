@@ -9,7 +9,7 @@ using VisualAccess.DataAccess.Contexts;
 
 namespace VisualAccess.DataAccess.Migrations
 {
-    [DbContext(typeof(VisualAccessDbContextPgSQL))]
+    [DbContext(typeof(VisualAccessDbContextPgSql))]
     partial class VisualAccessDbContextPgSQLModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -21,7 +21,7 @@ namespace VisualAccess.DataAccess.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("VisualAccess.DataAccess.Models.FaceDTO", b =>
+            modelBuilder.Entity("VisualAccess.DataAccess.Models.FaceDto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

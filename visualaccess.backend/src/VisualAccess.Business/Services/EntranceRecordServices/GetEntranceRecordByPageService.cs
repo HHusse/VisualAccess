@@ -24,7 +24,7 @@ namespace VisualAccess.Business.Services.EntranceRecordServices
 
         public async Task<(ServiceResult, List<EntranceRecord>?, long)> Execute(int page)
         {
-            List<EntranceRecordDTO> entranceRecordsDTOList = (List<EntranceRecordDTO>)await entranceRecordRepository.GetEntranceRecordsByPage(page);
+            List<EntranceRecordDto> entranceRecordsDTOList = (List<EntranceRecordDto>)await entranceRecordRepository.GetEntranceRecordsByPage(page);
             long entranceCount = await entranceRecordRepository.GetEntranceRecordsCount();
             double pagesDouble = (double)entranceCount / 5;
             long pages = (long)Math.Ceiling(pagesDouble);
@@ -35,7 +35,7 @@ namespace VisualAccess.Business.Services.EntranceRecordServices
             }
 
             log.Info($"Fetched {entranceRecordsDTOList.Count} entrance records");
-            List<EntranceRecord> entranceRecordsList = mapper.Map<List<EntranceRecordDTO>, List<EntranceRecord>>(entranceRecordsDTOList);
+            List<EntranceRecord> entranceRecordsList = mapper.Map<List<EntranceRecordDto>, List<EntranceRecord>>(entranceRecordsDTOList);
             return new(ServiceResult.OK, entranceRecordsList, pages);
         }
     }

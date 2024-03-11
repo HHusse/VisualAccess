@@ -27,7 +27,7 @@ namespace VisualAccess.DataAccess.Repositories
 
         public async Task<DatabaseResult> AddNewRoom(Room room)
         {
-            RoomDTO newRoom = mapper.Map<Room, RoomDTO>(room);
+            RoomDto newRoom = mapper.Map<Room, RoomDto>(room);
 
             try
             {
@@ -42,14 +42,14 @@ namespace VisualAccess.DataAccess.Repositories
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 return DatabaseResult.UNKNOWN_ERROR;
             }
         }
 
-        public async Task<DTOBase?> GetRoom(string roomName)
+        public async Task<IDtoBase?> GetRoom(string roomName)
         {
-            var filter = Builders<RoomDTO>.Filter.Eq(r => r.Name, roomName.ToLower());
+            var filter = Builders<RoomDto>.Filter.Eq(r => r.Name, roomName.ToLower());
             try
             {
                 var roomDTO = await dbContext.RoomsCollection.Find(filter).FirstOrDefaultAsync();
@@ -64,14 +64,14 @@ namespace VisualAccess.DataAccess.Repositories
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 return null;
             }
         }
 
         public async Task<DatabaseResult> RemoveRoom(Room room)
         {
-            var filter = Builders<RoomDTO>.Filter.Eq(r => r.Id, room.Id);
+            var filter = Builders<RoomDto>.Filter.Eq(r => r.Id, room.Id);
 
             try
             {
@@ -86,25 +86,25 @@ namespace VisualAccess.DataAccess.Repositories
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 return DatabaseResult.UNKNOWN_ERROR;
             }
         }
 
         public async Task<DatabaseResult> RoomExist(string roomName)
         {
-            var filter = Builders<RoomDTO>.Filter.Eq(r => r.Name, roomName.ToLower());
+            var filter = Builders<RoomDto>.Filter.Eq(r => r.Name, roomName.ToLower());
             var count = await dbContext.RoomsCollection.CountDocumentsAsync(filter);
             return count > 0 ? DatabaseResult.ROOM_EXIST : DatabaseResult.ROOM_NOT_FOUND;
         }
 
-        public async Task<IEnumerable<DTOBase>> GetRoomsByPage(int pageNumber, int pageSize = 5)
+        public async Task<IEnumerable<IDtoBase>> GetRoomsByPage(int pageNumber, int pageSize = 5)
         {
             try
             {
                 int skip = (pageNumber - 1) * pageSize;
 
-                var filter = Builders<RoomDTO>.Filter.Empty;
+                var filter = Builders<RoomDto>.Filter.Empty;
 
                 var rooms = await dbContext.RoomsCollection
                     .Find(filter)
@@ -118,7 +118,7 @@ namespace VisualAccess.DataAccess.Repositories
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 throw;
             }
         }
@@ -127,11 +127,11 @@ namespace VisualAccess.DataAccess.Repositories
         {
             try
             {
-                return await dbContext.RoomsCollection.CountDocumentsAsync(Builders<RoomDTO>.Filter.Empty);
+                return await dbContext.RoomsCollection.CountDocumentsAsync(Builders<RoomDto>.Filter.Empty);
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 throw;
             }
         }

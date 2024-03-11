@@ -13,21 +13,20 @@ namespace VisualAccess.Business.Services.AccountServices
     public class ResetAccountPasswordService
     {
         private readonly ILog log = LogManager.GetLogger(typeof(ResetAccountPasswordService));
-        private Account account;
+        private readonly Account account;
         private readonly IAccountRepository accountRepository;
         private readonly IAccountValidator accountValidator;
-        private readonly IGenericMapper mapper;
 
         public ResetAccountPasswordService(Account account, IAccountRepository accountRepository, IAccountValidator accountValidator, IGenericMapper mapper)
         {
             this.account = account;
             this.accountRepository = accountRepository;
             this.accountValidator = accountValidator;
-            this.mapper = mapper;
         }
 
         public async Task<ServiceResult> Execute(string oldPassword, string newParssword, string confirmedPassword)
         {
+            log.Info($"Started password reset for account {account.Username}");
             if (newParssword != confirmedPassword)
             {
                 return ServiceResult.INVALID_OPERATION;

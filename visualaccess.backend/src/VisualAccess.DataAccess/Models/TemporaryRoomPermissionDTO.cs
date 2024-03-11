@@ -5,7 +5,7 @@ using VisualAccess.Domain.Entities;
 
 namespace VisualAccess.DataAccess.Models
 {
-    public class TemporaryRoomPermissionDTO : DTOBase
+    public class TemporaryRoomPermissionDto : IDtoBase
     {
         [BsonElement("room")]
         [BsonRequired]

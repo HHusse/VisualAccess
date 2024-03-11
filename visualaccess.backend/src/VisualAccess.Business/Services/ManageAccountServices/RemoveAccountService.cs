@@ -28,7 +28,7 @@ namespace VisualAccess.Business.Services.ManageAccountServices
 
         public async Task<ServiceResult> Execute(Account currentAccount, string username)
         {
-            AccountDTO? accountDTO = (AccountDTO?)await accountRepository.GetAccount(username);
+            AccountDto? accountDTO = (AccountDto?)await accountRepository.GetAccount(username);
             if (accountDTO is null)
             {
                 log.Warn($"Account with username {username.ToLower()} dosen't exist");
@@ -36,7 +36,7 @@ namespace VisualAccess.Business.Services.ManageAccountServices
             }
 
 
-            Account account = mapper.Map<AccountDTO, Account>(accountDTO);
+            Account account = mapper.Map<AccountDto, Account>(accountDTO);
             if (currentAccount.Role != Role.ADMIN && account.Role == Role.ADMIN)
             {
                 log.Warn($"Account with role {currentAccount.Role} try to remove an ADMIN account");

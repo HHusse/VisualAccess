@@ -10,7 +10,7 @@ public class RemoveAllNotificationsService
 {
     private readonly ILog log = LogManager.GetLogger(typeof(RemoveAllNotificationsService));
 
-    private Account account;
+    private readonly Account account;
     private readonly IAccountRepository accountRepository;
 
     public RemoveAllNotificationsService(Account account, IAccountRepository accountRepository)
@@ -21,6 +21,7 @@ public class RemoveAllNotificationsService
 
     public async Task<ServiceResult> Execute()
     {
+        log.Info($"Trying to remove all notification for account {account.Username}");
         account.Notifications.Clear();
         DatabaseResult result = await accountRepository.UpdateAccount(account);
         switch (result)

@@ -19,6 +19,7 @@ namespace VisualAccess.Business.Services.ManageRoomServices
 
         public async Task<ServiceResult> Execute(Room room)
         {
+            log.Info($"Trying to register room {room.Name}");
             DatabaseResult existResult = await repository.RoomExist(room.Name);
             if (existResult == DatabaseResult.ROOM_EXIST)
             {

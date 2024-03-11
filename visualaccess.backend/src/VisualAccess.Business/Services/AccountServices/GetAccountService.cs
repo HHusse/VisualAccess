@@ -24,14 +24,14 @@ namespace VisualAccess.Business.Services.AccountServices
 
         public async Task<(ServiceResult, Account?)> Execute(string username)
         {
-            AccountDTO? accountDTO = (AccountDTO?)await accountRepository.GetAccount(username);
+            AccountDto? accountDTO = (AccountDto?)await accountRepository.GetAccount(username);
             if (accountDTO is null)
             {
                 log.Warn($"Account with username {username.ToLower()} dosen't exist");
                 return new(ServiceResult.ACCOUNT_NOT_FOUND, null);
             }
 
-            Account account = mapper.Map<AccountDTO, Account>(accountDTO);
+            Account account = mapper.Map<AccountDto, Account>(accountDTO);
 
             account.TemporaryRoomPermissions.RemoveAll(temp => temp.Until < DateTimeOffset.Now.ToUnixTimeSeconds());
             _ = accountRepository.UpdateAccount(account);

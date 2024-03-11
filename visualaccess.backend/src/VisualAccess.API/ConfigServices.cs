@@ -54,7 +54,7 @@ namespace VisualAccess.API
 
             services.AddHttpClient();
             services.AddSingleton(mongoDatabase);
-            services.AddDbContext<VisualAccessDbContextPgSQL>(opt => opt.UseNpgsql(Environment.GetEnvironmentVariable("VSAC_PGSQL")!));
+            services.AddDbContext<VisualAccessDbContextPgSql>(opt => opt.UseNpgsql(Environment.GetEnvironmentVariable("VSAC_PGSQL")!));
             services.AddSingleton(LogManager.GetLogger("API"));
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IAccountValidator, AccountValidator>();

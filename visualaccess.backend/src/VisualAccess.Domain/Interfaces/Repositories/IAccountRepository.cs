@@ -9,9 +9,9 @@ namespace VisualAccess.Domain.Interfaces.Repositories
         public Task<DatabaseResult> CreateAccount(Account account);
         public Task<DatabaseResult> UpdateAccount(Account account);
         public Task<DatabaseResult> RemoveAccount(Account account);
-        public Task<DTOBase?> GetAccount(string username);
-        public Task<DTOBase?> GetAccount(int faceId);
-        public Task<IEnumerable<DTOBase>> GetAccountsByPage(int pageNumber, int pageSize = 5);
+        public Task<IDtoBase?> GetAccount(string username);
+        public Task<IDtoBase?> GetAccount(int faceId);
+        public Task<IEnumerable<IDtoBase>> GetAccountsByPage(int pageNumber, int pageSize = 5);
         public Task<long> GetAccountCount();
 
         public Task<bool> UsernameExist(string username);

@@ -5,27 +5,27 @@ using VisualAccess.Domain.Enumerations;
 
 namespace VisualAccess.DataAccess.Contexts
 {
-    public class VisualAccessDbContextPgSQL : DbContext
+    public class VisualAccessDbContextPgSql : DbContext
     {
-        public DbSet<FaceDTO> Faces { get; set; }
+        public DbSet<FaceDto> Faces { get; set; }
 
-        public VisualAccessDbContextPgSQL()
+        public VisualAccessDbContextPgSql()
         {
         }
 
-        public VisualAccessDbContextPgSQL(DbContextOptions<VisualAccessDbContextPgSQL> options)
+        public VisualAccessDbContextPgSql(DbContextOptions<VisualAccessDbContextPgSql> options)
         : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<FaceDTO>().ToTable("Faces").HasKey(f => f.Id);
-            modelBuilder.Entity<FaceDTO>()
+            modelBuilder.Entity<FaceDto>().ToTable("Faces").HasKey(f => f.Id);
+            modelBuilder.Entity<FaceDto>()
                 .HasIndex(f => f.Id)
                 .IsUnique();
-            modelBuilder.Entity<FaceDTO>().Property(f => f.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<FaceDTO>().Property(f => f.Encoding).IsRequired();
+            modelBuilder.Entity<FaceDto>().Property(f => f.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<FaceDto>().Property(f => f.Encoding).IsRequired();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

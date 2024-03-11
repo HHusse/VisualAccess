@@ -30,7 +30,7 @@ public class AcceptRequestRoomPermissionService
 
     public async Task<ServiceResult> Execute(Account approverAccount, string requestID, int days)
     {
-        RequestRoomPermissionDTO? requestDTO = (RequestRoomPermissionDTO?)await requestRoomPermissionRepository.GetById(requestID);
+        RequestRoomPermissionDto? requestDTO = (RequestRoomPermissionDto?)await requestRoomPermissionRepository.GetById(requestID);
         if (requestDTO is null)
         {
             log.Warn($"Request with id {requestID} dosen't exist");
@@ -38,9 +38,9 @@ public class AcceptRequestRoomPermissionService
         }
 
         log.Info($"Request with id {requestID} succesfuly found");
-        RequestRoomPermission request = mapper.Map<RequestRoomPermissionDTO, RequestRoomPermission>(requestDTO);
+        RequestRoomPermission request = mapper.Map<RequestRoomPermissionDto, RequestRoomPermission>(requestDTO);
 
-        AccountDTO? accountDTO = (AccountDTO?)await accountRepository.GetAccount(request.Username);
+        AccountDto? accountDTO = (AccountDto?)await accountRepository.GetAccount(request.Username);
         if (accountDTO is null)
         {
             log.Warn($"Account with username {request.Username} dosen't exist");
@@ -48,7 +48,7 @@ public class AcceptRequestRoomPermissionService
             return ServiceResult.ACCOUNT_NOT_FOUND;
         }
 
-        Account account = mapper.Map<AccountDTO, Account>(accountDTO);
+        Account account = mapper.Map<AccountDto, Account>(accountDTO);
         if (request.Type == RequestRoomPermissionType.PERMANENT)
         {
             Notification notification = notificationFactory.Create(approverAccount.Username, $"You have received access to room {request.RoomName} permanently");

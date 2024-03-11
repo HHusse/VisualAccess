@@ -12,13 +12,11 @@ namespace VisualAccess.API.Controllers;
 [Authorize(Policy = "AccountRequest")]
 public class RequestDecisionsControllers : ControllerBase
 {
-    private readonly ILog log;
     private readonly IRequestDecisionsRepository requestDecisionsRepository;
     private readonly IGenericMapper mapper;
 
-    public RequestDecisionsControllers(ILog log, IRequestDecisionsRepository requestDecisionsRepository, IGenericMapper mapper)
+    public RequestDecisionsControllers(IRequestDecisionsRepository requestDecisionsRepository, IGenericMapper mapper)
     {
-        this.log = log;
         this.requestDecisionsRepository = requestDecisionsRepository;
         this.mapper = mapper;
     }

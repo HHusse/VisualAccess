@@ -25,7 +25,7 @@ namespace VisualAccess.DataAccess.Repositories
 
         public async Task<DatabaseResult> CreateRequest(RequestRoomPermission requestRoomPermission)
         {
-            RequestRoomPermissionDTO newRequest = mapper.Map<RequestRoomPermission, RequestRoomPermissionDTO>(requestRoomPermission);
+            RequestRoomPermissionDto newRequest = mapper.Map<RequestRoomPermission, RequestRoomPermissionDto>(requestRoomPermission);
 
             try
             {
@@ -35,7 +35,7 @@ namespace VisualAccess.DataAccess.Repositories
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 return DatabaseResult.UNKNOWN_ERROR;
             }
         }
@@ -57,16 +57,16 @@ namespace VisualAccess.DataAccess.Repositories
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 return DatabaseResult.UNKNOWN_ERROR;
             }
         }
 
-        public async Task<DTOBase?> GetById(string requestId)
+        public async Task<IDtoBase?> GetById(string requestId)
         {
             try
             {
-                var filter = Builders<RequestRoomPermissionDTO>.Filter.Eq(r => r.Id, requestId);
+                var filter = Builders<RequestRoomPermissionDto>.Filter.Eq(r => r.Id, requestId);
                 var requestDto = await dbContext.RequestRoomPermissionCollection.Find(filter).FirstOrDefaultAsync();
 
                 if (requestDto is null)
@@ -80,18 +80,18 @@ namespace VisualAccess.DataAccess.Repositories
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 throw;
             }
         }
 
-        public async Task<IEnumerable<DTOBase>> GetByPage(int pageNumber, int pageSize = 5)
+        public async Task<IEnumerable<IDtoBase>> GetByPage(int pageNumber, int pageSize = 5)
         {
             try
             {
                 int skip = (pageNumber - 1) * pageSize;
 
-                var filter = Builders<RequestRoomPermissionDTO>.Filter.Empty;
+                var filter = Builders<RequestRoomPermissionDto>.Filter.Empty;
 
                 var requests = await dbContext.RequestRoomPermissionCollection
                     .Find(filter)
@@ -105,7 +105,7 @@ namespace VisualAccess.DataAccess.Repositories
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 throw;
             }
         }
@@ -114,9 +114,9 @@ namespace VisualAccess.DataAccess.Repositories
         {
             try
             {
-                var filter = Builders<RequestRoomPermissionDTO>.Filter.And(
-                    Builders<RequestRoomPermissionDTO>.Filter.Eq(r => r.Username, username),
-                    Builders<RequestRoomPermissionDTO>.Filter.Eq(r => r.RoomName, roomName));
+                var filter = Builders<RequestRoomPermissionDto>.Filter.And(
+                    Builders<RequestRoomPermissionDto>.Filter.Eq(r => r.Username, username),
+                    Builders<RequestRoomPermissionDto>.Filter.Eq(r => r.RoomName, roomName));
 
                 var count = await dbContext.RequestRoomPermissionCollection.CountDocumentsAsync(filter);
 
@@ -124,14 +124,14 @@ namespace VisualAccess.DataAccess.Repositories
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 throw;
             }
         }
 
         public async Task<long> GetRequestsCount()
         {
-            var filter = Builders<RequestRoomPermissionDTO>.Filter.Empty;
+            var filter = Builders<RequestRoomPermissionDto>.Filter.Empty;
             return await dbContext.RequestRoomPermissionCollection.CountDocumentsAsync(filter);
         }
 

@@ -29,13 +29,13 @@ namespace VisualAccess.Business.Services.AuthenticationServices
 
         public async Task<(ServiceResult, string)> Execute(string name, string password)
         {
-            RoomDTO? roomDTO = (RoomDTO?)await repository.GetRoom(name);
+            RoomDto? roomDTO = (RoomDto?)await repository.GetRoom(name);
             if (roomDTO is null)
             {
                 log.Warn($"Room with name {name.ToLower()} dosen't exist");
                 return new(ServiceResult.ROOM_NOT_FOUND, "");
             }
-            Room room = mapper.Map<RoomDTO, Room>(roomDTO);
+            Room room = mapper.Map<RoomDto, Room>(roomDTO);
 
             if (!validator.VerifyPassword(room, password))
             {

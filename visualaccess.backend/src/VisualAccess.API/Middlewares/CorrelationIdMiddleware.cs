@@ -3,6 +3,8 @@ using log4net;
 using System;
 using System.Threading.Tasks;
 
+namespace VisualAccess.API.Middlewares;
+
 public class CorrelationIdMiddleware
 {
     private readonly RequestDelegate _next;

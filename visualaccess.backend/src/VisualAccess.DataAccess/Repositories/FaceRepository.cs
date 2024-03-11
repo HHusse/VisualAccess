@@ -13,10 +13,10 @@ namespace VisualAccess.DataAccess.Repositories
 {
     public class FaceRepository : IFaceRepository
     {
-        private readonly VisualAccessDbContextPgSQL dbContext;
+        private readonly VisualAccessDbContextPgSql dbContext;
         private readonly ILog log = LogManager.GetLogger("Database");
 
-        public FaceRepository(VisualAccessDbContextPgSQL dbContext)
+        public FaceRepository(VisualAccessDbContextPgSql dbContext)
         {
             this.dbContext = dbContext;
         }
@@ -39,7 +39,7 @@ namespace VisualAccess.DataAccess.Repositories
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 return DatabaseResult.UNKNOWN_ERROR;
             }
         }

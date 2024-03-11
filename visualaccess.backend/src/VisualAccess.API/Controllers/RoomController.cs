@@ -23,16 +23,14 @@ namespace VisualAccess.API.Controllers
     public class RoomController : ControllerBase
     {
         private readonly ILog log;
-        private readonly IRoomRepository roomRepository;
         private readonly IEntranceRecordRepository entranceRecordRepository;
         private readonly IAccountRepository accountRepository;
         private readonly IFaceRecognitionServiceClient faceRecognitionClient;
         private readonly IGenericMapper mapper;
 
-        public RoomController(ILog log, IRoomRepository roomRepository, IEntranceRecordRepository entranceRecordRepository, IAccountRepository accountRepository, IFaceRecognitionServiceClient faceRecognitionClient, IGenericMapper mapper)
+        public RoomController(ILog log, IEntranceRecordRepository entranceRecordRepository, IAccountRepository accountRepository, IFaceRecognitionServiceClient faceRecognitionClient, IGenericMapper mapper)
         {
             this.log = log;
-            this.roomRepository = roomRepository;
             this.entranceRecordRepository = entranceRecordRepository;
             this.accountRepository = accountRepository;
             this.faceRecognitionClient = faceRecognitionClient;
@@ -59,7 +57,7 @@ namespace VisualAccess.API.Controllers
             await requestModel.FaceImg!.CopyToAsync(faceStream);
             faceStream.Position = 0;
 
-            VerifyFaceService service = new(room, accountRepository, faceRecognitionClient, roomRepository, entranceRecordRepository, mapper);
+            VerifyFaceService service = new(room, accountRepository, faceRecognitionClient, entranceRecordRepository, mapper);
             ServiceResult result = await service.Execute(faceStream);
 
             switch (result)

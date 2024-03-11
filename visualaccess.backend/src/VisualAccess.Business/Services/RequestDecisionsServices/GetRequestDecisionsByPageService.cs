@@ -21,19 +21,19 @@ public class GetRequestDecisionsByPageService
 
     public async Task<(ServiceResult, List<RequestDecisions>?, long)> Execute(int page)
     {
-        List<RequestDecisionsDTO> requests = (List<RequestDecisionsDTO>)await requestDecisionsRepository.GetRequestDecisionByPage(page);
+        List<RequestDecisionsDto> requests = (List<RequestDecisionsDto>)await requestDecisionsRepository.GetRequestDecisionByPage(page);
         long requestsCount = await requestDecisionsRepository.GetRequestsCount();
         double pagesDouble = (double)requestsCount / 5;
         long pages = (long)Math.Ceiling(pagesDouble);
 
-        if (requests.Count() == 0)
+        if (requests.Count == 0)
         {
             log.Warn($"No request found for page {page}");
             return new(ServiceResult.NOT_FOUND, null, 0);
         }
 
-        log.Info($"Fetched {requests.Count()} requests");
-        List<RequestDecisions> requestsList = mapper.Map<List<RequestDecisionsDTO>, List<RequestDecisions>>(requests);
+        log.Info($"Fetched {requests.Count} requests");
+        List<RequestDecisions> requestsList = mapper.Map<List<RequestDecisionsDto>, List<RequestDecisions>>(requests);
         return new(ServiceResult.OK, requestsList, pages);
     }
 }

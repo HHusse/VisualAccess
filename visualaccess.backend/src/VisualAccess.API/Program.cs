@@ -25,7 +25,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var dbContextPgSQL = services.GetRequiredService<VisualAccessDbContextPgSQL>();
+    var dbContextPgSQL = services.GetRequiredService<VisualAccessDbContextPgSql>();
     dbContextPgSQL.Database.Migrate();
     var dbContextMongoDB = services.GetRequiredService<VisualAccessDbContextMongoDB>();
     dbContextMongoDB.Configure();
@@ -66,6 +66,6 @@ Console.CancelKeyPress += (sender, e) =>
 
 await app.RunAsync(cancellationToken.Token);
 
+cancellationToken.Dispose();
 log.Info("Server has stopped");
-
 

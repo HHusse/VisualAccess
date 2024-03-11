@@ -12,18 +12,16 @@ namespace VisualAccess.FaceRecognition.Services
     public class VerifyFaceService
     {
         private readonly ILog log = LogManager.GetLogger(typeof(RegisterFaceService));
-        private Room room;
+        private readonly Room room;
         private readonly IAccountRepository accountRepository;
         private readonly IFaceRecognitionServiceClient client;
-        private readonly IRoomRepository roomRepository;
         private readonly IEntranceRecordRepository entranceRecordRepository;
         private readonly IGenericMapper mapper;
 
-        public VerifyFaceService(Room room, IAccountRepository accountRepository, IFaceRecognitionServiceClient client, IRoomRepository roomRepository, IEntranceRecordRepository entranceRecordRepository, IGenericMapper mapper)
+        public VerifyFaceService(Room room, IAccountRepository accountRepository, IFaceRecognitionServiceClient client, IEntranceRecordRepository entranceRecordRepository, IGenericMapper mapper)
         {
             this.accountRepository = accountRepository;
             this.client = client;
-            this.roomRepository = roomRepository;
             this.entranceRecordRepository = entranceRecordRepository;
             this.mapper = mapper;
             this.room = room;
@@ -34,14 +32,14 @@ namespace VisualAccess.FaceRecognition.Services
             var faceRecognitionResult = await client.VerifyFaceAsync(faceStream);
             if (faceRecognitionResult.Item1 == FaceRecognitionResult.OK)
             {
-                AccountDTO? accountDTO = (AccountDTO?)await accountRepository.GetAccount((int)faceRecognitionResult.Item2!);
+                AccountDto? accountDTO = (AccountDto?)await accountRepository.GetAccount((int)faceRecognitionResult.Item2!);
                 if (accountDTO is null)
                 {
                     log.Warn($"No account found for user {faceRecognitionResult.Item2}");
                     return ServiceResult.ACCOUNT_NOT_FOUND;
                 }
 
-                Account account = mapper.Map<AccountDTO, Account>(accountDTO);
+                Account account = mapper.Map<AccountDto, Account>(accountDTO);
                 account.TemporaryRoomPermissions.RemoveAll(temp => temp.Until < DateTimeOffset.Now.ToUnixTimeSeconds());
                 _ = accountRepository.UpdateAccount(account);
                 if (!account.AllowedRooms.Contains(room.Name) && !account.TemporaryRoomPermissions.Exists(temp => temp.Room == room.Name && temp.Until > DateTimeOffset.Now.ToUnixTimeSeconds()))

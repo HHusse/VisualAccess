@@ -27,7 +27,7 @@ namespace VisualAccess.DataAccess.Repositories
 
         public async Task<DatabaseResult> CreateAccount(Account account)
         {
-            AccountDTO newAccount = mapper.Map<Account, AccountDTO>(account);
+            AccountDto newAccount = mapper.Map<Account, AccountDto>(account);
 
             try
             {
@@ -42,18 +42,18 @@ namespace VisualAccess.DataAccess.Repositories
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 return DatabaseResult.UNKNOWN_ERROR;
             }
         }
 
         public async Task<DatabaseResult> UpdateAccount(Account account)
         {
-            AccountDTO updatedAccountDto = mapper.Map<Account, AccountDTO>(account);
+            AccountDto updatedAccountDto = mapper.Map<Account, AccountDto>(account);
 
             updatedAccountDto.Id = account.Id;
 
-            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Id, updatedAccountDto.Id);
+            var filter = Builders<AccountDto>.Filter.Eq(a => a.Id, updatedAccountDto.Id);
 
             try
             {
@@ -70,14 +70,14 @@ namespace VisualAccess.DataAccess.Repositories
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 return DatabaseResult.UNKNOWN_ERROR;
             }
         }
 
         public async Task<DatabaseResult> RemoveAccount(Account account)
         {
-            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Id, account.Id);
+            var filter = Builders<AccountDto>.Filter.Eq(a => a.Id, account.Id);
 
             try
             {
@@ -92,30 +92,30 @@ namespace VisualAccess.DataAccess.Repositories
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 return DatabaseResult.UNKNOWN_ERROR;
             }
         }
 
-        public async Task<DTOBase?> GetAccount(string username)
+        public async Task<IDtoBase?> GetAccount(string username)
         {
-            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Username, username.ToLower());
+            var filter = Builders<AccountDto>.Filter.Eq(a => a.Username, username.ToLower());
             return await dbContext.AccountsCollection.Find(filter).FirstOrDefaultAsync();
         }
 
-        public async Task<DTOBase?> GetAccount(int faceId)
+        public async Task<IDtoBase?> GetAccount(int faceId)
         {
-            var filter = Builders<AccountDTO>.Filter.Eq(a => a.FaceID, faceId);
+            var filter = Builders<AccountDto>.Filter.Eq(a => a.FaceID, faceId);
             return await dbContext.AccountsCollection.Find(filter).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<DTOBase>> GetAccountsByPage(int pageNumber, int pageSize = 5)
+        public async Task<IEnumerable<IDtoBase>> GetAccountsByPage(int pageNumber, int pageSize = 5)
         {
             try
             {
                 int skip = (pageNumber - 1) * pageSize;
 
-                var filter = Builders<AccountDTO>.Filter.Empty;
+                var filter = Builders<AccountDto>.Filter.Empty;
 
                 var accounts = await dbContext.AccountsCollection
                     .Find(filter)
@@ -123,47 +123,47 @@ namespace VisualAccess.DataAccess.Repositories
                     .Limit(pageSize)
                     .ToListAsync();
 
-                log.Info($"Found {accounts.Count()} acounts on page {pageNumber}");
+                log.Info($"Found {accounts.Count} acounts on page {pageNumber}");
                 return accounts;
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 throw;
             }
         }
 
         public async Task<long> GetAccountCount()
         {
-            var filter = Builders<AccountDTO>.Filter.Empty;
+            var filter = Builders<AccountDto>.Filter.Empty;
             return await dbContext.AccountsCollection.CountDocumentsAsync(filter);
         }
 
         public async Task<bool> UsernameExist(string username)
         {
-            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Username, username.ToLower());
+            var filter = Builders<AccountDto>.Filter.Eq(a => a.Username, username.ToLower());
             var count = await dbContext.AccountsCollection.CountDocumentsAsync(filter);
             return count > 0;
         }
 
         public async Task<bool> EmailExist(string email)
         {
-            var filter = Builders<AccountDTO>.Filter.Eq(a => a.Email, email);
+            var filter = Builders<AccountDto>.Filter.Eq(a => a.Email, email);
             var count = await dbContext.AccountsCollection.CountDocumentsAsync(filter);
             return count > 0;
         }
 
         public async Task<bool> FaceAlreadyAssociated(int faceId)
         {
-            var filter = Builders<AccountDTO>.Filter.Eq(a => a.FaceID, faceId);
+            var filter = Builders<AccountDto>.Filter.Eq(a => a.FaceID, faceId);
             var count = await dbContext.AccountsCollection.CountDocumentsAsync(filter);
             return count > 0;
         }
 
         public async Task<DatabaseResult> CleanupPermissionsAfterRoomRemoval(string roomName)
         {
-            var filter = Builders<AccountDTO>.Filter.AnyEq(a => a.AllowedRooms, roomName);
-            var update = Builders<AccountDTO>.Update.Pull(a => a.AllowedRooms, roomName);
+            var filter = Builders<AccountDto>.Filter.AnyEq(a => a.AllowedRooms, roomName);
+            var update = Builders<AccountDto>.Update.Pull(a => a.AllowedRooms, roomName);
 
             try
             {
@@ -180,7 +180,7 @@ namespace VisualAccess.DataAccess.Repositories
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 return DatabaseResult.UNKNOWN_ERROR;
             }
         }

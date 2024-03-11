@@ -10,7 +10,7 @@ public class RemoveNotificationService
 {
     private readonly ILog log = LogManager.GetLogger(typeof(RemoveNotificationService));
 
-    private Account account;
+    private readonly Account account;
     private readonly IAccountRepository accountRepository;
 
     public RemoveNotificationService(Account account, IAccountRepository accountRepository)
@@ -21,6 +21,7 @@ public class RemoveNotificationService
 
     public async Task<ServiceResult> Execute(string id)
     {
+        log.Info($"Trying to remove notification {id} for account {account.Username}");
         if (!account.Notifications.Exists(n => n.Id == id))
         {
             return ServiceResult.NOT_FOUND;

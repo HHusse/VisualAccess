@@ -5,7 +5,7 @@ using VisualAccess.Domain.Enumerations;
 
 namespace VisualAccess.DataAccess.Models
 {
-    public class RequestDecisionsDTO : DTOBase
+    public class RequestDecisionsDto : IDtoBase
     {
         [BsonElement("id")]
         [BsonRequired]

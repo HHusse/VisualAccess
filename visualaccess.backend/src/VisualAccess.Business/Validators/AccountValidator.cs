@@ -5,10 +5,11 @@ using log4net;
 using VisualAccess.Domain.Entities;
 using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Interfaces.Validators;
+using System.Threading.Tasks;
 
 namespace VisualAccess.Business.Validators
 {
-    public class AccountValidator : IAccountValidator
+    public partial class AccountValidator : IAccountValidator
     {
         private readonly IAccountRepository accountRepository;
 
@@ -22,22 +23,28 @@ namespace VisualAccess.Business.Validators
             return BCrypt.Net.BCrypt.Verify(password, account.Password);
         }
 
+        [GeneratedRegex("^(?!.*[._]{2})[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")]
+        private static partial Regex EmailRegex();
+
         public bool IsValidEmail(string email)
         {
-            Regex emailRgx = new("^(?!.*[._]{2})[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
-            return emailRgx.IsMatch(email);
+            return EmailRegex().IsMatch(email);
         }
+
+        [GeneratedRegex("^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$")]
+        private static partial Regex PhoneNumberRegex();
 
         public bool IsValidPhoneNumber(string phoneNumber)
         {
-            Regex phoneNumberRgx = new("^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$");
-            return phoneNumberRgx.IsMatch(phoneNumber);
+            return PhoneNumberRegex().IsMatch(phoneNumber);
         }
+
+        [GeneratedRegex("^[a-zA-Z0-9_-]{5,15}$")]
+        private static partial Regex UsernameRegex();
 
         public bool IsValidUsername(string username)
         {
-            Regex usernameRgx = new("^[a-zA-Z0-9_-]{5,15}$");
-            return usernameRgx.IsMatch(username);
+            return UsernameRegex().IsMatch(username);
         }
 
         public async Task<bool> UsernameAlreadyExist(string username)
@@ -49,7 +56,5 @@ namespace VisualAccess.Business.Validators
         {
             return await accountRepository.EmailExist(email);
         }
-
     }
 }
-

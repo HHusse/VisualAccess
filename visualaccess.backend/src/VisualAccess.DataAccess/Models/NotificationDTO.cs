@@ -1,10 +1,11 @@
 ﻿using System;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using VisualAccess.Domain.Entities;
 
 namespace VisualAccess.DataAccess.Models
 {
-    public class NotificationDTO
+    public class NotificationDto : IDtoBase
     {
         [BsonElement("id")]
         [BsonRequired]

@@ -10,7 +10,7 @@ public class UpdateNotificationService
 {
     private readonly ILog log = LogManager.GetLogger(typeof(UpdateNotificationService));
 
-    private Account account;
+    private readonly Account account;
     private readonly IAccountRepository accountRepository;
 
     public UpdateNotificationService(Account account, IAccountRepository accountRepository)
@@ -21,7 +21,8 @@ public class UpdateNotificationService
 
     public async Task<ServiceResult> Execute(string id, bool isRead)
     {
-        Notification? notification = account.Notifications.FirstOrDefault(n => n.Id == id);
+        log.Info($"Trying to update notification with {id} for account {account.Username} and set isRead to {isRead}");
+        Notification? notification = account.Notifications.Find(n => n.Id == id);
         if (notification is null)
         {
             return ServiceResult.NOT_FOUND;

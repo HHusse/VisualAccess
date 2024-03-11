@@ -17,7 +17,7 @@ namespace VisualAccess.Domain.Entities
         public int? FaceID { get; set; }
         public List<string> AllowedRooms { get; set; } = new();
         public List<Notification> Notifications { get; set; } = new();
-        public List<TemporaryRoomPermission> TemporaryRoomPermissions = new();
+        public List<TemporaryRoomPermission> TemporaryRoomPermissions { get; set; } = new();
         public long CreatedAt { get; set; }
     }
 }

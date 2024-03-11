@@ -6,7 +6,7 @@ using VisualAccess.Domain.Enumerations;
 
 namespace VisualAccess.DataAccess.Models
 {
-    public class RequestRoomPermissionDTO : DTOBase
+    public class RequestRoomPermissionDto : IDtoBase
     {
         [BsonElement("id")]
         [BsonRequired]

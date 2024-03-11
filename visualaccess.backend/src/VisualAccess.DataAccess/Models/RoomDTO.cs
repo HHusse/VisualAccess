@@ -5,7 +5,7 @@ using VisualAccess.Domain.Entities;
 
 namespace VisualAccess.DataAccess.Models
 {
-    public class RoomDTO : DTOBase
+    public class RoomDto : IDtoBase
     {
 
         [BsonElement("id")]

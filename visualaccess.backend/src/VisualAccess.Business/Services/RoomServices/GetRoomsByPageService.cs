@@ -21,19 +21,19 @@ public class GetRoomsByPageService
 
     public async Task<(ServiceResult, List<Room>?, long)> Execute(int page)
     {
-        List<RoomDTO> rooms = (List<RoomDTO>)await roomRepository.GetRoomsByPage(page);
+        List<RoomDto> rooms = (List<RoomDto>)await roomRepository.GetRoomsByPage(page);
         long roomsCount = await roomRepository.GetRoomsCount();
         double pagesDouble = (double)roomsCount / 5;
         long pages = (long)Math.Ceiling(pagesDouble);
 
-        if (rooms.Count() == 0)
+        if (rooms.Count == 0)
         {
             log.Warn($"No room found for page {page}");
             return new(ServiceResult.NOT_FOUND, null, 0);
         }
 
-        log.Info($"Fetched {rooms.Count()} rooms");
-        List<Room> roomsList = mapper.Map<List<RoomDTO>, List<Room>>(rooms);
+        log.Info($"Fetched {rooms.Count} rooms");
+        List<Room> roomsList = mapper.Map<List<RoomDto>, List<Room>>(rooms);
         return new(ServiceResult.OK, roomsList, pages);
     }
 }

@@ -26,19 +26,19 @@ namespace VisualAccess.DataAccess.Repositories
 
         public async Task<DatabaseResult> CreateEntranceRecord(EntranceRecord entranceRecord)
         {
-            EntranceRecordDTO newEntranceRecord = mapper.Map<EntranceRecord, EntranceRecordDTO>(entranceRecord);
+            EntranceRecordDto newEntranceRecord = mapper.Map<EntranceRecord, EntranceRecordDto>(entranceRecord);
             await dbContext.EntranceRecordsCollection.InsertOneAsync(newEntranceRecord);
             log.Info($"Entrance record created successfully.");
             return DatabaseResult.OK;
         }
 
-        public async Task<IEnumerable<DTOBase>> GetEntranceRecordsByPage(int pageNumber, int pageSize = 5)
+        public async Task<IEnumerable<IDtoBase>> GetEntranceRecordsByPage(int pageNumber, int pageSize = 5)
         {
             try
             {
                 int skip = (pageNumber - 1) * pageSize;
 
-                var filter = Builders<EntranceRecordDTO>.Filter.Empty;
+                var filter = Builders<EntranceRecordDto>.Filter.Empty;
                 var entranceRecords = await dbContext.EntranceRecordsCollection
                     .Find(filter)
                     .SortByDescending(record => record.Time)
@@ -46,19 +46,19 @@ namespace VisualAccess.DataAccess.Repositories
                     .Limit(pageSize)
                     .ToListAsync();
 
-                log.Info($"Found {entranceRecords.Count()} entrance records on page {pageNumber}");
+                log.Info($"Found {entranceRecords.Count} entrance records on page {pageNumber}");
                 return entranceRecords;
             }
             catch (Exception e)
             {
-                LogException.Log(log, e);
+                ExceptionLogger.Log(log, e);
                 throw;
             }
         }
 
         public async Task<long> GetEntranceRecordsCount()
         {
-            return await dbContext.EntranceRecordsCollection.CountDocumentsAsync(Builders<EntranceRecordDTO>.Filter.Empty);
+            return await dbContext.EntranceRecordsCollection.CountDocumentsAsync(Builders<EntranceRecordDto>.Filter.Empty);
         }
     }
 }

@@ -26,14 +26,14 @@ namespace VisualAccess.FaceRecognition.Services
 
         public async Task<ServiceResult> Execute(string username, MemoryStream faceStream)
         {
-            AccountDTO? accountDTO = (AccountDTO?)await repository.GetAccount(username);
+            AccountDto? accountDTO = (AccountDto?)await repository.GetAccount(username);
             if (accountDTO is null)
             {
                 log.Warn($"Account with username {username.ToLower()} dosen't exist");
                 return ServiceResult.ACCOUNT_NOT_FOUND;
             }
 
-            Account account = mapper.Map<AccountDTO, Account>(accountDTO);
+            Account account = mapper.Map<AccountDto, Account>(accountDTO);
             var faceRecognitionResult = await client.RegisterFaceAsync(faceStream);
             if (faceRecognitionResult.Item1 == FaceRecognitionResult.OK)
             {

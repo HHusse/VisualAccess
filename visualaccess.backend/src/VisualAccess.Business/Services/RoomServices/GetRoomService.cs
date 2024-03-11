@@ -24,13 +24,13 @@ namespace VisualAccess.Business.Services.RoomServices
 
         public async Task<(ServiceResult, Room?)> Execute(string roomName)
         {
-            RoomDTO? roomDTO = (RoomDTO?)await roomRepository.GetRoom(roomName);
+            RoomDto? roomDTO = (RoomDto?)await roomRepository.GetRoom(roomName);
             if (roomDTO is null)
             {
                 log.Warn($"Room with name {roomName.ToLower()} dosen't exist");
                 return new(ServiceResult.ROOM_NOT_FOUND, null);
             }
-            Room room = mapper.Map<RoomDTO, Room>(roomDTO);
+            Room room = mapper.Map<RoomDto, Room>(roomDTO);
 
             return new(ServiceResult.OK, room);
         }

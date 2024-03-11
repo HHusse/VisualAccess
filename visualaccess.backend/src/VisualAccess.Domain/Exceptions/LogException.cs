@@ -3,7 +3,7 @@ using log4net;
 
 namespace VisualAccess.Domain.Exceptions
 {
-    public static class LogException
+    public static class ExceptionLogger
     {
         public static void Log(ILog log, Exception e)
         {

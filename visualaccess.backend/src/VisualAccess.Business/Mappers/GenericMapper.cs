@@ -14,20 +14,20 @@ namespace VisualAccess.Business.Mappers
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<Room, RoomDTO>();
-                cfg.CreateMap<RoomDTO, Room>();
-                cfg.CreateMap<Account, AccountDTO>();
-                cfg.CreateMap<AccountDTO, Account>();
-                cfg.CreateMap<EntranceRecord, EntranceRecordDTO>();
-                cfg.CreateMap<EntranceRecordDTO, EntranceRecord>();
-                cfg.CreateMap<Notification, NotificationDTO>();
-                cfg.CreateMap<NotificationDTO, Notification>();
-                cfg.CreateMap<RequestRoomPermission, RequestRoomPermissionDTO>();
-                cfg.CreateMap<RequestRoomPermissionDTO, RequestRoomPermission>();
-                cfg.CreateMap<TemporaryRoomPermission, TemporaryRoomPermissionDTO>();
-                cfg.CreateMap<TemporaryRoomPermissionDTO, TemporaryRoomPermission>();
-                cfg.CreateMap<RequestDecisions, RequestDecisionsDTO>();
-                cfg.CreateMap<RequestDecisionsDTO, RequestDecisions>();
+                cfg.CreateMap<Room, RoomDto>();
+                cfg.CreateMap<RoomDto, Room>();
+                cfg.CreateMap<Account, AccountDto>();
+                cfg.CreateMap<AccountDto, Account>();
+                cfg.CreateMap<EntranceRecord, EntranceRecordDto>();
+                cfg.CreateMap<EntranceRecordDto, EntranceRecord>();
+                cfg.CreateMap<Notification, NotificationDto>();
+                cfg.CreateMap<NotificationDto, Notification>();
+                cfg.CreateMap<RequestRoomPermission, RequestRoomPermissionDto>();
+                cfg.CreateMap<RequestRoomPermissionDto, RequestRoomPermission>();
+                cfg.CreateMap<TemporaryRoomPermission, TemporaryRoomPermissionDto>();
+                cfg.CreateMap<TemporaryRoomPermissionDto, TemporaryRoomPermission>();
+                cfg.CreateMap<RequestDecisions, RequestDecisionsDto>();
+                cfg.CreateMap<RequestDecisionsDto, RequestDecisions>();
             });
 
             mapper = config.CreateMapper();

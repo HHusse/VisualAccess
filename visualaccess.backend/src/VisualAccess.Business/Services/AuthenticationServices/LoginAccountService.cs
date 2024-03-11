@@ -31,7 +31,7 @@ namespace VisualAccess.Business.Services.AuthenticationServices
 
         public async Task<(ServiceResult, string)> Execute(string username, string password)
         {
-            AccountDTO? accountDTO = (AccountDTO?)await repository.GetAccount(username);
+            AccountDto? accountDTO = (AccountDto?)await repository.GetAccount(username);
 
             if (accountDTO is null)
             {
@@ -39,7 +39,7 @@ namespace VisualAccess.Business.Services.AuthenticationServices
                 return new(ServiceResult.ACCOUNT_NOT_FOUND, "");
             }
 
-            Account account = mapper.Map<AccountDTO, Account>(accountDTO);
+            Account account = mapper.Map<AccountDto, Account>(accountDTO);
 
             if (!validator.VerifyPassword(account, password))
             {

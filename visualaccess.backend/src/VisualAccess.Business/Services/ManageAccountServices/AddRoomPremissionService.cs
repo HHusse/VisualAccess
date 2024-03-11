@@ -26,22 +26,22 @@ namespace VisualAccess.Business.Services.ManageAccountServices
 
         public async Task<ServiceResult> Execute(string username, string roomName)
         {
-            AccountDTO? accountDTO = (AccountDTO?)await accountRepository.GetAccount(username);
+            AccountDto? accountDTO = (AccountDto?)await accountRepository.GetAccount(username);
             if (accountDTO is null)
             {
                 log.Warn($"Account with username {username.ToLower()} dosen't exist");
                 return ServiceResult.ACCOUNT_NOT_FOUND;
             }
 
-            RoomDTO? roomDTO = (RoomDTO?)await roomRepository.GetRoom(roomName);
+            RoomDto? roomDTO = (RoomDto?)await roomRepository.GetRoom(roomName);
             if (roomDTO is null)
             {
                 log.Warn($"Room with name {roomName.ToLower()} dosen't exist");
                 return ServiceResult.ROOM_NOT_FOUND;
             }
 
-            Account account = mapper.Map<AccountDTO, Account>(accountDTO);
-            Room room = mapper.Map<RoomDTO, Room>(roomDTO);
+            Account account = mapper.Map<AccountDto, Account>(accountDTO);
+            Room room = mapper.Map<RoomDto, Room>(roomDTO);
 
             account.AllowedRooms.Add(room.Name);
             DatabaseResult result = await accountRepository.UpdateAccount(account);

@@ -10,7 +10,7 @@ public class UpdateAllNotificationsService
 {
     private readonly ILog log = LogManager.GetLogger(typeof(UpdateAllNotificationsService));
 
-    private Account account;
+    private readonly Account account;
     private readonly IAccountRepository accountRepository;
 
     public UpdateAllNotificationsService(Account account, IAccountRepository accountRepository)
@@ -21,6 +21,7 @@ public class UpdateAllNotificationsService
 
     public async Task<ServiceResult> Execute(bool isRead)
     {
+        log.Info($"Trying to update all notification for account {account.Username} and set isRead to {isRead}");
         account.Notifications.ForEach(n => n.IsRead = isRead);
         DatabaseResult result = await accountRepository.UpdateAccount(account);
         switch (result)

@@ -5,7 +5,7 @@ using VisualAccess.Domain.Entities;
 
 namespace VisualAccess.DataAccess.Models
 {
-    public class EntranceRecordDTO : DTOBase
+    public class EntranceRecordDto : IDtoBase
     {
         [BsonElement("id")]
         [BsonRequired]

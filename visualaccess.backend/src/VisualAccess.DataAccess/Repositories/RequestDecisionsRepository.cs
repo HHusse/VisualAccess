@@ -26,7 +26,7 @@ public class RequestDecisionsRepository : IRequestDecisionsRepository
     {
         try
         {
-            var requestDecisionDTO = mapper.Map<RequestDecisions, RequestDecisionsDTO>(requestDecision);
+            var requestDecisionDTO = mapper.Map<RequestDecisions, RequestDecisionsDto>(requestDecision);
             await dbContext.RequestDecisionsCollection.InsertOneAsync(requestDecisionDTO);
             return DatabaseResult.OK;
         }
@@ -37,13 +37,13 @@ public class RequestDecisionsRepository : IRequestDecisionsRepository
         }
     }
 
-    public async Task<IEnumerable<DTOBase>> GetRequestDecisionByPage(int pageNumber, int pageSize = 5)
+    public async Task<IEnumerable<IDtoBase>> GetRequestDecisionByPage(int pageNumber, int pageSize = 5)
     {
         try
         {
             int skip = (pageNumber - 1) * pageSize;
 
-            var filter = Builders<RequestDecisionsDTO>.Filter.Empty;
+            var filter = Builders<RequestDecisionsDto>.Filter.Empty;
 
             var requestDecisions = await dbContext.RequestDecisionsCollection
                 .Find(filter)
@@ -57,7 +57,7 @@ public class RequestDecisionsRepository : IRequestDecisionsRepository
         }
         catch (Exception e)
         {
-            LogException.Log(log, e);
+            ExceptionLogger.Log(log, e);
             throw;
         }
     }
@@ -66,13 +66,13 @@ public class RequestDecisionsRepository : IRequestDecisionsRepository
     {
         try
         {
-            long count = await dbContext.RequestDecisionsCollection.CountDocumentsAsync(Builders<RequestDecisionsDTO>.Filter.Empty);
+            long count = await dbContext.RequestDecisionsCollection.CountDocumentsAsync(Builders<RequestDecisionsDto>.Filter.Empty);
             log.Info($"Found {count} request decisions.");
             return count;
         }
         catch (Exception e)
         {
-            LogException.Log(log, e);
+            ExceptionLogger.Log(log, e);
             throw;
         }
     }

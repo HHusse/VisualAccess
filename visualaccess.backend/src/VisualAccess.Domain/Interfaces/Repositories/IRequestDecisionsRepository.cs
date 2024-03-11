@@ -6,6 +6,6 @@ namespace VisualAccess.Domain.Interfaces.Repositories;
 public interface IRequestDecisionsRepository
 {
     public Task<DatabaseResult> AddRequestDecision(RequestDecisions requestDecision);
-    public Task<IEnumerable<DTOBase>> GetRequestDecisionByPage(int pageNumber, int pageSize = 5);
+    public Task<IEnumerable<IDtoBase>> GetRequestDecisionByPage(int pageNumber, int pageSize = 5);
     public Task<long> GetRequestsCount();
 }

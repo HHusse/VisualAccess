@@ -67,7 +67,7 @@ namespace VisualAccess.API.Controllers
             }
 
             RequestRoomPermission requestRoomPermission = factory.Create(type, request.RoomName!, request.Message);
-            CreateRequestRoomPermissionService service = new(accountRepository, roomRepository, requestRoomPermissionRepository, mapper);
+            CreateRequestRoomPermissionService service = new(roomRepository, requestRoomPermissionRepository, mapper);
             var response = await service.Execute(requestRoomPermission, account);
 
             switch (response)
@@ -167,7 +167,7 @@ namespace VisualAccess.API.Controllers
                 return StatusCode(401, new { message = "Invalid token" });
             }
 
-            RemoveRequestRoomPermissionService service = new(accountRepository, requestRoomPermissionRepository, temporaryRoomPermissionFactory, notificationFactory, requestDecisionsRepository, mapper);
+            RemoveRequestRoomPermissionService service = new(accountRepository, requestRoomPermissionRepository, notificationFactory, requestDecisionsRepository, mapper);
             ServiceResult response = await service.Execute(account, requestModel.RequestId!);
             switch (response)
             {

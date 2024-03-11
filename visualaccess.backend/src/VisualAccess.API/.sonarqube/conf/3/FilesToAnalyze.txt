@@ -1,0 +1,4 @@
+﻿/Users/hosseinvahidazari/Projects/GitHub/VisualAccess/visualaccess.backend/src/VisualAccess.FaceRecognition/Services/RegisterFaceService.cs
+/Users/hosseinvahidazari/Projects/GitHub/VisualAccess/visualaccess.backend/src/VisualAccess.FaceRecognition/Services/VerifyFaceService.cs
+/Users/hosseinvahidazari/Projects/GitHub/VisualAccess/visualaccess.backend/src/VisualAccess.FaceRecognition/ServicesClient/FaceRecognitionServiceClient.cs
+/Users/hosseinvahidazari/Projects/GitHub/VisualAccess/visualaccess.backend/src/VisualAccess.FaceRecognition/Protos/facerecognition.proto
