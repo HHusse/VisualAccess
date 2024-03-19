@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../utils/useAuth";
+import { useAuth } from "../hooks/useAuth";
 import { fetchUserRole } from "../utils/fetchUserRole";
 import LoadingComponent from "./LoadingComponent";
 
@@ -19,12 +19,8 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
 
   const tokenRef = useRef<string | null>(getToken());
 
-  const sleep = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
-
   useEffect(() => {
     const fetchAndSetUserRole = async () => {
-      await sleep(2000);
       if (!tokenRef.current) {
         setUserRole(null);
         setIsLoading(false);
