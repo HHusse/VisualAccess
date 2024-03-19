@@ -180,6 +180,8 @@ namespace VisualAccess.API.Controllers
                     return StatusCode(500, new { message = "Something went wrong" });
                 case ServiceResult.INVALID_OPERATION:
                     return StatusCode(400, new { message = "Invalid operation" });
+                case ServiceResult.ROOM_PERMISSION_ALREADY_EXIST:
+                    return StatusCode(400, new { message = "Account already has permission in the room" });
             }
             return StatusCode(200, new { });
         }
