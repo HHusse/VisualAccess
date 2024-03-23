@@ -17,7 +17,6 @@ const AccountRegistrationForm: React.FC = () => {
   const [lastName, setLastName] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [role, setRole] = useState<string>("");
@@ -35,7 +34,6 @@ const AccountRegistrationForm: React.FC = () => {
           lastName,
           username,
           email,
-          password,
           address,
           phoneNumber,
           role,
@@ -136,23 +134,6 @@ const AccountRegistrationForm: React.FC = () => {
         required
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        sx={{
-          "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-            {
-              borderColor: "black",
-            },
-          "& .MuiInputLabel-root.Mui-focused": {
-            color: "black",
-          },
-        }}
-      />
-      <TextField
-        label="Password"
-        type="password"
-        variant="outlined"
-        required
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
         sx={{
           "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
             {
