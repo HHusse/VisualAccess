@@ -38,5 +38,6 @@
   <ItemGroup>
     <ProjectReference Include="..\VisualAccess.DataAccess\VisualAccess.DataAccess.csproj" />
     <ProjectReference Include="..\VisualAccess.Domain\VisualAccess.Domain.csproj" />
+    <ProjectReference Include="..\VisualAccess.Utils\VisualAccess.Utils.csproj" />
   </ItemGroup>
 </Project>

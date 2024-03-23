@@ -24,6 +24,7 @@ namespace VisualAccess.Domain.Enumerations
         ROOM_PERMISSION_ALREADY_EXIST,
         REQUEST_ALREADY_EXIST,
         REQUEST_NOT_FOUND,
+        FAIL_TO_SEND_EMAIL,
         UNKNOWN_ERROR,
         DATABASE_ERROR
     }

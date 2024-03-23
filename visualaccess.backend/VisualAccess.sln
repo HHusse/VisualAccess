@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualAccess.Business", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualAccess.FaceRecognition", "src\VisualAccess.FaceRecognition\VisualAccess.FaceRecognition.csproj", "{1CB6E199-8E49-45A9-B08E-B9DC46796643}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualAccess.Utils", "src\VisualAccess.Utils\VisualAccess.Utils.csproj", "{3DC6E387-7CD5-4C7F-8E67-5423233CEC7A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{1CB6E199-8E49-45A9-B08E-B9DC46796643}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CB6E199-8E49-45A9-B08E-B9DC46796643}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CB6E199-8E49-45A9-B08E-B9DC46796643}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DC6E387-7CD5-4C7F-8E67-5423233CEC7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DC6E387-7CD5-4C7F-8E67-5423233CEC7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DC6E387-7CD5-4C7F-8E67-5423233CEC7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DC6E387-7CD5-4C7F-8E67-5423233CEC7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

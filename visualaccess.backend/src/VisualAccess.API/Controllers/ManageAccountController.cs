@@ -14,6 +14,7 @@ using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Interfaces.ServicesClient;
 using VisualAccess.Domain.Interfaces.Validators;
 using VisualAccess.FaceRecognition.Services;
+using VisualAccess.Utils;
 
 namespace VisualAccess.API.Controllers
 {
@@ -64,9 +65,10 @@ namespace VisualAccess.API.Controllers
                 return StatusCode(401, new { message = "Invalid token" });
             }
 
-            Account newAccount = accountFactory.Create(requestModel.FirstName!, requestModel.LastName!, requestModel.Username!, requestModel.Email!, requestModel.Password!, requestModel.Address!, requestModel.PhoneNumber!, accountRole, DateTimeOffset.Now.ToUnixTimeSeconds());
+            string generatedPassword = PasswordGenerator.Create();
+            Account newAccount = accountFactory.Create(requestModel.FirstName!, requestModel.LastName!, requestModel.Username!, requestModel.Email!, generatedPassword, requestModel.Address!, requestModel.PhoneNumber!, accountRole, DateTimeOffset.Now.ToUnixTimeSeconds());
             RegisterAccountService service = new(accountRepository, accountValidator);
-            ServiceResult result = await service.Execute(account, newAccount);
+            ServiceResult result = await service.Execute(account, newAccount, generatedPassword);
             switch (result)
             {
                 case ServiceResult.INVALID_OPERATION:
@@ -83,6 +85,8 @@ namespace VisualAccess.API.Controllers
                     return StatusCode(400, new { message = "Account with provided email already exist" });
                 case ServiceResult.DATABASE_ERROR:
                     return StatusCode(500, new { message = "Somthing went wrong" });
+                case ServiceResult.FAIL_TO_SEND_EMAIL:
+                    return StatusCode(500, new { message = "Fail to send welcome email" });
 
             }
 
@@ -281,6 +285,7 @@ namespace VisualAccess.API.Controllers
                 account.PhoneNumber,
                 account.FaceID,
                 account.AllowedRooms,
+                account.TemporaryRoomPermissions,
                 role = account.Role.ToString()
             };
             return StatusCode(200, response);

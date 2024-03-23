@@ -6,6 +6,7 @@ using VisualAccess.Domain.Interfaces.Repositories;
 using VisualAccess.Domain.Interfaces.Validators;
 using VisualAccess.Business.Validators;
 using VisualAccess.Domain.Enumerations;
+using VisualAccess.Utils;
 
 namespace VisualAccess.Business.Services.ManageAccountServices
 {
@@ -21,7 +22,7 @@ namespace VisualAccess.Business.Services.ManageAccountServices
             this.validator = validator;
         }
 
-        public async Task<ServiceResult> Execute(Account currentAccount, Account account)
+        public async Task<ServiceResult> Execute(Account currentAccount, Account account, string generatedPassword)
         {
             if (currentAccount.Role != Role.ADMIN && account.Role == Role.ADMIN)
             {
@@ -65,7 +66,22 @@ namespace VisualAccess.Business.Services.ManageAccountServices
                 log.Error("Something went wrong when trying to save in the database");
                 return ServiceResult.DATABASE_ERROR;
             }
-
+            try
+            {
+                if (!MailSender.WelcomeMessage(account.Email, account.Username, generatedPassword))
+                {
+                    log.Warn($"Because the email for account {account.Username} [Email address: {account.Email}] could not be sent, it will be deleted");
+                    _ = repository.RemoveAccount(account);
+                    return ServiceResult.FAIL_TO_SEND_EMAIL;
+                }
+            }
+            catch (Exception e)
+            {
+                log.Error($"Something went wrong trying to send email to {account.Email}: {e.Message}");
+                log.Warn($"Because the email for account {account.Username} [Email address: {account.Email}] could not be sent, it will be deleted");
+                _ = repository.RemoveAccount(account);
+                return ServiceResult.FAIL_TO_SEND_EMAIL;
+            }
             log.Info($"The account with user {account.Username} was successfully registered");
             return ServiceResult.OK;
         }
