@@ -29,7 +29,7 @@ namespace VisualAccess.Utils
             string body =
                 "Welcome to VisualAccess! We're thrilled to have you join our community. " +
                 "Below, you'll find your account login details and some important information to get you started.\n\n" +
-                $"Username: [{username}]\nPassword: [{password}]\n\n" +
+                $"Username: {username}\nPassword: {password}\n\n" +
                 "For security reasons, we recommend that you log in to your account as soon as possible and change your password to something only you know. You can change your password by going to your account settings after you log in.";
 
             using (SmtpClient client = new SmtpClient(SmtpServer, SmtpPort))
