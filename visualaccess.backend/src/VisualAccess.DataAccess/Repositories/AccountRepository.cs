@@ -162,12 +162,20 @@ namespace VisualAccess.DataAccess.Repositories
 
         public async Task<DatabaseResult> CleanupPermissionsAfterRoomRemoval(string roomName)
         {
-            var filter = Builders<AccountDto>.Filter.AnyEq(a => a.AllowedRooms, roomName);
-            var update = Builders<AccountDto>.Update.Pull(a => a.AllowedRooms, roomName);
+            var filter = Builders<AccountDto>.Filter.Or(
+                Builders<AccountDto>.Filter.AnyEq(a => a.AllowedRooms, roomName),
+                Builders<AccountDto>.Filter.ElemMatch(a => a.TemporaryRoomPermissions, temp => temp.Room == roomName)
+            );
+
+            var updateAllowedRooms = Builders<AccountDto>.Update.Pull(a => a.AllowedRooms, roomName);
+            var updateTemporaryPermissions = Builders<AccountDto>.Update.PullFilter(a => a.TemporaryRoomPermissions,
+                Builders<TemporaryRoomPermissionDto>.Filter.Eq(temp => temp.Room, roomName));
+
+            var combinedUpdate = Builders<AccountDto>.Update.Combine(updateAllowedRooms, updateTemporaryPermissions);
 
             try
             {
-                var updateResult = await dbContext.AccountsCollection.UpdateManyAsync(filter, update);
+                var updateResult = await dbContext.AccountsCollection.UpdateManyAsync(filter, combinedUpdate);
 
                 if (updateResult.MatchedCount == 0)
                 {
@@ -175,7 +183,7 @@ namespace VisualAccess.DataAccess.Repositories
                     return DatabaseResult.ACCOUNT_NOT_FOUND;
                 }
 
-                log.Info($"Room permission for {roomName} removed from all accounts.");
+                log.Info($"Room permission for {roomName} removed from all accounts, including temporary permissions.");
                 return DatabaseResult.OK;
             }
             catch (Exception e)
@@ -184,6 +192,7 @@ namespace VisualAccess.DataAccess.Repositories
                 return DatabaseResult.UNKNOWN_ERROR;
             }
         }
+
 
 
     }
