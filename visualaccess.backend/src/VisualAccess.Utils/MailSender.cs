@@ -12,7 +12,6 @@ namespace VisualAccess.Utils
         private static int SmtpPort { get; set; }
         private static string SmtpUser { get; set; }
         private static string SmtpPassword { get; set; }
-        private static bool UseSsl { get; set; }
 
         static MailSender()
         {
@@ -20,7 +19,6 @@ namespace VisualAccess.Utils
             SmtpPort = Convert.ToInt32(Environment.GetEnvironmentVariable("VSAC_SMTP_PORT")!.ToString()!);
             SmtpUser = Environment.GetEnvironmentVariable("VSAC_SMTP_USER")!.ToString()!;
             SmtpPassword = Environment.GetEnvironmentVariable("VSAC_SMTP_PASS")!.ToString()!;
-            UseSsl = Environment.GetEnvironmentVariable("VSAC_SMTP_USE_SSL")?.ToLower() == "yes";
         }
 
         public static bool WelcomeMessage(string toAddress, string username, string password)
@@ -32,10 +30,9 @@ namespace VisualAccess.Utils
                 $"Username: {username}\nPassword: {password}\n\n" +
                 "For security reasons, we recommend that you log in to your account as soon as possible and change your password to something only you know. You can change your password by going to your account settings after you log in.";
 
-            using (SmtpClient client = new SmtpClient(SmtpServer, SmtpPort))
+            using (SmtpClient client = new SmtpClient(SmtpServer, SmtpPort) { EnableSsl = true })
             {
                 client.Credentials = new NetworkCredential(SmtpUser, SmtpPassword);
-                client.EnableSsl = UseSsl;
 
                 MailAddress fromAddress = new MailAddress(SmtpUser, "VisualAccess Team");
                 MailMessage mailMessage = new MailMessage()

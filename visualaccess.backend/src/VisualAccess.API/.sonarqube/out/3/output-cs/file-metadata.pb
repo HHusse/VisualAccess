@@ -1,9 +1,0 @@
-µ
-©/Users/hosseinvahidazari/Projects/GitHub/VisualAccess/visualaccess.backend/src/VisualAccess.FaceRecognition/obj/Debug/net7.0/VisualAccess.FaceRecognition.AssemblyInfo.csutf-8¦
-š/Users/hosseinvahidazari/Projects/GitHub/VisualAccess/visualaccess.backend/src/VisualAccess.FaceRecognition/obj/Debug/net7.0/Protos/FacerecognitionGrpc.csutf-8¢
-–/Users/hosseinvahidazari/Projects/GitHub/VisualAccess/visualaccess.backend/src/VisualAccess.FaceRecognition/obj/Debug/net7.0/Protos/Facerecognition.csutf-8·
-«/Users/hosseinvahidazari/Projects/GitHub/VisualAccess/visualaccess.backend/src/VisualAccess.FaceRecognition/obj/Debug/net7.0/.NETCoreApp,Version=v7.0.AssemblyAttributes.csutf-8·
-«/Users/hosseinvahidazari/Projects/GitHub/VisualAccess/visualaccess.backend/src/VisualAccess.FaceRecognition/obj/Debug/net7.0/VisualAccess.FaceRecognition.GlobalUsings.g.csutf-8¤
-š/Users/hosseinvahidazari/Projects/GitHub/VisualAccess/visualaccess.backend/src/VisualAccess.FaceRecognition/ServicesClient/FaceRecognitionServiceClient.csutf-8“
-‰/Users/hosseinvahidazari/Projects/GitHub/VisualAccess/visualaccess.backend/src/VisualAccess.FaceRecognition/Services/VerifyFaceService.csutf-8•
-‹/Users/hosseinvahidazari/Projects/GitHub/VisualAccess/visualaccess.backend/src/VisualAccess.FaceRecognition/Services/RegisterFaceService.csutf-8

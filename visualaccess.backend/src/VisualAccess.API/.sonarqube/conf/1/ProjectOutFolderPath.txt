@@ -1,1 +1,0 @@
-/Users/hosseinvahidazari/Projects/GitHub/VisualAccess/visualaccess.backend/src/VisualAccess.API/.sonarqube/out/1
