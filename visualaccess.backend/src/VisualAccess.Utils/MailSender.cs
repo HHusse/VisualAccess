@@ -39,7 +39,8 @@ namespace VisualAccess.Utils
                 {
                     From = fromAddress,
                     Subject = subject,
-                    Body = body
+                    Body = body,
+                    BodyEncoding = System.Text.Encoding.UTF8
                 };
                 mailMessage.To.Add(toAddress);
 
