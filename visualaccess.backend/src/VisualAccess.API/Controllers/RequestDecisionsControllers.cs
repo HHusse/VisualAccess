@@ -40,7 +40,8 @@ public class RequestDecisionsControllers : ControllerBase
             req.username,
             req.room,
             type = req.type.ToString(),
-            req.isApproved
+            req.isApproved,
+            req.time
         });
 
         return StatusCode(200, new { maxPages, requests = requestsResponse });

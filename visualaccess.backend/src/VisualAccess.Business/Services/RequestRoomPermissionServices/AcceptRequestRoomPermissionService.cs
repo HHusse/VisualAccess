@@ -60,7 +60,7 @@ public class AcceptRequestRoomPermissionService
             }
 
             log.Info($"Permission added succesfuly for account {account.Username} in room {request.RoomName}");
-            RequestDecisions requestDecisions = new RequestDecisions(Guid.NewGuid().ToString(), approverAccount.Username, request.Username, request.RoomName, request.Type, true);
+            RequestDecisions requestDecisions = new RequestDecisions(Guid.NewGuid().ToString(), approverAccount.Username, request.Username, request.RoomName, request.Type, true, DateTimeOffset.Now.ToUnixTimeSeconds());
             _ = requestDecisionsRepository.AddRequestDecision(requestDecisions);
             _ = requestRoomPermissionRepository.DeleteRequest(request);
             return ServiceResult.OK;
@@ -83,7 +83,7 @@ public class AcceptRequestRoomPermissionService
             }
 
             log.Info($"Temporary permission added succesfuly for account {account.Username} in room {request.RoomName} for {days} days");
-            RequestDecisions requestDecisions = new RequestDecisions(Guid.NewGuid().ToString(), approverAccount.Username, request.Username, request.RoomName, request.Type, true);
+            RequestDecisions requestDecisions = new RequestDecisions(Guid.NewGuid().ToString(), approverAccount.Username, request.Username, request.RoomName, request.Type, true, DateTimeOffset.Now.ToUnixTimeSeconds());
             _ = requestDecisionsRepository.AddRequestDecision(requestDecisions);
             _ = requestRoomPermissionRepository.DeleteRequest(request);
             return ServiceResult.OK;

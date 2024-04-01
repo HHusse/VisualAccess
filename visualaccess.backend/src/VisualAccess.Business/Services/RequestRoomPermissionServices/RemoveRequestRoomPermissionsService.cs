@@ -60,7 +60,7 @@ public class RemoveRequestRoomPermissionService
         {
             return ServiceResult.DATABASE_ERROR;
         }
-        RequestDecisions requestDecisions = new RequestDecisions(Guid.NewGuid().ToString(), approverAccount.Username, request.Username, request.RoomName, request.Type, false);
+        RequestDecisions requestDecisions = new RequestDecisions(Guid.NewGuid().ToString(), approverAccount.Username, request.Username, request.RoomName, request.Type, false, DateTimeOffset.Now.ToUnixTimeSeconds());
         _ = await requestDecisionsRepository.AddRequestDecision(requestDecisions);
         return ServiceResult.OK;
     }

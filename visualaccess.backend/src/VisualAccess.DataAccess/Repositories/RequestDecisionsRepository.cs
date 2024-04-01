@@ -47,6 +47,7 @@ public class RequestDecisionsRepository : IRequestDecisionsRepository
 
             var requestDecisions = await dbContext.RequestDecisionsCollection
                 .Find(filter)
+                .SortByDescending(record => record.Time)
                 .Skip(skip)
                 .Limit(pageSize)
                 .ToListAsync();

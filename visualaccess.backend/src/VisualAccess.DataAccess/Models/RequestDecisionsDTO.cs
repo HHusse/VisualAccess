@@ -26,5 +26,8 @@ namespace VisualAccess.DataAccess.Models
         [BsonElement("isApproved")]
         [BsonRequired]
         public bool IsApproved { get; set; }
+        [BsonElement("time")]
+        [BsonRequired]
+        public long Time { get; set; }
     }
 }
