@@ -1,3 +1,5 @@
+import { TemporaryRoomPermissionInfo } from "./TemporaryRoomPermissionInfo";
+
 export interface AccountInfo {
   username: string;
   firstName: string;
@@ -7,4 +9,6 @@ export interface AccountInfo {
   phoneNumber: string;
   faceID: null | number;
   role: string;
+  allowedRooms: string[];
+  temporaryRoomPermissions: TemporaryRoomPermissionInfo[];
 }
