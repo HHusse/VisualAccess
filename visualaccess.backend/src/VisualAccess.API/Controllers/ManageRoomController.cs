@@ -79,7 +79,7 @@ namespace VisualAccess.API.Controllers
         }
 
         [HttpGet("/api/v1/manage/rooms/{page}")]
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN,HR")]
         public async Task<IActionResult> GetRoomsByPage(int page)
         {
             GetRoomsByPageService service = new(roomRepository, mapper);

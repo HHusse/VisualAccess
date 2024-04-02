@@ -69,6 +69,7 @@ namespace VisualAccess.API.Controllers
                 return Task.FromResult<IActionResult>(StatusCode(401, new { message = "Invalid token" }));
             }
 
+            account.Notifications.Reverse();
             return Task.FromResult<IActionResult>(StatusCode(200, new { notifications = account.Notifications }));
         }
 
