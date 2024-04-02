@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import axios from "axios";
-import { Alert, Box } from "@mui/material";
+import { Alert, Box, Typography } from "@mui/material";
 import { useAuth } from "../hooks/useAuth";
 
 const RoomRegistrationForm: React.FC = () => {
@@ -63,6 +63,14 @@ const RoomRegistrationForm: React.FC = () => {
           Camera registered successfully
         </Alert>
       )}
+      <Typography
+        variant="h4"
+        component="h1"
+        gutterBottom
+        className="text-center mb-6"
+      >
+        Register New Room
+      </Typography>
       <TextField
         label="Room Name"
         variant="outlined"

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, Button, Alert, Box } from "@mui/material";
+import { TextField, Button, Alert, Box, Typography } from "@mui/material";
 import axios from "axios";
 import { useAuth } from "../hooks/useAuth";
 
@@ -66,6 +66,14 @@ const FaceRegistrationForm: React.FC = () => {
           Face registered successfully
         </Alert>
       )}
+      <Typography
+        variant="h4"
+        component="h1"
+        gutterBottom
+        className="text-center mb-6"
+      >
+        Register Face For Account
+      </Typography>
       <TextField
         label="Username"
         variant="outlined"

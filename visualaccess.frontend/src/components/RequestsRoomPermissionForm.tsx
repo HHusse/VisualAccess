@@ -8,11 +8,12 @@ import {
   Select,
   FormControl,
   InputLabel,
+  Typography,
 } from "@mui/material";
 import axios from "axios";
 import { useAuth } from "../hooks/useAuth";
 
-const RequestsRoomPermisionForm: React.FC = () => {
+const RequestsRoomPermissionForm: React.FC = () => {
   const [roomName, setRoomName] = useState<string>("");
   const [type, setType] = useState<string>("");
   const [message, setMessage] = useState<string>("");
@@ -72,6 +73,14 @@ const RequestsRoomPermisionForm: React.FC = () => {
           Request submitted successfully!
         </Alert>
       )}
+      <Typography
+        variant="h4"
+        component="h1"
+        gutterBottom
+        className="text-center mb-6"
+      >
+        Create Request Room Permision
+      </Typography>
       <TextField
         label="Room Name"
         variant="outlined"
@@ -132,4 +141,4 @@ const RequestsRoomPermisionForm: React.FC = () => {
   );
 };
 
-export default RequestsRoomPermisionForm;
+export default RequestsRoomPermissionForm;

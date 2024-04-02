@@ -39,9 +39,11 @@ export default function LoginPage() {
       setErrorMessage("");
       const role = await fetchUserRole(token);
       if (role === "PERSON") {
-        navigate("/app");
+        navigate("/user-dashboard");
       } else if (role === "ADMIN") {
-        navigate("/app");
+        navigate("/admin-dashboard");
+      } else if (role === "HR") {
+        navigate("/hr-dashboard");
       }
     } catch (error) {
       setErrorMessage((error as any).response.data.message);

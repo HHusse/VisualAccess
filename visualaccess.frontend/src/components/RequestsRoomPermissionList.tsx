@@ -17,7 +17,7 @@ import { useAuth } from "../hooks/useAuth";
 import { RequestsRoomPermissionInfo } from "../models/RequestsRoomPermisionInfo";
 import DaysInputDialog from "./DaysInputDialog";
 
-const RequestsRoomPermisionRoomList: React.FC = () => {
+const RequestsRoomPermissionList: React.FC = () => {
   const [requests, setRequests] = useState<RequestsRoomPermissionInfo[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [tempRequestId, setTempRequestId] = useState<string | null>(null);
@@ -196,4 +196,4 @@ const RequestsRoomPermisionRoomList: React.FC = () => {
   );
 };
 
-export default RequestsRoomPermisionRoomList;
+export default RequestsRoomPermissionList;

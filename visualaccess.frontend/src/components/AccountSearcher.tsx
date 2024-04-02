@@ -125,6 +125,13 @@ const AccountSearcher: React.FC = () => {
     }
   };
 
+  const handleEnterPress = (e: any) => {
+    if (e.key === "Enter") {
+      console.log("Enter key was pressed");
+      handleSearch();
+    }
+  };
+
   return (
     <Box>
       <Typography
@@ -141,6 +148,7 @@ const AccountSearcher: React.FC = () => {
           variant="outlined"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          onKeyDown={handleEnterPress}
           sx={{
             "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
               {

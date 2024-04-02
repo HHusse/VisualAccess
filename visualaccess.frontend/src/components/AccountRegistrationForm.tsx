@@ -8,6 +8,7 @@ import {
   Select,
   InputLabel,
   FormControl,
+  Typography,
 } from "@mui/material";
 import axios from "axios";
 import { useAuth } from "../hooks/useAuth";
@@ -79,6 +80,14 @@ const AccountRegistrationForm: React.FC = () => {
           Account registered successfully
         </Alert>
       )}
+      <Typography
+        variant="h4"
+        component="h1"
+        gutterBottom
+        className="text-center mb-6"
+      >
+        Register New Account
+      </Typography>
       <TextField
         label="First Name"
         variant="outlined"
