@@ -180,7 +180,7 @@ class FaceRecognitionServicer(facerecognition_pb2_grpc.FaceRecognitionServicer):
             context.abort(grpc.StatusCode.INTERNAL, str(e))
 
 # Server Setup
-def serve():
+def server():
     logging.info("Starting the server")
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     facerecognition_pb2_grpc.add_FaceRecognitionServicer_to_server(FaceRecognitionServicer(), server)
@@ -194,5 +194,6 @@ def serve():
         server.stop(0)
 
 if __name__ == '__main__':
+    refresh_cache()
     logging.info("Application starting")
-    serve()
+    server()

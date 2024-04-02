@@ -1,0 +1,12 @@
+face-recognition==1.3.0
+Pillow==10.1.0
+psycopg2==2.9.9
+grpcio==1.60.0
+grpcio-tools==1.60.0
+redis==5.0.1
+opencv-python==4.8.1.78
+easydict==1.9
+tqdm==4.31.1
+torchvision==0.17.1
+torch==2.2.1
+tensorboardX==2.0
