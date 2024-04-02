@@ -11,26 +11,26 @@ import EntranceList from "../components/EntranceList";
 import RequestsRoomPermisionRoomList from "../components/RequestsRoomPermissionList";
 import AccountRegistrationForm from "../components/AccountRegistrationForm";
 import FaceRegistrationForm from "../components/FaceRegistrationForm";
-import RoomsListHR from "../components/RoomListHR";
+import RoomsListHR from "../components/RoomsListHR";
 
-const AdminDashboard = () => {
+const HRDashboard = () => {
   return (
     <>
       <Navbar />
-      <div className="flex flex-row justify-center items-stretch flex-wrap mt-10">
-        <div className="flex-1 p-4 text-center">
+      <div className="flex flex-wrap justify-center items-stretch mt-10">
+        <div className="p-2 w-full sm:w-1/2 md:flex-1 text-center">
           <AccountInfoCard />
         </div>
-        <div className="flex-1 p-4 text-center">
+        <div className="p-2 w-full sm:w-1/2 md:flex-1 text-center">
           <Notifications />
         </div>
       </div>
-      <div className="w-full p-4 mb-4">
-        <div className="flex flex-row justify-center items-center flex-wrap mt-5">
-          <div className="flex-1 p-4 text-center">
+      <div className="w-full p-2 md:p-4 mb-4">
+        <div className="flex flex-wrap justify-center items-center mt-5">
+          <div className="p-2 w-full md:w-1/2 lg:flex-1 text-center">
             <AccountsList />
           </div>
-          <div className="flex-1 p-4 text-center">
+          <div className="p-2 w-full md:w-1/2 lg:flex-1 text-center">
             <AccountSearcher />
           </div>
         </div>
@@ -47,7 +47,7 @@ const AdminDashboard = () => {
           variant="h4"
           component="h1"
           className="text-center"
-          sx={{ mt: 10, ontWeight: "bold" }}
+          sx={{ mt: 10, fontWeight: "bold" }}
         >
           Registrations
         </Typography>
@@ -64,7 +64,7 @@ const AdminDashboard = () => {
           variant="h4"
           component="h1"
           className="text-center"
-          sx={{ mt: 10, ontWeight: "bold" }}
+          sx={{ mt: 10, fontWeight: "bold" }}
         >
           Settings
         </Typography>
@@ -74,4 +74,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default HRDashboard;

@@ -144,14 +144,6 @@ const Notifications: React.FC = () => {
           >
             Mark All Read
           </Button>
-          <Button
-            variant="contained"
-            startIcon={<MarkChatUnreadIcon />}
-            onClick={() => handleReadUnreadAll(false)}
-            sx={{ mr: 2, bgcolor: "black", "&:hover": { bgcolor: "black" } }}
-          >
-            Mark All Unread
-          </Button>
           <List>
             {notifications.map((notification) => (
               <ListItem
