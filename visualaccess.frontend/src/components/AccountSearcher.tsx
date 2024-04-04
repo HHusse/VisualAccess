@@ -30,6 +30,13 @@ const AccountSearcher: React.FC = () => {
   const [roomName, setRoomName] = useState<string>("");
   const [permisionErrorMessage, setPermisionErrorMessage] = useState<string>();
   const [permisionSuccess, setPermisionSuccess] = useState<boolean>(false);
+
+  const [tempRoomName, setTempRoomName] = useState<string>("");
+  const [tempDays, setTempDays] = useState<number | null>(null);
+  const [tempPermisionErrorMessage, setTempPermisionErrorMessage] =
+    useState<string>();
+  const [tempPermisionSuccess, setTempPermisionSuccess] =
+    useState<boolean>(false);
   const { getToken } = useAuth();
   const token: string | null = getToken();
 
@@ -84,6 +91,35 @@ const AccountSearcher: React.FC = () => {
     } catch (error) {}
   };
 
+  const handleGrantTemporaryPermission = async (
+    username: string,
+    roomName: string
+  ) => {
+    try {
+      await axios.delete(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/manage/account/room/temporary/permission`,
+        {
+          data: { username, roomName },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setAccount((prev: AccountInfo | null) => {
+        if (prev === null) {
+          return null;
+        }
+        return {
+          ...prev,
+          temporaryRoomPermissions: prev.temporaryRoomPermissions.filter(
+            (permission) => permission.room !== roomName
+          ),
+        };
+      });
+    } catch (error) {}
+  };
+
   const handlePermissionCreation = () => {
     if (account?.username !== "" && roomName !== "") {
       axios
@@ -122,6 +158,40 @@ const AccountSearcher: React.FC = () => {
     } else {
       setPermisionSuccess(false);
       setPermisionErrorMessage("Room name cannot be empty");
+    }
+  };
+
+  const handleTemporaryPermissionCreation = () => {
+    if (account?.username !== "" && tempRoomName !== "") {
+      axios
+        .post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/manage/account/room/temporary/permission`,
+          {
+            username: account?.username,
+            roomName: tempRoomName,
+            days: tempDays === null ? 0 : tempDays,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then(() => {
+          setTempPermisionErrorMessage("");
+          setTempPermisionSuccess(true);
+          handleSearch();
+        })
+        .catch((error) => {
+          setTempPermisionSuccess(false);
+          setTempPermisionErrorMessage(
+            error.response?.data?.message || "An error occurred"
+          );
+        });
+    } else {
+      setTempPermisionSuccess(false);
+      setTempPermisionErrorMessage("Room name cannot be empty");
     }
   };
 
@@ -181,11 +251,10 @@ const AccountSearcher: React.FC = () => {
       )}
       {account && (
         <Card
+          elevation={3}
           sx={{
-            bgcolor: "rgb(243 244 246)",
+            bgcolor: "background.paper",
             borderRadius: "8px",
-            boxShadow:
-              "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
           }}
         >
           <CardContent>
@@ -210,7 +279,7 @@ const AccountSearcher: React.FC = () => {
                 >
                   Permanent Room Permissions
                 </Typography>
-                <TableContainer component={Paper}>
+                <TableContainer component={Paper} elevation={3}>
                   <Table aria-label="allowed rooms table">
                     <TableHead>
                       <TableRow>
@@ -267,10 +336,10 @@ const AccountSearcher: React.FC = () => {
                       sx={{
                         backgroundColor: "background.paper",
                         borderRadius: "4px",
-                        justifyContent: "center",
+                        justifyContent: "space-between", // Adjusted for space between text and button
                         display: "flex",
                         alignItems: "center",
-                        boxShadow: 1,
+                        boxShadow: 3,
                       }}
                     >
                       <ListItemText
@@ -281,6 +350,23 @@ const AccountSearcher: React.FC = () => {
                           permission.until * 1000
                         ).toLocaleString()}`}
                       />
+                      <Button
+                        onClick={() =>
+                          handleGrantTemporaryPermission(
+                            account.username,
+                            permission.room
+                          )
+                        }
+                        sx={{
+                          color: "red",
+                          "&:hover": {
+                            bgcolor: "#ffebee",
+                            color: "darkred",
+                          },
+                        }}
+                      >
+                        Grant Permission
+                      </Button>
                     </ListItem>
                   ))}
                 </List>
@@ -342,6 +428,96 @@ const AccountSearcher: React.FC = () => {
                 }}
               >
                 Create Permission
+              </Button>
+            </Box>
+            <Typography
+              variant="h5"
+              component="h5"
+              gutterBottom
+              className="text-center"
+              sx={{ mt: 3 }}
+            >
+              Create Temporary Room Permission
+            </Typography>
+            <Box className="flex flex-col space-y-4">
+              {tempPermisionErrorMessage && (
+                <Alert
+                  severity="error"
+                  className="w-full mb-2"
+                  onClick={() => setTempPermisionErrorMessage("")}
+                >
+                  {tempPermisionErrorMessage}
+                </Alert>
+              )}
+              {tempPermisionSuccess && (
+                <Alert
+                  severity="success"
+                  className="w-full mb-2"
+                  onClick={() => setTempPermisionSuccess(false)}
+                >
+                  Temporary permission created successfully
+                </Alert>
+              )}
+              <TextField
+                label="Room Name"
+                variant="outlined"
+                required
+                value={tempRoomName}
+                onChange={(e) => setTempRoomName(e.target.value)}
+                sx={{
+                  backgroundColor: "background.paper",
+                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                    {
+                      borderColor: "black",
+                    },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "black",
+                  },
+                }}
+              />
+              <TextField
+                label="Days"
+                variant="outlined"
+                required
+                type="number"
+                value={tempDays}
+                onChange={(e) =>
+                  setTempDays(
+                    e.target.value === "" ? null : Number(e.target.value)
+                  )
+                }
+                sx={{
+                  backgroundColor: "background.paper",
+                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                    {
+                      borderColor: "black",
+                    },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "black",
+                  },
+                  "& input[type='number']": {
+                    "-moz-appearance": "textfield",
+                    "&::-webkit-outer-spin-button": {
+                      "-webkit-appearance": "none",
+                      margin: 0,
+                    },
+                    "&::-webkit-inner-spin-button": {
+                      "-webkit-appearance": "none",
+                      margin: 0,
+                    },
+                  },
+                }}
+              />
+              <Button
+                variant="contained"
+                onClick={handleTemporaryPermissionCreation}
+                className="mt-4"
+                sx={{
+                  bgcolor: "black",
+                  "&:hover": { bgcolor: "black" },
+                }}
+              >
+                Create Temporary Permission
               </Button>
             </Box>
           </CardContent>
