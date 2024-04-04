@@ -12,7 +12,7 @@ namespace VisualAccess.Business.Factories
             {
                 Id = Guid.NewGuid().ToString(),
                 Type = type,
-                RoomName = roomName,
+                RoomName = roomName.ToLower(),
                 RequestMessage = requestMessage
             };
         }

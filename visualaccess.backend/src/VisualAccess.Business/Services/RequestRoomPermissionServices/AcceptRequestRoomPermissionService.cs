@@ -68,9 +68,9 @@ public class AcceptRequestRoomPermissionService
 
         else if (request.Type == RequestRoomPermissionType.TEMPORARY)
         {
-            if (days == 0)
+            if (days < 1)
             {
-                log.Warn($"temporary permission cannot be added for {days} days");
+                log.Warn($"Temporary permission cannot be added for {days} days");
                 return ServiceResult.INVALID_OPERATION;
             }
             Notification notification = notificationFactory.Create(approverAccount.Username, $"You received access to room {request.RoomName} temporarily for {days} days");

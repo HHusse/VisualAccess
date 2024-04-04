@@ -42,6 +42,12 @@ namespace VisualAccess.Business.Services.ManageAccountServices
             Account account = mapper.Map<AccountDto, Account>(accountDTO);
             Room room = mapper.Map<RoomDto, Room>(roomDTO);
 
+            if (!account.AllowedRooms.Exists(roomName => roomName == room.Name))
+            {
+                log.Warn($"Account {account.Username} has no room permision in room {room.Name}");
+                return ServiceResult.ROOM_PERMISSION_NOT_FOUND;
+            }
+
             account.AllowedRooms.Remove(room.Name);
             DatabaseResult result = await accountRepository.UpdateAccount(account);
 

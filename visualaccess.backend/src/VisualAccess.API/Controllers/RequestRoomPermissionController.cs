@@ -141,7 +141,7 @@ namespace VisualAccess.API.Controllers
                 case ServiceResult.ACCOUNT_NOT_FOUND:
                     return StatusCode(400, new { message = "Account associated to this request room permission not found" });
                 case ServiceResult.INVALID_OPERATION:
-                    return StatusCode(400, new { message = "For this request room permission you need to provide [days], beacuse is a temporary access permision" });
+                    return StatusCode(400, new { message = "For this request room permission you need to provide [days] > 0" });
                 case ServiceResult.DATABASE_ERROR:
                 case ServiceResult.UNKNOWN_ERROR:
                     return StatusCode(500, new { message = "Somthing went wrong" });

@@ -42,11 +42,12 @@ namespace VisualAccess.Business.Services.ManageAccountServices
 
             Account account = mapper.Map<AccountDto, Account>(accountDTO);
             Room room = mapper.Map<RoomDto, Room>(roomDTO);
-            if (account.AllowedRooms.Exists(r => r == room.Name))
+            if (account.AllowedRooms.Exists(r => r == room.Name) || account.TemporaryRoomPermissions.Exists(tr => tr.Room == room.Name))
             {
                 log.Warn($"Account {account.Username} has already room permision in room {room.Name}");
                 return ServiceResult.ROOM_PERMISSION_ALREADY_EXIST;
             }
+
             account.AllowedRooms.Add(room.Name);
             DatabaseResult result = await accountRepository.UpdateAccount(account);
 

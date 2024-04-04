@@ -30,8 +30,9 @@ namespace VisualAccess.API.Controllers
         private readonly IRoomRepository roomRepository;
         private readonly IAccountFactory accountFactory;
         private readonly IGenericMapper mapper;
+        private readonly ITemporaryRoomPermissionFactory temporaryRoomPermissionFactory;
 
-        public ManageAccountController(ILog log, IAccountRepository accountRepository, IAccountValidator accountValidator, IFaceRecognitionServiceClient faceRecognitionClient, IFaceRepository faceRepository, IRoomRepository roomRepository, IAccountFactory accountFactory, IGenericMapper mapper)
+        public ManageAccountController(ILog log, IAccountRepository accountRepository, IAccountValidator accountValidator, IFaceRecognitionServiceClient faceRecognitionClient, IFaceRepository faceRepository, IRoomRepository roomRepository, IAccountFactory accountFactory, IGenericMapper mapper, ITemporaryRoomPermissionFactory temporaryRoomPermissionFactory)
         {
             this.log = log;
             this.accountRepository = accountRepository;
@@ -41,7 +42,9 @@ namespace VisualAccess.API.Controllers
             this.roomRepository = roomRepository;
             this.accountFactory = accountFactory;
             this.mapper = mapper;
+            this.temporaryRoomPermissionFactory = temporaryRoomPermissionFactory;
         }
+
 
         [HttpPost("register")]
         [Authorize(Roles = "ADMIN,HR")]
@@ -190,6 +193,35 @@ namespace VisualAccess.API.Controllers
             return StatusCode(200, new { });
         }
 
+        [HttpPost("room/temporary/permission")]
+        [Authorize(Roles = "ADMIN,HR")]
+        public async Task<IActionResult> AddTemporaryRoomPermision([FromBody] AddTemporaryRoomPermisionRequestModel requestModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                log.Error($"Wrong body request");
+                return BadRequest(ModelState);
+            }
+
+            AddTemporaryRoomPremissionService service = new(accountRepository, roomRepository, mapper, temporaryRoomPermissionFactory);
+            ServiceResult result = await service.Execute(requestModel.Username!, requestModel.RoomName!, requestModel.Days);
+
+            switch (result)
+            {
+                case ServiceResult.ACCOUNT_NOT_FOUND:
+                    return StatusCode(404, new { message = "Account with provided username was not found" });
+                case ServiceResult.ROOM_NOT_FOUND:
+                    return StatusCode(404, new { message = "Room with provided name was not found" });
+                case ServiceResult.DATABASE_ERROR:
+                    return StatusCode(500, new { message = "Something went wrong" });
+                case ServiceResult.INVALID_OPERATION:
+                    return StatusCode(400, new { message = "Invalid operation" });
+                case ServiceResult.ROOM_PERMISSION_ALREADY_EXIST:
+                    return StatusCode(400, new { message = "Account already has permission in the room" });
+            }
+            return StatusCode(200, new { });
+        }
+
         [HttpDelete("room/permission")]
         [Authorize(Roles = "ADMIN,HR")]
         public async Task<IActionResult> RemoveRoomPermision([FromBody] AddOrRemoveRoomPermissionRequestModel requestModel)
@@ -213,6 +245,37 @@ namespace VisualAccess.API.Controllers
                     return StatusCode(500, new { message = "Something went wrong" });
                 case ServiceResult.INVALID_OPERATION:
                     return StatusCode(400, new { message = "Invalid operation" });
+                case ServiceResult.ROOM_PERMISSION_NOT_FOUND:
+                    return StatusCode(400, new { message = "Account has no permission in the room" });
+            }
+            return StatusCode(200, new { });
+        }
+
+        [HttpDelete("room/temporary/permission")]
+        [Authorize(Roles = "ADMIN,HR")]
+        public async Task<IActionResult> RemoveTemporaryRoomPermision([FromBody] RemoveTemporaryRoomPermisionRequestModel requestModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                log.Error($"Wrong body request");
+                return BadRequest(ModelState);
+            }
+
+            RemoveTemporaryRoomPermissionService service = new(accountRepository, roomRepository, mapper);
+            ServiceResult result = await service.Execute(requestModel.Username!, requestModel.RoomName!);
+
+            switch (result)
+            {
+                case ServiceResult.ACCOUNT_NOT_FOUND:
+                    return StatusCode(404, new { message = "Account with provided username was not found" });
+                case ServiceResult.ROOM_NOT_FOUND:
+                    return StatusCode(404, new { message = "Room with provided name was not found" });
+                case ServiceResult.DATABASE_ERROR:
+                    return StatusCode(500, new { message = "Something went wrong" });
+                case ServiceResult.INVALID_OPERATION:
+                    return StatusCode(400, new { message = "Invalid operation" });
+                case ServiceResult.ROOM_PERMISSION_NOT_FOUND:
+                    return StatusCode(400, new { message = "Account has no temporary permission in the room" });
             }
             return StatusCode(200, new { });
         }

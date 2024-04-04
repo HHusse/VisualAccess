@@ -9,7 +9,7 @@ public class TemporaryRoomPermissionFactory : ITemporaryRoomPermissionFactory
     {
         return new TemporaryRoomPermission
         {
-            Room = roomName,
+            Room = roomName.ToLower(),
             From = from,
             Until = until
         };

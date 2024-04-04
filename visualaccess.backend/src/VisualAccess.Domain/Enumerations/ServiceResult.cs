@@ -13,6 +13,7 @@ namespace VisualAccess.Domain.Enumerations
         ACCOUNT_NOT_FOUND,
         ROOM_NOT_FOUND,
         ROOM_ALREADY_EXIST,
+        ROOM_PERMISSION_NOT_FOUND,
         WRONG_PASSWORD,
         FACE_ASSOCIATION_FAIL,
         FACE_NOT_FOUND,
