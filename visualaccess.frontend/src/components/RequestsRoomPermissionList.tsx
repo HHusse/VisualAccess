@@ -143,7 +143,7 @@ const RequestsRoomPermissionList: React.FC = () => {
       >
         Requests Room Permission
       </Typography>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} elevation={3}>
         <Table aria-label="accounts table">
           <TableHead>
             <TableRow>

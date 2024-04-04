@@ -102,7 +102,7 @@ const AccountsList: React.FC = () => {
           {errorMessage}
         </Alert>
       )}
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} elevation={3}>
         <Table aria-label="accounts table">
           <TableHead>
             <TableRow>

@@ -63,7 +63,7 @@ const RoomsListHR: React.FC = () => {
       >
         Rooms List
       </Typography>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} elevation={3}>
         <Table aria-label="rooms table">
           <TableHead>
             <TableRow>

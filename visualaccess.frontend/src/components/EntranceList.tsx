@@ -60,7 +60,7 @@ const EntranceList: React.FC = () => {
       >
         Entrance Records
       </Typography>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} elevation={3}>
         <Table aria-label="entrance records table">
           <TableHead>
             <TableRow>

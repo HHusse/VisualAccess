@@ -109,7 +109,7 @@ const RoomsList: React.FC = () => {
           {errorMessage}
         </Alert>
       )}
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} elevation={3}>
         <Table aria-label="rooms table">
           <TableHead>
             <TableRow>

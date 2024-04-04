@@ -60,7 +60,7 @@ const RequestDecisionList: React.FC = () => {
       >
         Request Decisions
       </Typography>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} elevation={3}>
         <Table aria-label="request decisions table">
           <TableHead>
             <TableRow>
