@@ -38,8 +38,6 @@ const AccountInfoCard: React.FC = () => {
     fetchAccountInfo();
   }, [token]);
 
-  if (!accountInfo) return <div>Loading...</div>;
-
   // Helper function to format the timestamp
   const formatDate = (timestamp: number) => {
     return new Date(timestamp * 1000).toLocaleString();
@@ -50,72 +48,77 @@ const AccountInfoCard: React.FC = () => {
       <Typography variant="h4" sx={{ mb: 1 }}>
         Account Information
       </Typography>
-      <Card elevation={0}>
-        <CardContent>
-          <Typography variant="h5" component="div" sx={{ mb: 1 }}>
-            {accountInfo.firstName} {accountInfo.lastName}
-          </Typography>
-          <Typography color="text.secondary">
-            Username: {accountInfo.username}
-          </Typography>
-          <Typography color="text.secondary">
-            Email: {accountInfo.email}
-          </Typography>
-          <Typography color="text.secondary">
-            Address: {accountInfo.address}
-          </Typography>
-          <Typography color="text.secondary">
-            Phone: {accountInfo.phoneNumber}
-          </Typography>
-          <Typography color="text.secondary">
-            Role: {accountInfo.role}
-          </Typography>
-          <Typography color="text.secondary">
-            Face Registered: {accountInfo.faceID ? "Yes" : "No"}
-          </Typography>
-          <Typography color="text.secondary" sx={{ mt: 3, fontWeight: "bold" }}>
-            Allowed Rooms:
-          </Typography>
-          <Typography color="text.secondary">
-            {accountInfo.allowedRooms.join(", ") || "None"}
-          </Typography>
-          {accountInfo.temporaryRoomPermissions.length > 0 && (
-            <>
-              <Typography
-                color="text.secondary"
-                sx={{ mt: 3, textAlign: "center", fontWeight: "bold" }}
-              >
-                Temporary Room Permissions:
-              </Typography>
-              <Box display="flex" justifyContent="center">
-                <List>
-                  {accountInfo.temporaryRoomPermissions.map((perm, index) => (
-                    <ListItem
-                      key={index}
-                      sx={{ justifyContent: "center", mt: -2 }}
-                    >
-                      <ListItemText
-                        primary={`Room: ${perm.room}`}
-                        secondary={`From: ${formatDate(
-                          perm.from
-                        )} Until: ${formatDate(perm.until)}`}
-                        primaryTypographyProps={{
-                          textAlign: "center",
-                          color: "text.secondary",
-                        }}
-                        secondaryTypographyProps={{
-                          textAlign: "center",
-                          color: "text.secondary",
-                        }}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              </Box>
-            </>
-          )}
-        </CardContent>
-      </Card>
+      {accountInfo !== null && (
+        <Card elevation={0}>
+          <CardContent>
+            <Typography variant="h5" component="div" sx={{ mb: 1 }}>
+              {accountInfo.firstName} {accountInfo.lastName}
+            </Typography>
+            <Typography color="text.secondary">
+              Username: {accountInfo.username}
+            </Typography>
+            <Typography color="text.secondary">
+              Email: {accountInfo.email}
+            </Typography>
+            <Typography color="text.secondary">
+              Address: {accountInfo.address}
+            </Typography>
+            <Typography color="text.secondary">
+              Phone: {accountInfo.phoneNumber}
+            </Typography>
+            <Typography color="text.secondary">
+              Role: {accountInfo.role}
+            </Typography>
+            <Typography color="text.secondary">
+              Face Registered: {accountInfo.faceID ? "Yes" : "No"}
+            </Typography>
+            <Typography
+              color="text.secondary"
+              sx={{ mt: 3, fontWeight: "bold" }}
+            >
+              Allowed Rooms:
+            </Typography>
+            <Typography color="text.secondary">
+              {accountInfo.allowedRooms.join(", ") || "None"}
+            </Typography>
+            {accountInfo.temporaryRoomPermissions.length > 0 && (
+              <>
+                <Typography
+                  color="text.secondary"
+                  sx={{ mt: 3, textAlign: "center", fontWeight: "bold" }}
+                >
+                  Temporary Room Permissions:
+                </Typography>
+                <Box display="flex" justifyContent="center">
+                  <List>
+                    {accountInfo.temporaryRoomPermissions.map((perm, index) => (
+                      <ListItem
+                        key={index}
+                        sx={{ justifyContent: "center", mt: -2 }}
+                      >
+                        <ListItemText
+                          primary={`Room: ${perm.room}`}
+                          secondary={`From: ${formatDate(
+                            perm.from
+                          )} Until: ${formatDate(perm.until)}`}
+                          primaryTypographyProps={{
+                            textAlign: "center",
+                            color: "text.secondary",
+                          }}
+                          secondaryTypographyProps={{
+                            textAlign: "center",
+                            color: "text.secondary",
+                          }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import Navbar from "../components/Navbar";
 import AccountInfoCard from "../components/AccountInfoCard";
 import Notifications from "../components/Notifications";
@@ -12,11 +12,21 @@ import RequestsRoomPermisionRoomList from "../components/RequestsRoomPermissionL
 import AccountRegistrationForm from "../components/AccountRegistrationForm";
 import FaceRegistrationForm from "../components/FaceRegistrationForm";
 import RoomsListHR from "../components/RoomsListHR";
+import withRefresh from "../hoc/withRefresh";
 
 const HRDashboard = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const AccountInfoCardWithRefresh = withRefresh(AccountInfoCard);
+  const NotificationsWithRefresh = withRefresh(Notifications);
+  const AccountsListWithRefresh = withRefresh(AccountsList);
+  const RoomsListHRWithRefresh = withRefresh(RoomsListHR);
+  const EntranceListWithRefresh = withRefresh(EntranceList);
+  const RequestsRoomPermisionRoomListWithRefresh = withRefresh(
+    RequestsRoomPermisionRoomList
+  );
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -25,29 +35,29 @@ const HRDashboard = () => {
       </div>
       <div className="flex flex-wrap justify-center items-stretch mt-10 pt-20">
         <div className="p-2 w-full sm:w-1/2 md:flex-1 text-center">
-          <AccountInfoCard />
+          <AccountInfoCardWithRefresh />
         </div>
         <div className="p-2 w-full sm:w-1/2 md:flex-1 text-center">
-          <Notifications />
+          <NotificationsWithRefresh />
         </div>
       </div>
       <div className="w-full p-2 md:p-4 mb-4">
         <div className="flex flex-wrap justify-center items-center mt-5">
           <div className="p-2 w-full md:w-1/2 lg:flex-1 text-center">
-            <AccountsList />
+            <AccountsListWithRefresh />
           </div>
           <div className="p-2 w-full md:w-1/2 lg:flex-1 text-center">
             <AccountSearcher />
           </div>
         </div>
         <div className="mt-10">
-          <RoomsListHR />
+          <RoomsListHRWithRefresh />
         </div>
         <div className="mt-10">
-          <EntranceList />
+          <EntranceListWithRefresh />
         </div>
         <div className="mt-10">
-          <RequestsRoomPermisionRoomList />
+          <RequestsRoomPermisionRoomListWithRefresh />
         </div>
         <Typography
           variant="h4"

@@ -5,11 +5,15 @@ import Notifications from "../components/Notifications";
 import RequestsRoomPermisionForm from "../components/RequestsRoomPermissionForm";
 import PasswordResetForm from "../components/PasswordResetForm";
 import { Typography } from "@mui/material";
+import withRefresh from "../hoc/withRefresh";
 
 const UserDashboard = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const AccountInfoCardWithRefresh = withRefresh(AccountInfoCard);
+  const NotificationsWithRefresh = withRefresh(Notifications);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -18,10 +22,10 @@ const UserDashboard = () => {
       </div>
       <div className="flex flex-wrap justify-center items-stretch mt-10 pt-20">
         <div className="p-2 w-full sm:w-1/2 md:flex-1 text-center">
-          <AccountInfoCard />
+          <AccountInfoCardWithRefresh />
         </div>
         <div className="p-2 w-full sm:w-1/2 md:flex-1 text-center">
-          <Notifications />
+          <NotificationsWithRefresh />
         </div>
       </div>
       <div className="w-full p-2 md:p-4">
