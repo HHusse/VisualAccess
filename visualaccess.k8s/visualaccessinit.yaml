@@ -57,9 +57,9 @@ spec:
           image: postgres
           env:
             - name: POSTGRES_PASSWORD
-              value: "P@ssword123"
+              value: <placeholder>
             - name: POSTGRES_USER
-              value: "user"
+              value: <placeholder>
           ports:
             - containerPort: 5432
           volumeMounts:
@@ -137,7 +137,7 @@ spec:
             [
               "sh",
               "-c",
-              "until nc -z redis-service 6379 && nc -z visualaccess-service 80; do echo waiting for dependencies; sleep 2; done;",
+              "until nc -z redis-service 6379 && nc -z visualaccess-service 8080; do echo waiting for dependencies; sleep 2; done;",
             ]
       containers:
         - name: facerecognition-container
@@ -145,9 +145,9 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: VSAC_REDIS
-              value: "redis://redis-service:6379"
+              value: <placeholder>
             - name: VSAC_PGSQL
-              value: "Host=postgresdb-service;Port=5432;Database=visualaccessdb;Username=user;Password=P@ssword123"
+              value: <placeholder>
           ports:
             - containerPort: 50051
 
@@ -196,17 +196,25 @@ spec:
             - containerPort: 80
           env:
             - name: VSAC_PGSQL
-              value: "Host=postgresdb-service;Port=5432;Database=visualaccessdb;Username=user;Password=P@ssword123"
+              value: <placeholder>
             - name: VSAC_SECRETKEY
-              value: "qfEtbmKAgNOP5El/21kowmwdjsQyJp63hI+3d0CU3A0="
+              value: <placeholder>
             - name: VSAC_ISSUER
-              value: "VisualAccess"
+              value: <placeholder>
             - name: VSAC_MONGODB_CONNECTION_STRING
-              value: "mongodb://mongodb-service:27017"
+              value: <placeholder>
             - name: VSAC_MONGODB_DATABASE_NAME
-              value: "visualaccessdb"
+              value: <placeholder>
             - name: VSAC_FACE_RECOGNITION_SERVICE_URL
-              value: "http://facerecognition-service:50051"
+              value: <placeholder>
+            - name: VSAC_SMTP_SERVER
+              value: <placeholder>
+            - name: VSAC_SMTP_PORT
+              value: <placeholder>
+            - name: VSAC_SMTP_USER
+              value: <placeholder>
+            - name: VSAC_SMTP_PASS
+              value: <placeholder>
           livenessProbe:
             httpGet:
               path: /api/v1
@@ -222,7 +230,51 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - port: 80
+    - port: 8080
       targetPort: 80
   selector:
     app: visualaccess
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: visualaccessfe-deployment
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: visualaccessfe
+  template:
+    metadata:
+      labels:
+        app: visualaccessfe
+    spec:
+      initContainers:
+        - name: initcontainer
+          image: busybox
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z visualaccess-service 8080; do echo waiting for dependencies; sleep 2; done;",
+            ]
+      containers:
+        - name: visualaccessfe-container
+          image: local.repo/visualaccessfe
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: visualaccessfe-service
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 3000
+      targetPort: 3000
+  selector:
+    app: visualaccessfe
