@@ -1,10 +1,9 @@
 import React from "react";
-import { AppBar, Toolbar, IconButton, Box, useTheme } from "@mui/material";
+import { AppBar, Toolbar, IconButton, Box } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 
 const Navbar: React.FC = () => {
-  const theme = useTheme();
   const navigate = useNavigate();
 
   const onLogout = () => {
@@ -15,10 +14,10 @@ const Navbar: React.FC = () => {
   return (
     <AppBar
       position="static"
+      elevation={3}
       sx={{
         bgcolor: "black",
-        borderRadius: "0 0 20px 20px",
-        boxShadow: theme.shadows[4],
+        borderRadius: { xs: "0 0 10px 10px", sm: "0 0 20px 20px" },
       }}
     >
       <Toolbar
@@ -32,15 +31,21 @@ const Navbar: React.FC = () => {
           <img
             src="/visualaccesslogowhite.png"
             alt="Logo"
-            style={{ maxHeight: "100px" }}
+            className="max-h-[50px] md:max-h-[100px] justify-center"
           />
         </Box>
 
         <IconButton
           edge="end"
-          color="inherit"
           aria-label="logout"
           onClick={onLogout}
+          sx={{
+            fontSize: { xs: "0.75rem", sm: "1rem" },
+            "& .MuiSvgIcon-root": {
+              fontSize: { xs: "1.1rem", sm: "1.5rem" },
+            },
+            color: "white",
+          }}
         >
           <LogoutIcon />
         </IconButton>
