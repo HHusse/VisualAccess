@@ -21,6 +21,7 @@ namespace VisualAccess.API.Middlewares
 
             log.Info($"Request: {context.Request.Protocol} {context.Request.Method} {context.Request.Path} from IP: {ipAddress}");
 
+            context.Response.Headers["Server"] = "Visual Access";
             await next(context);
         }
     }
