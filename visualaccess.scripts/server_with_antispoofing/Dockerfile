@@ -1,9 +1,8 @@
 FROM python:3.11
 
-RUN apt-get update \
-    && apt-get install -y libgl1-mesa-glx \
-    && apt-get install -y libjpeg-dev \
-    && apt-get install -y libjpeg-dev \
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    cmake \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
