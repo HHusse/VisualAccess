@@ -213,3 +213,5 @@ project.lock.json
 AppPackages/
 
 *.sonarqube/
+
+src/VisualAccess.API/Properties/launchSettings.json
